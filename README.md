@@ -14,4 +14,4 @@ users based on predefined allocation rules.
 TODO
 
 ### LICENSE
-MIT
+[MIT](./LICENSE)
