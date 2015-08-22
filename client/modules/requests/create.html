@@ -1,0 +1,105 @@
+<section class="wrapper">
+  <form name="CreateForm" class="form-horizontal" ng-submit="CreateCtrl.submit(CreateCtrl.slave)" novalidate ng-cloak>
+    <fieldset>
+      <legend>Application For Expenditure</legend>
+
+      <div class="form-group" ng-class="{ 'has-error' : CreateForm.$submitted && CreateForm.projectid.$invalid }">
+        <label class="col-xs-2 control-label">Project</label>
+        <div class="col-xs-6">
+          <select class="form-control"
+            name="projectid"
+            ng-model="CreateCtrl.slave.projectid"
+            ng-options="project.id as CreateCtrl.fmtProjects(project) for project in CreateCtrl.projects"
+            required>
+          </select>
+          <p ng-show="CreateForm.$submitted && CreateForm.projectid.$invalid" class="help-block">
+            Please select a project.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-xs-2 control-label">Date</label>
+        <div class="col-xs-6">
+          <p class="form-control-static">{{ CreateCtrl.slave.date | date }}</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-xs-2 control-label">Requestor</label>
+        <div class="col-xs-6">
+          <p class="form-control-static">{{ CreateCtrl.user.username }}</p>
+        </div>
+      </div>
+
+      <div class="form-group" ng-class="{ 'has-error' : CreateForm.$submitted && CreateForm.beneficiary.$invalid }">
+        <label class="col-xs-2 control-label">Beneficiary</label>
+        <div class="col-xs-6">
+          <input type="text" class="form-control" name="beneficiary" ng-model="CreateCtrl.slave.beneficiary" required>
+          <p ng-show="CreateForm.$submitted && CreateForm.beneficiary.$invalid" class="help-block">
+            Please provide a beneficiary.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group" ng-class="{ 'has-error' : CreateForm.$submitted && CreateForm.explanation.$invalid }">
+        <label class="col-xs-2 control-label">Explanation</label>
+        <div class="col-xs-6">
+          <textarea class="form-control" name="explanation" ng-model="CreateCtrl.slave.explanation" rows="4" required></textarea>
+          <p ng-show="CreateForm.$submitted && CreateForm.explanation.$invalid" class="help-block">
+            Please provide an explanation.
+          </p>
+        </div>
+      </div>
+
+      <table class="table table-bordered table-condensed">
+        <thead>
+          <tr>
+            <th></th>
+            <th style="width:320px;">Item Requested</th>
+            <th style="width:120px;">Budget Code</th>
+            <th style="width:10px;">Quantity</th>
+            <th>Unit</th>
+            <th style="width:80px;">Unit Price</th>
+            <th style="width:90px;">Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="row in CreateCtrl.slave.details">
+            <td>{{ $index + 1 }}</td>
+            <td><input type="text" class="table-input" ng-model="row.item"></td>
+            <td><input type="text" class="table-input" ng-model="row.budgetcode"></td>
+            <td><input type="number" class="table-input" ng-model="row.quantity" ng-change="CreateCtrl.totalRows()" placeholder="0" min="0"></td>
+            <td><input type="text" class="table-input" ng-model="row.unit" placeholder=""></td>
+            <td><input type="number" class="table-input" ng-model="row.unitprice" ng-change="CreateCtrl.totalRows()" placeholder="$0" min="0"></td>
+            <td style="text-align:right;">{{ (row.quantity * row.unitprice) || 0 | currency }}</td>
+            <td ng-click="CreateCtrl.removeRow($index)" ng-show="CreateCtrl.slave.details.length > 1" style="cursor:pointer;text-align:center;">
+              <i class="glyphicon glyphicon-remove" style="color:rgb(191, 25, 25);"></i>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr ng-if="CreateCtrl.slave.rowerror">
+            <td colspan="8"><p class="text-danger text-center"><b>Hmph.</b> It looks like you may have missed some fields. Please check carefully!</p></td>
+          </tr>
+          <tr>
+            <th colspan="7" style="text-align: right;">Total {{ CreateCtrl.total || 0 | currency }}</th>
+            <th></th>
+          </tr>
+        </tfoot>
+      </table>
+
+        <button type="button" class="btn btn-primary" ng-click="CreateCtrl.addRow()">
+          <i class="glyphicon glyphicon-plus-sign"></i> Add Row
+        </button>
+
+        <div class="pull-right">
+          <button type="button" class="btn btn-default">
+            <i class="glyphicon glyphicon-save"></i> Save For Later</button>
+          <button type="submit" class="btn btn-primary">Submit Form</button>
+        </div>
+
+    </fieldset>
+  </form>
+</section>

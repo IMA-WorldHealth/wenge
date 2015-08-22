@@ -1,0 +1,27 @@
+<section class="wrapper">
+  <p class="alert alert-info">
+    <i class="glyphicon glyphicon-exclamation-sign"></i> To recover your account, please provide us
+    with your email address.  You will be sent an email with recovery instructions.  If you are
+    still having trouble, please speak to a system administrator.
+  </p>
+  <div class="row">
+    <div class="col-md-6">
+      <form class="form" name="RecoveryForm" ng-submit="RecoveryCtrl.submit()" novalidate>
+        <div class="form-group" ng-class="{ 'has-error' : RecoveryCtrl.error, 'has-success' : RecoveryCtrl.success }">
+          <label>Email Address</label>
+          <input type="email" ng-model="RecoveryCtrl.email" class="solid-input" autofocus required ng-disabled="RecoveryCtrl.success">
+          <p class="help-block" ng-if="RecoveryCtrl.error">
+            I do not recognize that email address.  Please try again.
+          </p>
+          <p class="help-block" ng-if="RecoveryCtrl.success">
+          <i class="glyphicon glyphicon-ok-circle"></i> Success!  An email has been sent to <b>{{ RecoveryCtrl.email }}</b>.
+            Please check it for further instructions.
+          </p>
+        </div>
+        <button type="submit" ng-disabled="RecoveryForm.$invalid" class="btn btn-sm btn-success">
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</section>

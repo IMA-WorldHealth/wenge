@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <title>Authorization For Expenditure</title>
+
+  <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+
+  <link rel='stylesheet' href='css/bootstrap.min.css'>
+  <link rel='stylesheet' href='css/linear-icons.css'>
+  <link rel='stylesheet' href='css/site.css'>
+</head>
+<body ng-app='eprf' ng-controller='ApplicationController' ng-cloak>
+
+  <nav class='navbar navbar-fixed-top' ng-controller='NavigationController as NavCtrl'>
+    <div class='container-fluid' style='margin: 0 2em;' ng-show="NavCtrl.isLoggedIn()">
+      <div class='collapse navbar-collapse'>
+        <div class='navbar-header'>
+          <a class='navbar-brand' href='#/'>
+            <img alt="IMA Logo" src="assets/logo.png" width="50" height="50">
+          </a>
+        </div>
+        <h2 class="navbar-left">AFE</h2>
+
+        <ul class="nav navbar navbar-right">
+          <li class="dropdown" dropdown keyboard-nav>
+            <a class="dropdown-toggle" data-toggle="dropdown"role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
+              <i class="glyphicon glyphicon-list-alt"></i> {{ NavCtrl.user.username }} <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a ng-href="#/users/{{ NavCtrl.user.id }}"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
+              <li><a href="#/settings"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
+              <li><a href="" ng-click="NavCtrl.logout()"><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class='container' style='padding-top: 5em;'>
+    <ng-view></ng-view>
+  </main>
+
+  <script src='vendor/angular.min.js'></script>
+  <script src='vendor/angular-route.min.js'></script>
+  <script src='vendor/angular-animate.min.js'></script>
+  <script src='vendor/ui-bootstrap-custom-tpls-0.13.1.min.js'></script>
+  <script src='app.min.js'></script>
+</body>
+</html>

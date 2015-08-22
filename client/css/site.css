@@ -1,0 +1,66 @@
+/* hide the number spinners */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+          margin: 0;
+}
+
+input[type=number] {
+      -moz-appearance:textfield;
+}
+
+/* pretty inputs within tables */
+.table-input {
+  background-color: inherit;
+  border: none;
+  border-bottom: 1px dashed rgb(173, 173, 173);
+  width: 100%;
+}
+
+.solid-input {
+  padding-top: 10px;
+  background-color: inherit;
+  border: none;
+  border-bottom: 1px solid rgb(173, 173, 173);
+  width: 100%;
+}
+
+.solid-input:hover {
+  box-shadow : 0px 2px #CCC;
+}
+
+.link-inherit {
+  color : inherit;
+  text-decoration : underline;
+  cursor : pointer;
+  font-weight: bold;
+}
+
+.wrapper {
+  width : 850px;
+  margin : 0 auto;
+  padding-bottom: 2.5em;
+}
+
+.dot {
+  display : inline-block;
+  border-radius: 50%;
+  height: 10px;
+  width: 10px;
+}
+
+.dot.dot-green {
+  background-color : green;
+}
+
+.dot.dot-red {
+  background-color : red;
+}
+
+.dot.dot-orange {
+  background-color : orange;
+}
+
+.currency {
+  text-align: right;
+}

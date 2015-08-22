@@ -1,0 +1,38 @@
+<section class='panel panel-primary'>
+  <div class='panel-heading'>
+    <h5>Open PRFs <span class='badge pull-right'>{{ dash.items.length }}</span></h5>
+  </div>
+  <table class='table table-hover'>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Project</th>
+        <th>Date</th>
+        <th>Requestor</th>
+        <th>Activity</th>
+        <th>Amount</th>
+        <th>Signatures</th>
+        <th>Review</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat='prf in dash.items'>
+        <td><a ng-href='/request/{{ prf.id }}'>#</a></td>
+        <td>{{ prf.project }}</td>
+        <td>{{ prf.date | date }}</td>
+        <td>{{ prf.requestor }}</td>
+        <td>{{ prf.activity }}</td>
+        <td>{{ prf.amount | currency }}</td>
+        <td>
+          <span class='label label-success' style='margin: 0 0.25em;' ng-if='prf.signatures.cop'>
+            {{ prf.signatures.cop | uppercase }}
+          </span>
+          <span class='label label-success' style='margin: 0 0.25em;' ng-if='prf.signatures.dcop'>
+            {{ prf.signatures.dcop | uppercase }}
+          </span>
+        </td>
+        <td>{{ prf.review }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

@@ -1,0 +1,29 @@
+{
+  "name": "eprf",
+  "version": "0.1.0",
+  "description": "Electrong PRFs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "prf"
+  ],
+  "author": "jniles",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.13.2",
+    "compression": "^1.5.1",
+    "express": "^4.13.1",
+    "express-jwt": "^3.0.1",
+    "express-session": "^1.11.3",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-if": "^1.2.5",
+    "gulp-minify-css": "^1.2.0",
+    "gulp-uglify": "^1.2.0",
+    "morgan": "^1.6.1",
+    "session-file-store": "0.0.16",
+    "sqlite3": "^3.0.9"
+  }
+}

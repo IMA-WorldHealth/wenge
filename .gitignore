@@ -1,0 +1,16 @@
+database.db
+base.sql
+
+# vim things
+*.swp
+*.swo
+*.swn
+
+# npm things
+node_modules/
+
+# express-session things
+sessions/*
+
+# log files
+*.log
