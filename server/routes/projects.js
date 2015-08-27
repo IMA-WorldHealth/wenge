@@ -55,7 +55,7 @@ exports.createProject = function (req, res, next) {
 exports.getColors = function (req, res, next) {
   'use strict';
 
-  db.asyc.all('SELECT code, name FROM color;')
+  db.async.all('SELECT code, name FROM color;')
   .then(function (rows) {
     res.status(200).json(rows);
   })
