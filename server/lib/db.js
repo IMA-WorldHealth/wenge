@@ -1,6 +1,13 @@
-var sqlite3 = require('sqlite3').verbose();
+var sqlite3 = require('sqlite3').verbose(),
+    q       = require('q');
+
 var db = new sqlite3.Database('./database.db');
 
+// create asynchronous versions of db functions
+db.async = {};
+db.async.run = q.nbind(db.run, db);
+db.async.get = q.nbind(db.get, db);
+db.async.all = q.nbind(db.all, db);
 
 // build the database if it doesn't exist
 db.serialize(function () {
@@ -34,7 +41,7 @@ db.serialize(function () {
   db.run(
     'CREATE TABLE IF NOT EXISTS project (' +
       'id INTEGER PRIMARY KEY, code TEXT, color TEXT, createdby INTEGER, ' +
-      'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, ' +
+      'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, ' +
       'FOREIGN KEY (createdby) REFERENCES user(id) ' +
     ');'
   );

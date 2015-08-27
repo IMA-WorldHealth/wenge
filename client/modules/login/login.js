@@ -1,7 +1,7 @@
 (function (angular) {
   'use strict';
 
-  var app = angular.module('eprf');
+  var app = angular.module('AFE');
 
   // Managing a session like this is an elegant way to
   // ensure a session exists

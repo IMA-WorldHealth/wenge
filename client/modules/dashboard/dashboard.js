@@ -2,7 +2,7 @@
 
   'use strict';
 
-  var app = angular.module('eprf');
+  var app = angular.module('AFE');
 
 
   app.service('DashboardService', ['$http', function ($http) {

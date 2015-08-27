@@ -1,7 +1,7 @@
 (function (angular) {
   'use strict';
 
-  var app = angular.module('eprf', ['ngRoute', 'ui.bootstrap']);
+  var app = angular.module('AFE', ['ngRoute', 'ui.bootstrap']);
 
   // ensure that the user is properly connected
   app.factory('AuthenticationInjectorFactory', ['$rootScope', '$q', function ($rootScope, $q) {

@@ -1,7 +1,7 @@
 (function (angular) {
   'use strict';
 
-  angular.module('eprf')
+  angular.module('AFE')
   .controller('RequestCreateController', ['$http', '$location', 'Session', function ($http, $location, Session) {
 
     var self = this,

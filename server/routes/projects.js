@@ -23,10 +23,12 @@ exports.getProjectById = function (req, res, next) {
 
   // TODO - return a nice tree structure in this format:
   // { id : xxx, code : xxx, color : xxx, subprojects : [ { id: xxx, label : xxx }, {..}] }
-  db.get(sql, req.params.id, function (err, rows) {
-    if (err) { return res.status(500).json(err); }
+  db.async.get(sql, req.params.id)
+  .then(function (rows) {
     res.status(200).json(rows);
-  });
+  })
+  .catch(next)
+  .done();
 };
 
 // POST /projects
@@ -38,7 +40,7 @@ exports.createProject = function (req, res, next) {
 
   sql = 'INSERT INTO project (code, color, createdby) VALUES (?,?,?)';
 
-  db.run(sql, data.code, data.color, userid)
+  db.async.run(sql, data.code, data.color, userid)
   .then(function () {
     var id =  this.lastID;
     res.status(200).json({ id : id });
@@ -51,8 +53,10 @@ exports.createProject = function (req, res, next) {
 exports.getColors = function (req, res, next) {
   'use strict';
 
-  db.all('SELECT code, name FROM color;', function (err, rows) {
-    if (err) { return res.status(500).json(err); }
+  db.asyc.all('SELECT code, name FROM color;')
+  .then(function (rows) {
     res.status(200).json(rows);
-  });
+  })
+  .catch(next)
+  .done();
 };

@@ -1,4 +1,4 @@
-angular.module('eprf')
+angular.module('AFE')
 
 /* UserProfileController
  *

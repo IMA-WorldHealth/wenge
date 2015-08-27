@@ -1,5 +1,5 @@
 
-angular.module('eprf')
+angular.module('AFE')
 .controller('RecoveryController', ['$http', function ($http) {
 
   // alias this

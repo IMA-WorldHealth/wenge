@@ -1,7 +1,7 @@
 (function (angular) {
   'use strict';
 
-  angular.module('eprf')
+  angular.module('AFE')
 
   .controller('MainController', function (Session) {
     var self = this;

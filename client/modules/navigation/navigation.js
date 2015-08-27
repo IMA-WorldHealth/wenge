@@ -1,4 +1,4 @@
-angular.module('eprf')
+angular.module('AFE')
 
 .controller('NavigationController', ['AuthService', 'Session', '$location', function (AuthService, Session, $location) {
   this.isLoggedIn = function () {

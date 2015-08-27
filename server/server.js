@@ -63,7 +63,7 @@ app.delete('/requests/:id', requests.deleteRequests);
 
 // error handler
 app.use(function (err, res, req, next) {
-  console.error(err.stack);
+  console.error('An error occured:', err.stack);
   res.status(500).send('Something broke!');
 });
 

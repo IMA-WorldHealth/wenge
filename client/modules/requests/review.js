@@ -1,7 +1,7 @@
 (function (angular) {
   'use strict';
 
-  angular.module('eprf')
+  angular.module('AFE')
   .controller('RequestReviewController', ['$http', '$routeParams', function ($http, $routeParams) {
 
     var self =  this;
