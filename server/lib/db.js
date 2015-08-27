@@ -17,7 +17,9 @@ db.serialize(function () {
 
   // build the role table
   db.run(
-    'CREATE TABLE IF NOT EXISTS role (id INTEGER PRIMARY KEY, label TEXT);'
+    'CREATE TABLE IF NOT EXISTS role (' +
+      'id INTEGER PRIMARY KEY, label TEXT ' +
+    ');'
   );
 
   // build the user table
@@ -30,21 +32,28 @@ db.serialize(function () {
 
   // build the project table
   db.run(
-    'CREATE TABLE IF NOT EXISTS project (id INTEGER PRIMARY KEY, code TEXT, color TEXT);'
+    'CREATE TABLE IF NOT EXISTS project (' +
+      'id INTEGER PRIMARY KEY, code TEXT, color TEXT, createdby INTEGER, ' +
+      'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, ' +
+      'FOREIGN KEY (createdby) REFERENCES user(id) ' +
+    ');'
   );
 
   // build the subproject table
   db.run(
-    'CREATE TABLE IF NOT EXISTS subproject (id INTEGER PRIMARY KEY, projectid INTEGER, label TEXT);'
+    'CREATE TABLE IF NOT EXISTS subproject (' +
+      'id INTEGER PRIMARY KEY, projectid INTEGER, label TEXT, ' +
+      'FOREIGN KEY (projectid) REFERENCES project(id) ' +
+    ');'
   );
 
   // build the request table
   db.run(
     'CREATE TABLE IF NOT EXISTS request (' +
       'id INTEGER PRIMARY KEY, projectid INTEGER, date TEXT, beneficiary TEXT, explanation TEXT, ' +
-      'signatureA, signatureB, review TEXT, status TEXT, userid INTEGER, ' +
+      'signatureA, signatureB, review TEXT, status TEXT, createdby INTEGER, ' +
       'FOREIGN KEY (projectid) REFERENCES project(id), ' +
-      'FOREIGN KEY (userid) REFERENCES user(id)' +
+      'FOREIGN KEY (createdby) REFERENCES user(id)' +
     ');'
   );
 
@@ -56,6 +65,7 @@ db.serialize(function () {
       'FOREIGN KEY (requestid) REFERENCES request(id)' +
     ');'
   );
+
 });
 
 module.exports = db;

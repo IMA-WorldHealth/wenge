@@ -48,6 +48,10 @@
       controller : 'RecoveryController as RecoveryCtrl',
       templateUrl: 'modules/users/recovery/recovery.html'
     })
+    .when('/projects', {
+      controller : 'ProjectController as ProjectCtrl',
+      templateUrl : 'modules/projects/project.html'
+    })
     .otherwise('/login');
   }
 
