@@ -33,6 +33,10 @@ db.serialize(function () {
     'CREATE TABLE IF NOT EXISTS project (id INTEGER PRIMARY KEY, code TEXT, color TEXT);'
   );
 
+  // build the subproject table
+  db.run(
+    'CREATE TABLE IF NOT EXISTS subproject (id INTEGER PRIMARY KEY, projectid INTEGER, label TEXT);'
+  );
 
   // build the request table
   db.run(
