@@ -6,10 +6,12 @@ var db = require('../lib/db');
 exports.getProjects = function (req, res, next) {
   'use strict';
 
-  db.all('SELECT id, code, color FROM project;', function (err, rows) {
-    if (err) { return res.status(500).json(err); }
+  db.async.all('SELECT id, code, color FROM project;')
+  .then(function (rows) {
     res.status(200).json(rows);
-  });
+  })
+  .catch(next)
+  .done();
 };
 
 // GET projects/:id

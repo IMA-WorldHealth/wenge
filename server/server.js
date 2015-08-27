@@ -47,7 +47,7 @@ app.post('/users/accountrecovery', users.userAccountRecovery);
 // ensure that the user session is defined
 app.use(auth.gateway);
 
-app.get('/projects', projects.getProjects);
+// misc
 app.get('/colors', projects.getColors);
 
 // user controller
@@ -60,6 +60,11 @@ app.post('/requests', requests.createRequests);
 app.get('/requests/:id', requests.getRequestsById);
 app.put('/requests/:id', requests.updateRequests);
 app.delete('/requests/:id', requests.deleteRequests);
+
+// projects controller
+app.get('/projects', projects.getProjects);
+app.get('/projects/:id', projects.getProjectById);
+app.post('/projects', projects.createProject);
 
 // error handler
 app.use(function (err, res, req, next) {

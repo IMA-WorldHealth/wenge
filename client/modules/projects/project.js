@@ -13,6 +13,6 @@ function ProjectController(ProjectService) {
   // load projects from server
   ProjectService.query(function (response) {
     console.log('response', response);
-    vm.projects = reponse.data;
+    vm.projects = response.data;
   });
 }
