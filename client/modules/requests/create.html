@@ -9,7 +9,7 @@
           <select class="form-control"
             name="projectid"
             ng-model="CreateCtrl.slave.projectid"
-            ng-options="project.id as CreateCtrl.fmtProjects(project) for project in CreateCtrl.projects"
+            ng-options="project.id as project.code for project in CreateCtrl.projects"
             required>
           </select>
           <p ng-show="CreateForm.$submitted && CreateForm.projectid.$invalid" class="help-block">
