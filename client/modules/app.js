@@ -3,15 +3,29 @@
 
   var app = angular.module('AFE', ['ngRoute', 'ngResource', 'ui.bootstrap']);
 
-  // ensure that the user is properly connected
-  app.factory('AuthenticationInjectorFactory', ['$rootScope', '$q', function ($rootScope, $q) {
+  // Intercept server sent errors, potentially rejecting auth errors
+  function AuthInjector($rootScope, $q, $location, Session) {
     return {
+
+      // called on server error
       responseError : function (response) {
-        console.log('Response:', response);
+
+        // if the server sends back a 403 "Not Authorized",
+        // and the code is ERR_NO_SESSION, we have had a session timeout
+        // on the server.  Redirect to login
+        if (response.status === 403 && response.data.code === "ERR_NO_SESSION") {
+          console.log('[AUTH] No session found!');
+          Session.destroy();
+          $location.url('/login');
+        }
+
         return $q.reject(response);
       }
     };
-  }]);
+  }
+
+  // ensure that the user is properly connected
+  app.factory('AuthenticationInjectorFactory', ['$rootScope', '$q', '$location', 'Session', AuthInjector]);
 
   // configure routes
   function configRoutes($routeProvider) {

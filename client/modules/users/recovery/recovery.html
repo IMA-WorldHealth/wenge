@@ -1,27 +1,42 @@
 <section class="wrapper">
-  <p class="alert alert-info">
-    <i class="glyphicon glyphicon-exclamation-sign"></i> To recover your account, please provide us
-    with your email address.  You will be sent an email with recovery instructions.  If you are
-    still having trouble, please speak to a system administrator.
-  </p>
+  <div class="row alert alert-info">
+    <b><i class="octicon octicon-shield"></i> Recover Your Account</b>
+    <p>
+      To recover your account, please provide us with your email address. 
+      You will be sent an email with recovery instructions.  If you are
+      still having trouble, please speak to a system administrator.
+    </p>
+  </div>
+
   <div class="row">
-    <div class="col-md-6">
-      <form class="form" name="RecoveryForm" ng-submit="RecoveryCtrl.submit()" novalidate>
-        <div class="form-group" ng-class="{ 'has-error' : RecoveryCtrl.error, 'has-success' : RecoveryCtrl.success }">
+    <form class="form" name="RecoveryForm" ng-submit="RecoveryCtrl.submit()" novalidate>
+    
+      <div class="row">
+        <div class="form-group col-md-6" ng-class="{ 'has-error' : RecoveryCtrl.error, 'has-success' : RecoveryCtrl.success }">
           <label>Email Address</label>
           <input type="email" ng-model="RecoveryCtrl.email" class="solid-input" autofocus required ng-disabled="RecoveryCtrl.success">
-          <p class="help-block" ng-if="RecoveryCtrl.error">
-            I do not recognize that email address.  Please try again.
-          </p>
-          <p class="help-block" ng-if="RecoveryCtrl.success">
-          <i class="glyphicon glyphicon-ok-circle"></i> Success!  An email has been sent to <b>{{ RecoveryCtrl.email }}</b>.
-            Please check it for further instructions.
-          </p>
         </div>
+      </div>
+
+      <div class="row col-md-12">
         <button type="submit" ng-disabled="RecoveryForm.$invalid" class="btn btn-sm btn-success">
           Submit
         </button>
-      </form>
-    </div>
+      </div>
+
+      <div class="row col-md-12" style="margin-top:1em;">
+
+        <p class="alert alert-danger" ng-if="RecoveryCtrl.error">
+          <i class="octicon octicon-alert"></i> I do not recognize that email address.  Please try again.
+        </p>
+
+        <p class="alert alert-success" ng-if="RecoveryCtrl.success">
+          <i class="octicon octicon-check"></i> <b>Success!</b>  An email has been sent to <b>{{ RecoveryCtrl.email }}</b>.
+          Please check it for further instructions.
+          <a href="#/login">Back to Login</a>
+        </p>
+      </div>
+
+    </form>
   </div>
 </section>

@@ -15,10 +15,8 @@ exports.login = function (req, res, next) {
   // passwords are hashed with sha256 and stored in database
   shasum = crypto.createHash('sha256').update(req.body.password).digest('hex');
 
-  db.get(sql, [req.body.username, shasum], function (err, row) {
-
-    // an error occurred!  Respond witha 500
-    if (err) { return res.status(500).json(err); }
+  db.async.get(sql, req.body.username, shasum)
+  .then(function (row) {
 
     // no user found!  Respond with a 403 'Not Authorized'
     if (!row) { return res.status(403).json({ code : 'ERR_LOGIN' }); }
@@ -31,7 +29,9 @@ exports.login = function (req, res, next) {
     db.run('UPDATE user SET lastactive = ? WHERE id = ?;', [new Date(), row.id]);
 
     res.status(200).json(row);
-  });
+  })
+  .catch(next)
+  .done();
 };
 
 // GET /logout
