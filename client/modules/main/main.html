@@ -1,38 +1,29 @@
 <section class="wrapper">
 
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Welcome {{ MainCtrl.user.username }}!
-    </div>
-    <form class="form-horizontal panel-body">
-
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Last Login</label>
-        <div class="col-sm-10">
-          <p class="form-control-static">{{ MainCtrl.user.lastactive | date }}</p>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Email</label>
-        <div class="col-sm-10">
-          <p class="form-control-static">{{ MainCtrl.user.email }}</p>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Open AFEs</label>
-        <div class="col-sm-10">
-          <p class="form-control-static">{{ 3 }}</p>
-        </div>
-      </div>
-
-
-      <a class="btn btn-sm btn-default" href="#/requests/create">
-        <span class="dot dot-red"></span>
-        <i class="glyphicon glyphicon-list-alt"></i> Create a new AFE
-      </a>
-    </form>
+  <div class="row">
+    <h1 class="text-center">{{ MainCtrl.getGreeting() }} {{ MainCtrl.user.username }}!</h1>
   </div>
 
+  <div class="row" style="margin-top:2em;">
+    <div class="col-sm-4 col-sm-offset-1">
+      <div class="panel panel-default">
+        <div class="panel-heading text-center">
+          <b>Create a new Request</b>
+        </div>
+        <div class="panel-body text-center">
+          <a href="#/requests/create"><i class="mega-octicon octicon-file-text" style="font-size:128px;color:#000"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4 col-sm-offset-2">
+      <div class="panel panel-default">
+        <div class="panel-heading text-center">
+          <b>View Your Open Requests</b>
+        </div>
+        <div class="panel-body text-center">
+          <a href="#/dashboard"><i class="mega-octicon octicon-eye" style="font-size:128px;color:#000"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
