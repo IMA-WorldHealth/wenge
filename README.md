@@ -5,9 +5,9 @@ A web application for creating, viewing, and filtering Authorizations for Expend
 
 ### Overview
 
-Every expense must be preceeded by a AFE detailing the reason and cost associated with the
-expenditure, recorded in the AFE.  This application will create an AFE and assign the signatory
-users based on predefined allocation rules.
+Every expense must be preceded by a AFE detailing the reason and cost associated with the
+expenditure, recorded in the AFE.  This application digitizes that process.
+
 
 #### Signature Allocation
 

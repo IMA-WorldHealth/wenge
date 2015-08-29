@@ -30,6 +30,7 @@
     "sqlite3": "^3.0.9"
   },
   "devDependencies": {
+    "gulp-uglify": "^1.4.0",
     "gulp-uncss": "^1.0.3"
   }
 }
