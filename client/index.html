@@ -8,12 +8,12 @@
 
   <link rel='stylesheet' href='css/bootstrap.min.css'>
   <link rel='stylesheet' href='css/octicons.css'>
-  <link rel='stylesheet' href='css/select.min.css'>
   <link rel='stylesheet' href='css/site.css'>
 </head>
+
 <body ng-app='AFE' ng-controller='ApplicationController' ng-cloak>
 
-  <nav class='navbar navbar-fixed-top' ng-controller='NavigationController as NavCtrl'>
+  <nav class='navbar navbar-fixed-top' ng-controller='NavigationController as NavCtrl' class="hidden-print">
     <div class='container-fluid' style='margin: 0 2em;' ng-show="NavCtrl.isLoggedIn()">
       <div class='collapse navbar-collapse'>
         <div class='navbar-header'>
@@ -26,7 +26,7 @@
         <ul class="nav navbar navbar-right">
           <li class="dropdown" dropdown keyboard-nav>
             <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
-              {{ NavCtrl.user.username }} <i class="octicon octicon-chevron-down"></i> 
+              {{ NavCtrl.user.username }} <i class="octicon octicon-chevron-down"></i>
             </a>
             <ul class="dropdown-menu">
               <li><a ng-href="#/users/{{ NavCtrl.user.id }}"><i class="octicon octicon-person"></i> Profile</a></li>
@@ -46,7 +46,6 @@
   <script src='vendor/angular.min.js'></script>
   <script src='vendor/angular-route.min.js'></script>
   <script src='vendor/angular-resource.min.js'></script>
-  <script src='vendor/select.min.js'></script>
   <script src='vendor/ui-bootstrap-custom-tpls-0.13.1.min.js'></script>
   <script src='app.min.js'></script>
 </body>

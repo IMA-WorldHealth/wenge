@@ -52,3 +52,7 @@ input[type=number] {
 .currency {
   text-align: right;
 }
+
+.nav-tabs {
+  margin-bottom : 1em;
+}

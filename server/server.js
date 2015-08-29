@@ -65,6 +65,8 @@ app.delete('/requests/:id', requests.deleteRequests);
 app.get('/projects', projects.getProjects);
 app.get('/projects/:id', projects.getProjectById);
 app.post('/projects', projects.createProject);
+app.put('/projects/:id', projects.editProject);
+app.delete('/projects/:id', projects.removeProject);
 
 // error handler
 app.use(function (err, res, req, next) {
