@@ -28,7 +28,7 @@ function ProjectService($resource) {
 
   // the REST datasource
   vm.datasource = $resource('/projects/:id', { id : '@id' }, { 'update' : { 'method' : 'PUT' }});
-  vm.reload = load;
+  vm.load = load;
 
   // get a new form
   vm.new = function () { return new vm.datasource(); };
@@ -73,9 +73,6 @@ function ProjectService($resource) {
     return promise.$promise;
   }
 
-  // automatically load data
-  load();
-
   return vm;
 }
 
@@ -83,6 +80,9 @@ function ProjectService($resource) {
 // View-Model for the project page.
 function ProjectController($window, ProjectService, ColorService) {
   var vm = this;
+
+  // Load the projects data
+  ProjectService.load();
 
   // manage tab states
   vm.states = { 'overview' : true, 'add' : false, 'edit' : false };
@@ -96,7 +96,7 @@ function ProjectController($window, ProjectService, ColorService) {
   vm.print = function () { $window.print(); };
   vm.download = angular.noop;
   vm.selectColor = selectColor;
-  vm.refresh = ProjectService.reload;
+  vm.refresh = ProjectService.load;
 
   // edit/add/remove projects
   vm.initAdd = initAdd;

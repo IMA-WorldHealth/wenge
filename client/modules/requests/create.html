@@ -1,5 +1,5 @@
 <section>
-  <form name="CreateForm" class="form-horizontal" ng-submit="RequestCtrl.submit(RequestCtrl.slave)" novalidate>
+  <form name="RequestForm" class="form-horizontal" ng-submit="RequestCtrl.submit(RequestCtrl.$invalid, RequestCtrl.slave)" novalidate>
     <legend>
       Application For Expenditure
       <span class="pull-right btn-group btn-group-xs">
@@ -15,11 +15,15 @@
       </span>
     </legend>
 
-    <div class="form-group" ng-class="{ 'has-error' : CreateForm.$submitted && CreateForm.projectid.$invalid }">
+    <div class="alert alert-success" ng-if="RequestCtrl.posted">
+      <b><i class="octicon octicon-check"></i> Success!</b>  You created a new record.  <a ng-href="#/requests/view/{{ RequestCtrl.posted.id}}">Click here for a printable version.</a>
+    </div>
+
+    <div class="form-group" ng-class="{ 'has-error' : RequestForm.$submitted && !RequestCtrl.slave.project }">
 
       <label class="col-sm-1 control-label">Project</label>
-      <div class="dropdown col-sm-3" dropdown keyboard-nav>
-        <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
+      <div class="col-sm-3" dropdown keyboard-nav>
+        <a class="btn btn-default dropdown dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" ng-class="{ 'btn-danger' : RequestForm.$submitted && !RequestCtrl.slave.project }" dropdown-toggle>
           <span class="dot" ng-style="{ 'background-color' : RequestCtrl.slave.project.color}" ng-if="RequestCtrl.slave.project"></span>
           {{ RequestCtrl.slave.project.code || "Select a Project" }}
           <i class="octicon octicon-chevron-down"></i>
@@ -44,21 +48,21 @@
       </div>
     </div>
 
-    <div class="form-group" ng-class="{ 'has-error' : CreateForm.$submitted && CreateForm.beneficiary.$invalid }">
+    <div class="form-group" ng-class="{ 'has-error' : RequestForm.$submitted && RequestForm.beneficiary.$invalid }">
       <label class="col-sm-1 control-label">Beneficiary</label>
       <div class="col-sm-4">
         <input type="text" class="solid-input" name="beneficiary" ng-model="RequestCtrl.slave.beneficiary" required>
-        <p ng-show="CreateForm.$submitted && CreateForm.beneficiary.$invalid" class="help-block">
+        <p ng-show="RequestForm.$submitted && RequestForm.beneficiary.$invalid" class="help-block">
           Please provide a beneficiary.
         </p>
       </div>
     </div>
 
-    <div class="form-group" ng-class="{ 'has-error' : CreateForm.$submitted && CreateForm.explanation.$invalid }">
+    <div class="form-group" ng-class="{ 'has-error' : RequestForm.$submitted && RequestForm.explanation.$invalid }">
       <label class="col-sm-1 control-label">Explanation</label>
       <div class="col-sm-11">
         <textarea class="form-control" name="explanation" ng-model="RequestCtrl.slave.explanation" rows="4" required></textarea>
-        <p ng-show="CreateForm.$submitted && CreateForm.explanation.$invalid" class="help-block">
+        <p ng-show="RequestForm.$submitted && RequestForm.explanation.$invalid" class="help-block">
           Please provide an explanation.
         </p>
       </div>
@@ -68,6 +72,7 @@
       <thead>
         <tr>
           <th colspan="8">
+            Request Details
             <span class="pull-right">
               <span class="btn-group btn-group-xs">
                 <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.addRow()" tooltip="Add Row">
@@ -77,31 +82,28 @@
                   <i class="octicon octicon-file-zip"></i>
                 </a>
               </span>
-              <span class="btn-group btn-group-xs">
-                <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.noop()"><i class="octicon octicon-file-zip"></i></a>
-              </span>
             </span>
           </th>
         </tr>
         <tr>
           <th style="width:2.5%;text-align:center"><i class="octicon octicon-list-ordered"></i></th>
-          <th style="width:70%;">Item Requested</th>
+          <th style="width:60%;">Item Requested</th>
           <th style="width:10%;">Budget Code</th>
           <th style="width:5%;">Quantity</th>
           <th style="width:5%">Unit</th>
-          <th style="width:5%;">Unit Price</th>
-          <th style="width:2.5%;">Total</th>
-          <th></th>
+          <th style="width:8%;">Unit Price</th>
+          <th style="width:8%;">Total</th>
+          <th style="width:1.5%;"></th>
         </tr>
       </thead>
       <tbody>
         <tr ng-repeat="row in RequestCtrl.slave.details">
-          <td>{{ $index + 1 }}</td>
+          <td><i class="octicon octicon-alert text-danger" ng-if="row.$error"></i> {{ row.$error ? "" : ($index + 1) }}</td>
           <td><input type="text" class="table-input" ng-model="row.item"></td>
           <td><input type="text" class="table-input" ng-model="row.budgetcode"></td>
-          <td><input type="number" class="table-input" ng-model="row.quantity" ng-change="RequestCtrl.totalRows()" placeholder="0" min="0"></td>
+          <td><input type="number" class="table-input" ng-model="row.quantity" ng-change="RequestCtrl.retotal()" placeholder="0" min="0"></td>
           <td><input type="text" class="table-input" ng-model="row.unit" placeholder=""></td>
-          <td><input type="number" class="table-input" ng-model="row.unitprice" ng-change="RequestCtrl.totalRows()" placeholder="$0" min="0"></td>
+          <td><input type="number" class="table-input" ng-model="row.unitprice" ng-change="RequestCtrl.retotal()" placeholder="$0" min="0"></td>
           <td style="text-align:right;">{{ (row.quantity * row.unitprice) || 0 | currency }}</td>
           <td style="text-align:center;">
             <a href="" ng-click="RequestCtrl.removeRow($index)">
@@ -115,7 +117,8 @@
           <td colspan="8"><p class="text-danger text-center"><b>Hmph.</b> It looks like you may have missed some fields. Please check carefully!</p></td>
         </tr>
         <tr>
-          <th colspan="7" style="text-align: right;">Total {{ RequestCtrl.total || 0 | currency }}</th>
+          <th colspan="7" style="text-align: right;">Total {{ (RequestCtrl.total || 0) | currency }}</th>
+          <th></th>
         </tr>
       </tfoot>
     </table>
