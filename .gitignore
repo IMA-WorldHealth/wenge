@@ -1,5 +1,6 @@
-database.db
+# ignore instance data
 base.sql
+data/*
 
 # vim things
 *.swp

@@ -1,7 +1,7 @@
 var sqlite3 = require('sqlite3').verbose(),
     q       = require('q');
 
-var db = new sqlite3.Database('./database.db');
+var db = new sqlite3.Database('./data/database.db');
 
 // create asynchronous versions of db functions
 db.async = {};
@@ -37,6 +37,23 @@ db.serialize(function () {
     ');'
   );
 
+  // build the signature type table
+  db.run(
+    'CREATE TABLE IF NOT EXISTS signaturetype (' +
+      'id INTEGER PRIMARY KEY, type TEXT' +
+    ');'
+  );
+
+  // build the signature table
+  db.run(
+    'CREATE TABLE IF NOT EXISTS signature (' +
+      'id INTEGER PRIMARY KEY, level INTEGER, typeid INTEGER, userid INTEGER, ' +
+      'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, ' +
+      'active BOOLEAN, FOREIGN KEY (userid) REFERENCES user(id), ' +
+      'FOREIGN KEY (typeid) REFERENCES signaturetype(id) ' +
+    ');'
+  );
+
   // build the project table
   db.run(
     'CREATE TABLE IF NOT EXISTS project (' +
@@ -50,6 +67,7 @@ db.serialize(function () {
   db.run(
     'CREATE TABLE IF NOT EXISTS subproject (' +
       'id INTEGER PRIMARY KEY, projectid INTEGER, label TEXT, ' +
+      'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, ' +
       'FOREIGN KEY (projectid) REFERENCES project(id) ' +
     ');'
   );
@@ -64,7 +82,7 @@ db.serialize(function () {
     ');'
   );
 
-  // build the requestdetail table
+  // build the request detail table
   db.run(
     'CREATE TABLE IF NOT EXISTS requestdetail (' +
       'id INTEGER PRIMARY KEY, requestid INTEGER, item TEXT, budgetcode REAL, ' +
@@ -73,6 +91,13 @@ db.serialize(function () {
     ');'
   );
 
+  // build the attachment table (for static attachments to requests)
+  db.run(
+    'CREATE TABLE IF NOT EXISTS attachment (' +
+      'id INTEGER PRIMARY KEY, requestid INTEGER, reference TEXT, ' +
+      'FOREIGN KEY (requestid) REFERENCES request(id)' +
+    ');'
+  );
 });
 
 module.exports = db;
