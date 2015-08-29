@@ -86,16 +86,15 @@ function ProjectController($window, ProjectService, ColorService) {
 
   // manage tab states
   vm.states = { 'overview' : true, 'add' : false, 'edit' : false };
+  vm.goTo = goTo;
 
   // bind the datasets
   vm.projects = ProjectService.projects;
   vm.colors = ColorService.colors;
 
-  // bind tab controls
-  vm.goTo = goTo;
-
-  // bind functions
-  vm.print = $window.print;
+  // utility functions
+  vm.print = function () { $window.print(); };
+  vm.download = angular.noop;
   vm.selectColor = selectColor;
 
   // edit/add/remove projects
@@ -114,9 +113,9 @@ function ProjectController($window, ProjectService, ColorService) {
   }
 
   // select a color for the slave project
-  function selectColor(color) {
-    vm.slave.colorname = color.name;
-    vm.slave.color = color.code;
+  function selectColor(project, color) {
+    project.colorname = color.name;
+    project.color = color.code;
   }
 
   // initialize the add form
@@ -162,8 +161,6 @@ function ProjectController($window, ProjectService, ColorService) {
 
   // delete a project
   function removeProject(project) {
-    ProjectService.remove(project)
-    .then(function () {
-    });
+    ProjectService.remove(project);
   }
 }

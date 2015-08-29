@@ -12,10 +12,6 @@
         <b><i class="octicon octicon-check"></i></b> Sucessfully editted project <b> {{ vm.slave.code }}</b>.
       </div>
 
-      <div class="row col-xs-12">
-        <a class="btn btn-default" ng-click="ProjectCtrl.initAdd()"> <i class="octicon octicon-plus"></i> Add a Project</a>
-      </div>
-
       <table class="table table-condensed table-bordered table-hover">
         <thead>
           <tr>
@@ -23,9 +19,15 @@
               Available Projects
 
               <span class="pull-right btn-group btn-group-xs">
-                <a href="" class="btn btn-xs btn-default"><i class="octicon octicon-search"></i></a>
-                <a href="" class="btn btn-xs btn-default"><i class="octicon octicon-file-pdf"></i></a>
-                <a href="" class="btn btn-xs btn-default"><i class="octicon octicon-cloud-download"></i></a>
+                <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.initAdd()">
+                  <i class="octicon octicon-plus"></i>
+                </a>
+                <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.print()">
+                  <i class="octicon octicon-file-pdf"></i>
+                </a>
+                <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.download()">
+                  <i class="octicon octicon-cloud-download"></i>
+                </a>
               </span>
             </th>
           </tr>
@@ -85,7 +87,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li ng-repeat="color in ProjectCtrl.colors | limitTo:12">
-                  <a ng-click="ProjectCtrl.selectColor(color)" href="">
+                  <a ng-click="ProjectCtrl.selectColor(ProjectCtrl.slave, color)" href="">
                     <span class="dot" ng-style="{ 'background-color' : color.code }"></span> {{ color.name}}
                   </a>
                 </li>
@@ -128,7 +130,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li ng-repeat="color in ProjectCtrl.colors | limitTo:12">
-                  <a ng-click="ProjectCtrl.selectColor(color)" href="">
+                  <a ng-click="ProjectCtrl.selectColor(ProjectCtrl.slave, color)" href="">
                     <span class="dot" ng-style="{ 'background-color' : color.code }"></span> {{ color.name}}
                   </a>
                 </li>
