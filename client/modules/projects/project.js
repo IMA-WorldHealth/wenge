@@ -69,7 +69,7 @@ function ProjectService($resource) {
       console.log('Removing:', idx);
       vm.projects.splice(idx, 1);
     });
-    
+
     return promise.$promise;
   }
 
@@ -84,12 +84,14 @@ function ProjectService($resource) {
 function ProjectController($window, ProjectService, ColorService) {
   var vm = this;
 
+  // manage tab states
+  vm.states = { 'overview' : true, 'add' : false, 'edit' : false };
+
   // bind the datasets
   vm.projects = ProjectService.projects;
   vm.colors = ColorService.colors;
 
   // bind tab controls
-  vm.active = 1;
   vm.goTo = goTo;
 
   // bind functions
@@ -106,8 +108,9 @@ function ProjectController($window, ProjectService, ColorService) {
   /* ------------------------------------------------------------------------ */
 
   // navigate to tab by id, setting it as active
-  function goTo(id) {
-    vm.active = id;
+  function goTo(state) {
+    for (var s in vm.states) { vm.states[s] = false; }
+    vm.states[state] = true;
   }
 
   // select a color for the slave project
@@ -119,7 +122,7 @@ function ProjectController($window, ProjectService, ColorService) {
   // initialize the add form
   function initAdd() {
     vm.slave = new ProjectService.datasource();
-    vm.goTo(2);
+    vm.goTo('add');
   }
 
   // save the new form
@@ -127,7 +130,7 @@ function ProjectController($window, ProjectService, ColorService) {
     if (invalid) { return; }
     ProjectService.add(project)
     .then(function () {
-      vm.goTo(1); 
+      vm.goTo('overview');
     });
   }
 
@@ -137,8 +140,6 @@ function ProjectController($window, ProjectService, ColorService) {
     // go to the editting mode on this project
     vm.slave = project;
 
-    console.log(project);
-
     // get the color name
     vm.colors.forEach(function (color) {
       if (project.color === color.code) {
@@ -147,7 +148,7 @@ function ProjectController($window, ProjectService, ColorService) {
     });
 
     // go to the editting tab
-    vm.goTo(3);
+    vm.goTo('edit');
   }
 
   // save the editted project
@@ -155,12 +156,14 @@ function ProjectController($window, ProjectService, ColorService) {
     if (invalid) { return; }
     ProjectService.edit(project)
     .then(function () {
-      vm.goTo(1); 
+      vm.goTo('overview');
     });
   }
 
   // delete a project
   function removeProject(project) {
-    ProjectService.remove(project);
+    ProjectService.remove(project)
+    .then(function () {
+    });
   }
 }

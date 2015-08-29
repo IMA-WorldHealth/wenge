@@ -3,7 +3,7 @@
   <tabset>
 
     <!-- main overview tab -->
-    <tab ng-click="ProjectCtrl.goTo(1)">
+    <tab ng-click="ProjectCtrl.goTo('overview')" active="states['overview']">
       <tab-heading>
         <i class="octicon octicon-list-ordered"></i> Available Projects
       </tab-heading>
@@ -12,7 +12,7 @@
         <b><i class="octicon octicon-check"></i></b> Sucessfully editted project <b> {{ vm.slave.code }}</b>.
       </div>
 
-      <div>
+      <div class="row col-xs-12">
         <a class="btn btn-default" ng-click="ProjectCtrl.initAdd()"> <i class="octicon octicon-plus"></i> Add a Project</a>
       </div>
 
@@ -56,7 +56,7 @@
     </tab>
 
     <!-- add project form -->
-    <tab active="ProjectCtrl.active === 2" ng-if="ProjectCtrl.active === 2">
+    <tab active="ProjectCtrl.states['add']" ng-if="ProjectCtrl.states['add']">
       <tab-heading>
         <i class="octicon octicon-plus"></i> Add a Project
       </tab-heading>
@@ -99,7 +99,7 @@
     </tab>
 
     <!-- edit project form -->
-    <tab active="ProjectCtrl.active === 3"  ng-if="ProjectCtrl.active === 3">
+    <tab active="ProjectCtrl.states['edit']"  ng-if="ProjectCtrl.states['edit']">
       <tab-heading>
         <i class="octicon octicon-pencil"></i> Edit Project
       </tab-heading>
