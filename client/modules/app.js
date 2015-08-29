@@ -43,7 +43,7 @@
       templateUrl : 'modules/dashboard/dashboard.html'
     })
     .when('/requests/create', {
-      controller : 'RequestCreateController as CreateCtrl',
+      controller : 'RequestController as RequestCtrl',
       templateUrl : 'modules/requests/create.html'
     })
     .when('/requests/:id', {

@@ -1,41 +1,54 @@
-<section class="wrapper">
-  <form name="CreateForm" class="form-horizontal" ng-submit="CreateCtrl.submit(CreateCtrl.slave)" novalidate ng-cloak>
-    <fieldset>
-      <legend>Application For Expenditure</legend>
+<section>
+  <form name="CreateForm" class="form-horizontal" ng-submit="RequestCtrl.submit(RequestCtrl.slave)" novalidate>
+
+      <legend>
+        Application For Expenditure
+        <span class="pull-right btn-group btn-group-xs">
+          <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.noop()" tooltip="Save Template">
+            <i class="octicon octicon-cloud-upload"></i>
+          </a>
+          <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.noop()" tooltip="Open Template">
+            <i class="octicon octicon-file-symlink-directory"></i>
+          </a>
+          <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.noop()" tooltip="Print">
+            <i class="octicon octicon-file-pdf"></i>
+          </a>
+        </span>
+      </legend>
 
       <div class="form-group" ng-class="{ 'has-error' : CreateForm.$submitted && CreateForm.projectid.$invalid }">
-        <label class="col-xs-2 control-label">Project</label>
-        <div class="col-xs-6">
-          <select class="form-control"
-            name="projectid"
-            ng-model="CreateCtrl.slave.projectid"
-            ng-options="project.id as project.code for project in CreateCtrl.projects"
-            required>
-          </select>
-          <p ng-show="CreateForm.$submitted && CreateForm.projectid.$invalid" class="help-block">
-            Please select a project.
-          </p>
-        </div>
-      </div>
 
-      <div class="form-group">
-        <label class="col-xs-2 control-label">Date</label>
-        <div class="col-xs-6">
-          <p class="form-control-static">{{ CreateCtrl.slave.date | date }}</p>
+        <label class="col-sm-1 control-label">Project</label>
+        <div class="dropdown col-sm-3" dropdown keyboard-nav>
+          <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
+            <span class="dot" ng-style="{ 'background-color' : RequestCtrl.slave.project.color}" ng-if="RequestCtrl.slave.project"></span>
+            {{ RequestCtrl.slave.project.code || "Select a Project" }}
+            <i class="octicon octicon-chevron-down"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li ng-repeat="project in RequestCtrl.projects track by project.id">
+              <a ng-click="RequestCtrl.assignProjectId(project)" href="">
+                <span class="dot" ng-style="{ 'background-color' : project.color}"></span> {{ project.code }}
+              </a>
+            </li>
+          </ul>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label class="col-xs-2 control-label">Requestor</label>
-        <div class="col-xs-6">
-          <p class="form-control-static">{{ CreateCtrl.user.username }}</p>
+        <label class="col-sm-1 control-label"><i class="octicon octicon-calendar"></i> Date</label>
+        <div class="col-sm-3">
+          <p class="form-control-static">{{ RequestCtrl.slave.date | date }}</p>
+        </div>
+
+        <label class="col-sm-2 control-label"><i class="octicon octicon-person"></i> Requestor</label>
+        <div class="col-sm-2">
+          <p class="form-control-static">{{ RequestCtrl.user.username }}</p>
         </div>
       </div>
 
       <div class="form-group" ng-class="{ 'has-error' : CreateForm.$submitted && CreateForm.beneficiary.$invalid }">
-        <label class="col-xs-2 control-label">Beneficiary</label>
-        <div class="col-xs-6">
-          <input type="text" class="form-control" name="beneficiary" ng-model="CreateCtrl.slave.beneficiary" required>
+        <label class="col-sm-1 control-label">Beneficiary</label>
+        <div class="col-sm-4">
+          <input type="text" class="solid-input" name="beneficiary" ng-model="RequestCtrl.slave.beneficiary" required>
           <p ng-show="CreateForm.$submitted && CreateForm.beneficiary.$invalid" class="help-block">
             Please provide a beneficiary.
           </p>
@@ -43,9 +56,9 @@
       </div>
 
       <div class="form-group" ng-class="{ 'has-error' : CreateForm.$submitted && CreateForm.explanation.$invalid }">
-        <label class="col-xs-2 control-label">Explanation</label>
-        <div class="col-xs-6">
-          <textarea class="form-control" name="explanation" ng-model="CreateCtrl.slave.explanation" rows="4" required></textarea>
+        <label class="col-sm-1 control-label">Explanation</label>
+        <div class="col-sm-11">
+          <textarea class="form-control" name="explanation" ng-model="RequestCtrl.slave.explanation" rows="4" required></textarea>
           <p ng-show="CreateForm.$submitted && CreateForm.explanation.$invalid" class="help-block">
             Please provide an explanation.
           </p>
@@ -55,51 +68,62 @@
       <table class="table table-bordered table-condensed">
         <thead>
           <tr>
-            <th></th>
-            <th style="width:320px;">Item Requested</th>
-            <th style="width:120px;">Budget Code</th>
-            <th style="width:10px;">Quantity</th>
-            <th>Unit</th>
-            <th style="width:80px;">Unit Price</th>
-            <th style="width:90px;">Total</th>
+            <th colspan="8">
+              <span class="pull-right">
+                <span class="btn-group btn-group-xs">
+                  <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.addRow()" tooltip="Add Row">
+                    <i class="octicon octicon-plus"></i>
+                  </a>
+                  <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.noop()" tooltip="Upload Attachment">
+                    <i class="octicon octicon-file-zip"></i>
+                  </a>
+                </span>
+                <span class="btn-group btn-group-xs">
+                  <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.noop()"><i class="octicon octicon-file-zip"></i></a>
+                </span>
+              </span>
+            </th>
+          </tr>
+          <tr>
+            <th style="width:2.5%;text-align:center"><i class="octicon octicon-list-ordered"></i></th>
+            <th style="width:70%;">Item Requested</th>
+            <th style="width:10%;">Budget Code</th>
+            <th style="width:5%;">Quantity</th>
+            <th style="width:5%">Unit</th>
+            <th style="width:5%;">Unit Price</th>
+            <th style="width:2.5%;">Total</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="row in CreateCtrl.slave.details">
+          <tr ng-repeat="row in RequestCtrl.slave.details">
             <td>{{ $index + 1 }}</td>
             <td><input type="text" class="table-input" ng-model="row.item"></td>
             <td><input type="text" class="table-input" ng-model="row.budgetcode"></td>
-            <td><input type="number" class="table-input" ng-model="row.quantity" ng-change="CreateCtrl.totalRows()" placeholder="0" min="0"></td>
+            <td><input type="number" class="table-input" ng-model="row.quantity" ng-change="RequestCtrl.totalRows()" placeholder="0" min="0"></td>
             <td><input type="text" class="table-input" ng-model="row.unit" placeholder=""></td>
-            <td><input type="number" class="table-input" ng-model="row.unitprice" ng-change="CreateCtrl.totalRows()" placeholder="$0" min="0"></td>
+            <td><input type="number" class="table-input" ng-model="row.unitprice" ng-change="RequestCtrl.totalRows()" placeholder="$0" min="0"></td>
             <td style="text-align:right;">{{ (row.quantity * row.unitprice) || 0 | currency }}</td>
-            <td ng-click="CreateCtrl.removeRow($index)" ng-show="CreateCtrl.slave.details.length > 1" style="cursor:pointer;text-align:center;">
-              <i class="glyphicon glyphicon-remove" style="color:rgb(191, 25, 25);"></i>
+            <td style="text-align:center;">
+              <a href="" ng-click="RequestCtrl.removeRow($index)">
+                <i class="octicon octicon-trashcan"></i>
+              </a>
             </td>
           </tr>
         </tbody>
         <tfoot>
-          <tr ng-if="CreateCtrl.slave.rowerror">
+          <tr ng-if="RequestCtrl.slave.rowerror">
             <td colspan="8"><p class="text-danger text-center"><b>Hmph.</b> It looks like you may have missed some fields. Please check carefully!</p></td>
           </tr>
           <tr>
-            <th colspan="7" style="text-align: right;">Total {{ CreateCtrl.total || 0 | currency }}</th>
-            <th></th>
+            <th colspan="7" style="text-align: right;">Total {{ RequestCtrl.total || 0 | currency }}</th>
           </tr>
         </tfoot>
       </table>
 
-        <button type="button" class="btn btn-primary" ng-click="CreateCtrl.addRow()">
-          <i class="glyphicon glyphicon-plus-sign"></i> Add Row
-        </button>
+      <div class="pull-right">
+        <button type="submit" class="btn btn-success">Submit Form</button>
+      </div>
 
-        <div class="pull-right">
-          <button type="button" class="btn btn-default">
-            <i class="glyphicon glyphicon-save"></i> Save For Later</button>
-          <button type="submit" class="btn btn-primary">Submit Form</button>
-        </div>
-
-    </fieldset>
   </form>
 </section>

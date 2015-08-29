@@ -96,6 +96,7 @@ function ProjectController($window, ProjectService, ColorService) {
   vm.print = function () { $window.print(); };
   vm.download = angular.noop;
   vm.selectColor = selectColor;
+  vm.refresh = ProjectService.reload;
 
   // edit/add/remove projects
   vm.initAdd = initAdd;

@@ -18,16 +18,23 @@
             <th colspan="3">
               Available Projects
 
-              <span class="pull-right btn-group btn-group-xs">
-                <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.initAdd()">
-                  <i class="octicon octicon-plus"></i>
-                </a>
-                <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.print()">
-                  <i class="octicon octicon-file-pdf"></i>
-                </a>
-                <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.download()">
-                  <i class="octicon octicon-cloud-download"></i>
-                </a>
+              <span class="pull-right">
+                <span class="btn-group btn-group-xs">
+                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.initAdd()">
+                    <i class="octicon octicon-plus"></i>
+                  </a>
+                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.reload()">
+                    <i class="octicon octicon-sync"></i>
+                  </a>
+                </span>
+                <span class="btn-group btn-group-xs">
+                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.print()">
+                    <i class="octicon octicon-file-pdf"></i>
+                  </a>
+                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.download()">
+                    <i class="octicon octicon-cloud-download"></i>
+                  </a>
+                </span>
               </span>
             </th>
           </tr>
@@ -82,7 +89,7 @@
             <div class="dropdown col-sm-6" dropdown keyboard-nav>
               <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
                 <span class="dot" ng-style="{ 'background-color' : ProjectCtrl.slave.color }" ng-if="ProjectCtrl.slave.colorname"></span>
-                {{ ProjectCtrl.slave.color ? ProjectCtrl.slave.colorname : "Select a Color" }}
+                {{ ProjectCtrl.slave.colorname || "Select a Color" }}
                 <i class="octicon octicon-chevron-down"></i>
               </a>
               <ul class="dropdown-menu">

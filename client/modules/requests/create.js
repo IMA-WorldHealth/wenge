@@ -1,89 +1,108 @@
-(function (angular) {
-  'use strict';
 
-  angular.module('AFE')
-  .controller('RequestCreateController', ['$http', '$location', 'Session', function ($http, $location, Session) {
+angular.module('AFE')
+.service('RequestService', ['$resource', RequestService])
+.controller('RequestController', ['$location', 'RequestService', 'ProjectService', 'Session', RequestController]);
 
-    var self = this,
-        isDef = angular.isDefined;
+function RequestService($resource) {
+  var vm = this;
 
-    self.slave = {
-      details : [{}, {}],
-      date : new Date()
-    };
+  vm.datasource = $resource('/requests/:id');
+  vm.reload = load;
 
-    // load projects
-    $http.get('/projects')
-    .success(function (data) {
-      self.projects = data;
-      console.log('project', data);
-    })
-    .error(console.error);
+  // refresh the dataset
+  function load() {
+    vm.requests = vm.datasource.query();
+  }
 
-    // pretty formatting for the projects dropdown
-    this.fmtProjects = function (project) {
-      return project ? project.id + ' - ' + project.code : '';
-    };
+  return vm;
+}
 
-    self.user = Session;
 
-    // TODO/FIXME This validation has many holes
-    // ideally, I'd like to inform the user which rows on the
-    //
-    // submits the form to the server, after validation checks
-    this.submit = function (slave) {
+function RequestController($location, RequestService, ProjectService, Session) {
+  var vm = this;
 
-      if (validateRows(slave.details)) {
+  // bind service data
+  vm.user = Session;
+  vm.requests = RequestService.requests;
+  vm.projects = ProjectService.projects;
 
-        // remove row error (redo this, please using self.errors = {};)
-        delete slave.rowerror;
+  // creation
+  vm.slave = new RequestService.datasource();
+  vm.submit = submit;
+  vm.assignProjectId = assignProjectId;
+  vm.addRow = addRow;
+  vm.removeRow = removeRow;
+  vm.totalRows = totalRows;
 
-        // we need to get the user id
-        slave.userid = self.user.id;
+  // assign temp data
+  vm.slave.date = new Date();
+  vm.slave.details = [{}];
+  vm.noop = angular.noop;
 
-        $http.post('/requests', slave)
-        .then(function (response) {
+  /* ----------------------------------------------------------------------- */
 
-          // on successful submission, go the view mode
-          $location.url('/requests/' + response.data.requestid);
-        })
-        .catch(console.error);
-      } else {
 
-        // TODO standardize error reporting
-        slave.rowerror = true;
-      }
-    };
+  // assign the projectId
+  function assignProjectId(project) {
+    vm.slave.projectid = project.id;
+    vm.slave.project = project;
+  }
 
-    // validation for table rows
-    function validateRows(rows) {
-      return rows.every(function (row) {
-        return isDef(row.item) &&
-          isDef(row.budgetcode) &&
-          isDef(row.quantity) &&
-          isDef(row.unit) &&
-          isDef(row.unitprice);
-      });
+  // TODO/FIXME This validation has many holes
+  // ideally, I'd like to inform the user which rows on the
+  //
+  // submits the form to the server, after validation checks
+  function submit(slave) {
+
+    if (validateRows(slave.details)) {
+
+      // remove row error (redo this, please using vm.errors = {};)
+      delete slave.rowerror;
+
+      // we need to get the user id
+      slave.userid = vm.user.id;
+
+      $http.post('/requests', slave)
+      .then(function (response) {
+
+        // on successful submission, go the view mode
+        $location.url('/requests/' + response.data.requestid);
+      })
+      .catch(console.error);
+    } else {
+
+      // TODO standardize error reporting
+      slave.rowerror = true;
     }
+  }
 
-    // adds a row to the requestdetail line
-    this.addRow = function () {
-      this.slave.details.push({});
-    };
+  // validation for table rows
+  function validateRows(rows) {
+    return rows.every(function (row) {
+      return isDef(row.item) &&
+        isDef(row.budgetcode) &&
+        isDef(row.quantity) &&
+        isDef(row.unit) &&
+        isDef(row.unitprice);
+    });
+  }
 
-    // removes the row at idx from the requestdetails table
-    this.removeRow = function (idx) {
-      self.slave.details.splice(idx, 1);
-    };
+  // adds a row to the requestdetail line
+  function addRow() {
+    this.slave.details.push({});
+  }
 
-    // calculates totats for the requestdetails table
-    this.totalRows = function () {
-      self.total = self.slave.details.reduce(function (a, row) {
-        if (!row.quantity || !row.unitprice) { return a; }
-        return a + (row.quantity * row.unitprice);
-      }, 0);
-    };
+  // removes the row at idx from the requestdetails table
+  function removeRow(idx) {
+    vm.slave.details.splice(idx, 1);
+  }
 
-  }]);
+  // calculates totals for the requestdetails table
+  function totalRows() {
+    vm.total = vm.slave.details.reduce(function (a, row) {
+      if (!row.quantity || !row.unitprice) { return a; }
+      return a + (row.quantity * row.unitprice);
+    }, 0);
+  }
+}
 
-})(angular);
