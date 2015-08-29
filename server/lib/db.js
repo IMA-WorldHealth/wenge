@@ -76,7 +76,7 @@ db.serialize(function () {
   db.run(
     'CREATE TABLE IF NOT EXISTS request (' +
       'id INTEGER PRIMARY KEY, projectid INTEGER, date TEXT, beneficiary TEXT, explanation TEXT, ' +
-      'signatureA, signatureB, review TEXT, status TEXT, createdby INTEGER, ' +
+      'signatureA, signatureB, review TEXT, status TEXT, totalamount REAL, createdby INTEGER, ' +
       'FOREIGN KEY (projectid) REFERENCES project(id), ' +
       'FOREIGN KEY (createdby) REFERENCES user(id)' +
     ');'
