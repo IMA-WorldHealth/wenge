@@ -1,7 +1,7 @@
 angular.module('AFE')
 .service('RequestService', ['$resource', 'Session', RequestService])
 .service('TemplateService', [TemplateService])
-.controller('RequestController', ['$location', 'RequestService', 'ProjectService', 'Session', RequestController]);
+.controller('RequestController', ['$scope', '$location', 'RequestService', 'ProjectService', 'Session', RequestController]);
 
 function RequestService($resource, Session) {
   var vm = this,
@@ -11,6 +11,7 @@ function RequestService($resource, Session) {
   vm.reload = load;
   vm.record = record;
   vm.total = total;
+  vm.create = create;
   vm.valid = valid;
 
   /* ----------------------------------------------------------------------- */
@@ -53,6 +54,10 @@ function RequestService($resource, Session) {
     return !invalid;
   }
 
+  function create(slave) {
+    return slave.$save();
+  }
+
   // total the amound in the record field
   function total(record) {
     return record.details.reduce(function (total, row) {
@@ -72,7 +77,7 @@ function TemplateService() {
 }
 
 
-function RequestController($location, RequestService, ProjectService, Session) {
+function RequestController($scope, $location, RequestService, ProjectService, Session) {
   var vm = this;
 
   // load the project data
@@ -93,11 +98,10 @@ function RequestController($location, RequestService, ProjectService, Session) {
   vm.assignProjectId = assignProjectId;
   vm.addRow = addRow;
   vm.removeRow = removeRow;
-  vm.totalRows = totalRows;
   vm.attachment = attachment;
 
   // assign temp data
-  vm.noop = angular.noop;
+  vm.noop = angular.noop; // FIXME/TODO
 
   /* ----------------------------------------------------------------------- */
 
@@ -108,14 +112,16 @@ function RequestController($location, RequestService, ProjectService, Session) {
     vm.slave.project = project;
   }
 
-  // TODO/FIXME This validation has many holes
-  // ideally, I'd like to inform the user which rows on the
-  //
   // submits the form to the server, after validation checks
   function submit(invalid, slave) {
 
     // detect errors on detail rows (set the $error property)
-    if (!RequestService.valid(slave)) { return; }
+    if (!RequestService.valid(slave)) {
+      slave.$invalid = true;
+      return;
+    } else {
+      slave.$invalid = false;
+    }
 
     // reject outright if the form controller finds an error
     if (invalid) { return; }
@@ -125,12 +131,14 @@ function RequestController($location, RequestService, ProjectService, Session) {
     RequestService.create(slave)
     .then(function (record) {
 
+      // reset the form to a prestine state (for validation)
+      $scope.RequestForm.$setPristine();
+
       // set up a new record
       vm.slave = RequestService.record();
 
       // assign the newly posted record here
       vm.posted = record;
-
     });
   }
 
@@ -149,13 +157,4 @@ function RequestController($location, RequestService, ProjectService, Session) {
     var id = 1;
     vm.slave.attachments.push(id);
   }
-
-  // calculates totals for the requestdetails table
-  function totalRows() {
-    vm.total = vm.slave.details.reduce(function (a, row) {
-      if (!row.quantity || !row.unitprice) { return a; }
-      return a + (row.quantity * row.unitprice);
-    }, 0);
-  }
 }
-

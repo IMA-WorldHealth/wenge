@@ -32,7 +32,7 @@ exports.createRequests = function (req, res, next) {
       data = req.body,
       userid = req.session.user.id;
 
-  requestStmt = db.prepare('INSERT INTO request (projectid, date, beneficiary, explanation, status, userid) VALUES (?, ?, ?, ?, ?, ?);');
+  requestStmt = db.prepare('INSERT INTO request (projectid, date, beneficiary, explanation, status, createdby) VALUES (?, ?, ?, ?, ?, ?);');
   detailStmt = db.prepare('INSERT INTO requestdetail (requestid, item, budgetcode, quantity, unit, unitprice, totalprice) VALUES (?, ?, ?, ?, ?, ?, ?);');
 
   // execute requests one at a time (synchronously)
@@ -54,7 +54,7 @@ exports.createRequests = function (req, res, next) {
         if (err) { return next(err); }
 
         // everything is good, send back the id for receipt rendering
-        res.status(200).json({ requestid : requestid });
+        res.status(200).json({ id : requestid });
       });
     });
 
@@ -72,7 +72,7 @@ exports.getRequestsById = function (req, res, next) {
   var sql =
     'SELECT r.id, r.projectid, r.date, r.beneficiary, r.explanation, r.signatureA, ' +
       'r.signatureB, r.review, rd.item, rd.budgetcode, rd.quantity, rd.unit, ' +
-      'rd.unitprice, rd.totalprice, r.status, r.userid ' +
+      'rd.unitprice, rd.totalprice, r.status, r.createdby ' +
     'FROM request r JOIN requestdetail rd ON r.id = rd.requestid ' +
     'WHERE r.id = ?;';
 

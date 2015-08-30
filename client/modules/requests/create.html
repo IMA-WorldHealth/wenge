@@ -1,5 +1,6 @@
 <section>
   <form name="RequestForm" class="form-horizontal" ng-submit="RequestCtrl.submit(RequestCtrl.$invalid, RequestCtrl.slave)" novalidate>
+
     <legend>
       Application For Expenditure
       <span class="pull-right btn-group btn-group-xs">
@@ -15,8 +16,12 @@
       </span>
     </legend>
 
+    <div class="alert alert-danger" ng-if="RequestForm.$submitted && (RequestForm.$invalid || RequestCtrl.slave.$invalid)">
+      <b><i class="octicon octicon-alert"></i> Warning</b> There are some errors in your request.  Please correct these and submit the form again.
+    </div>
+
     <div class="alert alert-success" ng-if="RequestCtrl.posted">
-      <b><i class="octicon octicon-check"></i> Success!</b>  You created a new record.  <a ng-href="#/requests/view/{{ RequestCtrl.posted.id}}">Click here for a printable version.</a>
+      <b><i class="octicon octicon-check"></i> Success!</b>  You created a new AFE.  <a ng-href="#/requests/view/{{ RequestCtrl.posted.id}}">Click here for a printable version.</a>
     </div>
 
     <div class="form-group" ng-class="{ 'has-error' : RequestForm.$submitted && !RequestCtrl.slave.project }">
@@ -123,9 +128,8 @@
       </tfoot>
     </table>
 
-    <div class="pull-right">
-      <button type="submit" class="btn btn-success">Submit Form</button>
+    <div class="form-group">
+      <button type="submit" class="pull-right btn btn-success">Submit Form</button>
     </div>
-
   </form>
 </section>
