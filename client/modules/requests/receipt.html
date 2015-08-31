@@ -1,7 +1,8 @@
 <section>
+  {{ RequestCtrl.project }} {{ RequestCtrl.user }}
   <form class="form-horizontal">
     <legend>
-      Application For Expenditure <small>#{{ ReceiptCtrl.meta.id }}</small>
+      Application For Expenditure <small>#{{ ReceiptCtrl.receipt.id }}</small>
       <span class="pull-right btn-group btn-group-xs">
         <a href="" class="btn btn-xs btn-default" ng-click="ReceiptCtrl.print()" tooltip="Print">
           <i class="octicon octicon-file-pdf"></i>
@@ -16,31 +17,31 @@
     <div class="form-group">
       <label class="col-xs-1 control-label">Project</label>
       <div class="col-xs-3">
-        <p class="form-control-static">{{ ReceiptCtrl.meta.project }}</p>
+        <p class="form-control-static">{{ ReceiptCtrl.receipt.project }}</p>
       </div>
 
       <label class="col-xs-1 control-label"><i class="octicon octicon-calendar hidden-print"></i> Date</label>
       <div class="col-xs-3">
-        <p class="form-control-static">{{ ReceiptCtrl.meta.date | date }}</p>
+        <p class="form-control-static">{{ ReceiptCtrl.receipt.date | date }}</p>
       </div>
 
       <label class="col-xs-2 control-label"><i class="octicon octicon-person hidden-print"></i> Requestor</label>
       <div class="col-xs-2">
-        <p class="form-control-static">{{ ReceiptCtrl.meta.createdby }}</p>
+        <p class="form-control-static">{{ ReceiptCtrl.receipt.createdby }}</p>
       </div>
     </div>
 
     <div class="form-group">
       <label class="col-xs-2 control-label">Beneficiary</label>
       <div class="col-xs-6">
-        <p class="form-control-static">{{ ReceiptCtrl.meta.beneficiary }}</p>
+        <p class="form-control-static">{{ ReceiptCtrl.receipt.beneficiary }}</p>
       </div>
     </div>
 
     <div class="form-group">
       <label class="col-xs-2 control-label">Explanation</label>
       <div class="col-xs-6">
-        <p class="form-control-static">{{ ReceiptCtrl.meta.explanation }}</p>
+        <p class="form-control-static">{{ ReceiptCtrl.receipt.explanation }}</p>
       </div>
     </div>
 
