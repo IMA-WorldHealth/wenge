@@ -2,7 +2,7 @@
 data/*
 
 # ignore built files
-client/app.min.js
+*.min.js
 
 # vim things
 *.swp

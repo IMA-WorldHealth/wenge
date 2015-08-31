@@ -8,11 +8,13 @@ exports.signup = function (req, res, next) {
   var sql = 'INSERT INTO user (username, email, password, roleid) VALUES (?, ?, ?, ?);';
 };
 
+// GET /users
 exports.getUsers = function (req, res, next) {
   'use strict';
 
   var sql =
-    'SELECT user.id, user.username, user.email FROM user;';
+    'SELECT user.id, user.username, user.email, role.label AS role ' +
+    'FROM user JOIN role ON user.roleid = role.id;';
 
   db.async.all(sql)
   .then(function (rows) {
@@ -25,29 +27,27 @@ exports.getUsers = function (req, res, next) {
 // GET /users/:id
 exports.getUserById = function (req, res, next) {
   'use strict';
- 
+
   var sql =
-    'SELECT user.id, user.username, user.email, role.label AS role' +
+    'SELECT user.id, user.username, user.email, role.label AS role ' +
     'FROM user JOIN role ON user.roleid = role.id WHERE id = ?;';
 
-  db.get(sql, [req.params.id], function (err, rows) {
-    // server error
-    if (err) { return next(err); }
-
-    // no data (NOT FOUND)
+  db.async.get(sql, req.params.id)
+  .then(function (row) {
     if (!row) { return res.status(404).json(); }
-
-    // success
+    console.log('row:', row);
     res.status(200).json(row);
-  });
+  })
+  .catch(next)
+  .done();
 };
 
 // PUT /users/:id
 exports.updateUser = function (req, res, next) {
   'use strict';
-  
+
   var sql, shasum;
-  
+
   // TODO - super user override
   if (req.params.id !== req.session.user.id) {
     res.status(403).json({

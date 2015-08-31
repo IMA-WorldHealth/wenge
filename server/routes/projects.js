@@ -26,8 +26,8 @@ exports.getProjectById = function (req, res, next) {
   // TODO - return a nice tree structure in this format:
   // { id : xxx, code : xxx, color : xxx, subprojects : [ { id: xxx, label : xxx }, {..}] }
   db.async.get(sql, req.params.id)
-  .then(function (rows) {
-    res.status(200).json(rows);
+  .then(function (row) {
+    res.status(200).json(row);
   })
   .catch(next)
   .done();

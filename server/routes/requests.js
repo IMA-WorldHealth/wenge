@@ -69,24 +69,50 @@ exports.createRequests = function (req, res, next) {
 exports.getRequestsById = function (req, res, next) {
   'use strict';
 
-  var sql =
+  var sql, row, response;
+
+  sql =
     'SELECT r.id, r.projectid, r.date, r.beneficiary, r.explanation, r.signatureA, ' +
       'r.signatureB, r.review, rd.item, rd.budgetcode, rd.quantity, rd.unit, ' +
       'rd.unitprice, rd.totalprice, r.status, r.createdby ' +
     'FROM request r JOIN requestdetail rd ON r.id = rd.requestid ' +
     'WHERE r.id = ?;';
 
-  db.all(sql, [req.params.id], function (err, rows) {
-
-    // server error
-    if (err) { return next(err); }
-
-    // no data (NOT FOUND)
+  db.async.all(sql, req.params.id)
+  .then(function (rows) {
     if (!rows) { return res.status(404).json(); }
 
-    // success
-    res.status(200).json(rows);
-  });
+    // FIXME - this is a bit of hack
+    row = rows[0];
+    response = {
+      id                   : row.id,
+      projectid            : row.projectid,
+      date                 : new Date(row.date),
+      beneficiary          : row.beneficiary,
+      explanation          : row.explanation,
+      signatureAccounting  : row.signatureA,
+      signatureProgramming : row.signatureB,
+      review               : row.review,
+      status               : row.status,
+      createdby            : row.createdby,
+      details : rows.map(function (rd) {
+        return {
+          item       : rd.item,
+          budgetcode : rd.budgetcode,
+          unitprice  : rd.unitprice,
+          totalprice : rd.totalprice,
+          quantity   : rd.quantity,
+          unit       : rd.unit
+        };
+      })
+    };
+
+    console.log('response', response);
+
+    res.status(200).json(response);
+  })
+  .catch(next)
+  .done();
 };
 
 // PUT /requests/:id
