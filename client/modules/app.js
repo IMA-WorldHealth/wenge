@@ -47,23 +47,23 @@ function configRoutes($routeProvider) {
     controller : 'ReceiptController as ReceiptCtrl',
     templateUrl : 'modules/requests/receipt.html'
   })
-  .when('/users/:userid', {
+  .when('/users/:id?', {
     controller : 'UserController as UserCtrl',
     templateUrl : 'modules/users/users.html'
   })
-  .when('/users/:id/profile', {
-    controller : 'UserProfileController as ProfileCtrl',
-    templateUrl : 'modules/users/profile.html'
+  .when('/users/:id/preferences', {
+    controller : 'PreferencesController as PreferencesCtrl',
+    templateUrl : 'modules/users/preferences.html'
   })
   .when('/users/account/recovery', {
-    controller : 'RecoveryController as RecoveryCtrl',
-    templateUrl: 'modules/users/recovery/recovery.html'
+    controller  : 'RecoveryController as RecoveryCtrl',
+    templateUrl : 'modules/users/recovery/recovery.html'
   })
   .when('/projects', {
-    controller : 'ProjectController as ProjectCtrl',
+    controller  : 'ProjectController as ProjectCtrl',
     templateUrl : 'modules/projects/project.html'
   })
-  .otherwise('/login');
+  .otherwise('/');
 }
 
 function configAuth($httpProvider) {

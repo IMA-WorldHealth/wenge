@@ -35,7 +35,7 @@ function ProjectService($resource) {
       vm.projects.push(data);
     });
   }
-  
+
   // fetch a single project
   function get(id) {
     return vm.datasource.get({ id : id });
@@ -46,17 +46,13 @@ function ProjectService($resource) {
     return project.$update(project);
   }
 
-  // delete a project
+  // DELETE a project on the server and remove
+  // the project reference from the projects array
   function remove(project) {
-    var promise = project.$remove(function () {
-
-      // get the index of the removed project
+    return project.$remove(function () {
       var idx = vm.projects.indexOf(project);
-      console.log('Removing:', idx);
       vm.projects.splice(idx, 1);
     });
-
-    return promise.$promise;
   }
 
   return vm;

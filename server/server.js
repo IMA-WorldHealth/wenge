@@ -54,6 +54,7 @@ app.get('/colors', projects.getColors);
 
 // user controller
 app.get('/users/:id', users.getUserById);
+app.get('/users', users.getUsers);
 app.post('/users', users.signup);
 
 // request controller

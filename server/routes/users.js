@@ -1,4 +1,3 @@
-
 var db = require('../lib/db'),
     crypto = require('crypto');
 
@@ -9,26 +8,18 @@ exports.signup = function (req, res, next) {
   var sql = 'INSERT INTO user (username, email, password, roleid) VALUES (?, ?, ?, ?);';
 };
 
-// POST /users/accountrecovery
-exports.userAccountRecovery = function (req, res, next) {
+exports.getUsers = function (req, res, next) {
   'use strict';
 
   var sql =
-    'SELECT id, username, email FROM user WHERE email = ?;';
+    'SELECT user.id, user.username, user.email FROM user;';
 
-  db.get(sql, [req.body.email], function (err, row) {
-
-    // server error
-    if (err) { return next(err); }
-
-    // no data (NOT FOUND)
-    if (!row) { return res.status(404).json(); }
-
-    // success
-    // TODO - code to send email
-    res.status(200).json(row);
-  });
-
+  db.async.all(sql)
+  .then(function (rows) {
+    res.status(200).json(rows);
+  })
+  .catch(next)
+  .done();
 };
 
 // GET /users/:id
@@ -36,7 +27,7 @@ exports.getUserById = function (req, res, next) {
   'use strict';
  
   var sql =
-    'SELECT user.id, user.username, uesr.email, role.label AS role' +
+    'SELECT user.id, user.username, user.email, role.label AS role' +
     'FROM user JOIN role ON user.roleid = role.id WHERE id = ?;';
 
   db.get(sql, [req.params.id], function (err, rows) {
@@ -50,7 +41,6 @@ exports.getUserById = function (req, res, next) {
     res.status(200).json(row);
   });
 };
-
 
 // PUT /users/:id
 exports.updateUser = function (req, res, next) {
@@ -78,3 +68,26 @@ exports.updateUser = function (req, res, next) {
     res.status(200).send();
   });
 };
+
+// POST /users/accountrecovery
+exports.userAccountRecovery = function (req, res, next) {
+  'use strict';
+
+  var sql =
+    'SELECT id, username, email FROM user WHERE email = ?;';
+
+  db.get(sql, [req.body.email], function (err, row) {
+
+    // server error
+    if (err) { return next(err); }
+
+    // no data (NOT FOUND)
+    if (!row) { return res.status(404).json(); }
+
+    // success
+    // TODO - code to send email
+    res.status(200).json(row);
+  });
+
+};
+
