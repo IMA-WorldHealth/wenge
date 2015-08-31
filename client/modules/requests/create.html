@@ -73,20 +73,23 @@
       </div>
     </div>
 
+    <div class="form-group">
+      <label class="col-sm-1 control-label">Attachments</label>
+      <input type="file" class="btn btn-sm" nv-file-select uploader="RequestCtrl.uploader" multiple />
+      <span class="label" ng-if="RequestCtrl.uploader.queue.length > 0" ng-class="{ 'label-warning' : RequestCtrl.uploader.progress < 100, 'label-success' : RequestCtrl.uploader.progress === 100 }">
+        {{ RequestCtrl.uploader.progress === 100 ? "Complete" : "Attaching ..." }} {{ RequestCtrl.uploader.progress }} %
+      </span>
+    </div>
+
     <table class="table table-bordered table-condensed">
       <thead>
         <tr>
           <th colspan="8">
             Request Details
             <span class="pull-right">
-              <span class="btn-group btn-group-xs">
-                <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.addRow()" tooltip="Add Row">
-                  <i class="octicon octicon-plus"></i>
-                </a>
-                <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.noop()" tooltip="Upload Attachment">
-                  <i class="octicon octicon-file-zip"></i>
-                </a>
-              </span>
+              <a href="" class="btn btn-xs btn-default" ng-click="RequestCtrl.addRow()" tooltip="Add Row">
+                <i class="octicon octicon-plus"></i>
+              </a>
             </span>
           </th>
         </tr>

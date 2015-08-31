@@ -3,6 +3,8 @@ var express     = require('express'),
     compression = require('compression'),
     bodyParser  = require('body-parser'),
     morgan      = require('morgan'),
+    multer      = require('multer'),
+    attachment  = multer({ dest : 'data/attachments/' }),
     FileStore   = require('session-file-store')(session),
     app         = express();
 
@@ -30,10 +32,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // store user sessions in a file store for later lookups
 app.use(session({
   store : new FileStore(),
-  secret : 'xor Y0Mama',
+  secret : 'x0r world HeaLth',
   saveUninitialized : false,
   resave : false,
-  unset             : 'destroy',
+  unset  : 'destroy',
   //cookie            : { secure : true }
 }));
 
@@ -60,6 +62,16 @@ app.post('/requests', requests.createRequests);
 app.get('/requests/:id', requests.getRequestsById);
 app.put('/requests/:id', requests.updateRequests);
 app.delete('/requests/:id', requests.deleteRequests);
+
+// handle attachments
+// mas number of attachments is 5
+app.post('/upload', attachment.array('attachment', 5), function (req, res, next) {
+  'use strict';
+
+  res.status(200).json({
+    filenames : req.files.map(function (f) { return f.filename; })
+  });
+});
 
 // projects controller
 app.get('/projects', projects.getProjects);
