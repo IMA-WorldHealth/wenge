@@ -1,6 +1,4 @@
-
 angular.module('AFE')
-.service('ProjectService', ['$resource', ProjectService])
 .service('ColorService', ['$resource', ColorService])
 .controller('ProjectController', ['$window', 'ProjectService', 'ColorService', ProjectController]);
 
@@ -9,68 +7,12 @@ function ColorService($resource) {
   var vm = this;
 
   vm.datasource = $resource('/colors/:id');
-  vm.reload = load;
+  vm.load = load;
 
   // refresh the dataset
   function load() {
     vm.colors = vm.datasource.query();
-  }
-
-  // automatically load data
-  load();
-
-  return vm;
-}
-
-// controls CRUD on projects
-function ProjectService($resource) {
-  var vm = this;
-
-  // the REST datasource
-  vm.datasource = $resource('/projects/:id', { id : '@id' }, { 'update' : { 'method' : 'PUT' }});
-  vm.load = load;
-
-  // get a new form
-  vm.new = function () { return new vm.datasource(); };
-
-  // CRUD operatins
-  vm.add = add;
-  vm.remove = remove;
-  vm.edit = edit;
-
-  /* ------------------------------------------------------------------------ */
-
-  // refresh the dataset
-  function load() {
-    vm.projects = vm.datasource.query();
-  }
-
-  // add a new project, updating the project collection
-  // when the function completes
-  function add(project) {
-    return project.$save(function (data) {
-
-      // push the new project onto the stack
-      vm.projects.push(data);
-    });
-  }
-
-  // edit an existing project
-  function edit(project) {
-    return project.$update(project);
-  }
-
-  // delete a project
-  function remove(project) {
-    var promise = project.$remove(function () {
-
-      // get the index of the removed project
-      var idx = vm.projects.indexOf(project);
-      console.log('Removing:', idx);
-      vm.projects.splice(idx, 1);
-    });
-
-    return promise.$promise;
+    return vm.colors;
   }
 
   return vm;
@@ -89,8 +31,8 @@ function ProjectController($window, ProjectService, ColorService) {
   vm.goTo = goTo;
 
   // bind the datasets
-  vm.projects = ProjectService.projects;
-  vm.colors = ColorService.colors;
+  vm.projects = ProjectService.load();
+  vm.colors = ColorService.load();
 
   // utility functions
   vm.print = function () { $window.print(); };

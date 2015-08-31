@@ -11,6 +11,7 @@ function AFEService($resource, Session) {
   vm.total = total;
   vm.create = create;
   vm.valid = valid;
+  vm.get = get;
 
   /* ----------------------------------------------------------------------- */
 
@@ -65,7 +66,14 @@ function AFEService($resource, Session) {
   }
 
   // refresh the dataset
-  function load() { vm.requests = vm.datasource.query(); }
+  function load() {
+    vm.requests = vm.datasource.query();
+    return vm.requests;
+  }
+
+  function get(id) {
+    return vm.datasource.get({ id : id });
+  }
 
   return vm;
 }
