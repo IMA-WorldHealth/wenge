@@ -1,6 +1,9 @@
 # ignore instance data
 data/*
 
+# ignore built files
+client/app.min.js
+
 # vim things
 *.swp
 *.swo

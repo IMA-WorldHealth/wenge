@@ -39,7 +39,7 @@ function configRoutes($routeProvider) {
     controller : 'DashboardController as DashboardCtrl',
     templateUrl : 'modules/dashboard/dashboard.html'
   })
-  .when('/requests/create', {
+  .when('/create', {
     controller : 'RequestController as RequestCtrl',
     templateUrl : 'modules/requests/create.html'
   })
