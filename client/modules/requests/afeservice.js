@@ -6,7 +6,7 @@ function AFEService($resource, Session) {
       isDef = angular.isDefined;
 
   vm.datasource = $resource('/requests/:id');
-  vm.reload = load;
+  vm.load = load;
   vm.record = record;
   vm.total = total;
   vm.create = create;
@@ -69,5 +69,3 @@ function AFEService($resource, Session) {
 
   return vm;
 }
-
-

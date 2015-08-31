@@ -56,3 +56,10 @@ input[type=number] {
 .nav-tabs {
   margin-bottom : 1em;
 }
+
+@media print {
+  a:before,
+  a:after {
+    content : "";
+  }
+}

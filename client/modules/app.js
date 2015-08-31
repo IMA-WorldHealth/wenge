@@ -44,8 +44,8 @@ function configRoutes($routeProvider) {
     templateUrl : 'modules/requests/create.html'
   })
   .when('/requests/:id', {
-    controller : 'RequestReviewController as ReviewCtrl',
-    templateUrl : 'modules/requests/review.html'
+    controller : 'ReceiptController as ReceiptCtrl',
+    templateUrl : 'modules/requests/receipt.html'
   })
   .when('/users/:userid', {
     controller : 'UserController as UserCtrl',

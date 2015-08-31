@@ -1,0 +1,79 @@
+<section>
+  <form class="form-horizontal">
+    <legend>
+      Application For Expenditure <small>#{{ ReceiptCtrl.meta.id }}</small>
+      <span class="pull-right btn-group btn-group-xs">
+        <a href="" class="btn btn-xs btn-default" ng-click="ReceiptCtrl.print()" tooltip="Print">
+          <i class="octicon octicon-file-pdf"></i>
+        </a>
+      </span>
+    </legend>
+
+    <div class="alert alert-danger" ng-if="ReceiptCtrl.$error">
+      <b><i class="octicon octicon-alert"></i> Error</b> There doesn't seem to a receipt with id <b>#{{ ReceiptCtrl.id }}</b>.
+    </div>
+
+    <div class="form-group">
+      <label class="col-xs-1 control-label">Project</label>
+      <div class="col-xs-3">
+        <p class="form-control-static">{{ ReceiptCtrl.meta.project }}</p>
+      </div>
+
+      <label class="col-xs-1 control-label"><i class="octicon octicon-calendar hidden-print"></i> Date</label>
+      <div class="col-xs-3">
+        <p class="form-control-static">{{ ReceiptCtrl.meta.date | date }}</p>
+      </div>
+
+      <label class="col-xs-2 control-label"><i class="octicon octicon-person hidden-print"></i> Requestor</label>
+      <div class="col-xs-2">
+        <p class="form-control-static">{{ ReceiptCtrl.meta.createdby }}</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-xs-2 control-label">Beneficiary</label>
+      <div class="col-xs-6">
+        <p class="form-control-static">{{ ReceiptCtrl.meta.beneficiary }}</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-xs-2 control-label">Explanation</label>
+      <div class="col-xs-6">
+        <p class="form-control-static">{{ ReceiptCtrl.meta.explanation }}</p>
+      </div>
+    </div>
+
+    <table class="table table-condensed table-bordered">
+      <thead>
+        <tr>
+          <th></th>
+          <th style="width:320px;">Item Requested</th>
+          <th style="width:120px;">Budget Code</th>
+          <th style="width:10px;">Quantity</th>
+          <th>Unit</th>
+          <th style="width:80px;">Unit Price</th>
+          <th style="width:90px;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="row in ReceiptCtrl.data">
+          <td>{{ $index + 1 }}</td>
+          <td>{{ row.item }}</td>
+          <td>{{ row.budgetcode }}</td>
+          <td class="currency">{{ row.quantity }}</td>
+          <td>{{ row.unit }}</td>
+          <td class="currency">{{ row.unitprice }}</td>
+          <td class="currency">{{ (row.quantity * row.unitprice) || 0 | currency }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="3">Totals</th>
+          <th style="text-align:right;"> {{ ReceiptCtrl.totals.items }}</th>
+          <th colspan="3" class="currency"> {{ ReceiptCtrl.totals.prices | currency }}</th>
+        </tr>
+      </tfoot>
+    </table>
+  </form>
+</section>
