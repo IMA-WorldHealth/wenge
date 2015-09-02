@@ -1,5 +1,6 @@
 # ignore instance data
 data/*
+config.js
 
 # ignore built files
 *.min.js

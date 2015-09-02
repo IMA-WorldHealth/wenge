@@ -55,7 +55,7 @@ function configRoutes($routeProvider) {
     controller : 'PreferencesController as PreferencesCtrl',
     templateUrl : 'modules/users/preferences.html'
   })
-  .when('/users/account/recovery', {
+  .when('/recover', {
     controller  : 'RecoveryController as RecoveryCtrl',
     templateUrl : 'modules/users/recovery/recovery.html'
   })
@@ -80,7 +80,7 @@ function run($rootScope, $location, Session) {
 
   // make sure that the user is authenticated
   $rootScope.$on('$routeChangeStart', function (event, next) {
-    var publicRoutes = ['/users/account/recovery', '/users/account/reset', '/login'],
+    var publicRoutes = ['/recover', '/users/account/reset', '/login'],
         route = next.originalPath;
 
     // NOTE - cannot have a user with id === 0

@@ -32,8 +32,17 @@ db.serialize(function () {
   // build the user table
   db.run(
     'CREATE TABLE IF NOT EXISTS user (' +
-      'id INTEGER PRIMARY KEY, username TEXT, longname TEXT, email TEXT, password TEXT, ' +
-      'roleid INTEGER, lastactive TEXT, FOREIGN KEY (roleid) REFERENCES role(id) ' +
+      'id INTEGER PRIMARY KEY, username TEXT, firstname TEXT, lastname TEXT, ' +
+      'email TEXT, password TEXT, roleid INTEGER, lastactive TEXT, ' +
+      'FOREIGN KEY (roleid) REFERENCES role(id) ' +
+    ');'
+  );
+
+  // build the recover table (for account recovery)
+  db.run(
+    'CREATE TABLE IF NOT EXISTS recover (' +
+      'id INTEGER PRIMARY KEY, userid INTEGER, hash TEXT, expiration DATE, ' +
+      'FOREIGN KEY (userid) REFERENCES user(id)' +
     ');'
   );
 
