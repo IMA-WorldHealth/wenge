@@ -14,11 +14,14 @@ function ReceiptController($scope, $routeParams, $location, Requests, Users, Pro
   // load the particular request
   $scope.receipt = vm.receipt = Requests.get(id);
 
+  // FIXME - this doesn't work
   // TODO - is there a better way?
   // On receipt load, load projects and users
-  $scope.$watch('receipt', function () {
-    vm.user = Users.get(vm.receipt.userid);
-    vm.project = Projects.get(vm.receipt.projectid);
+  $scope.$watch('receipt', function (receipt) {
+    if (receipt.$resolved) {
+      vm.project = Projects.get(vm.receipt.projectid);
+      vm.user = Users.get(vm.receipt.userid);
+    }
   });
 
 }

@@ -107,8 +107,6 @@ exports.getRequestsById = function (req, res, next) {
       })
     };
 
-    console.log('response', response);
-
     res.status(200).json(response);
   })
   .catch(next)
