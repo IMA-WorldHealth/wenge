@@ -26,9 +26,10 @@ exports.login = function (req, res, next) {
     req.session.user = row;
 
     // update the lastactive field
-    db.run('UPDATE user SET lastactive = ? WHERE id = ?;', [new Date(), row.id]);
-
-    res.status(200).json(row);
+    return db.async.run('UPDATE user SET lastactive = ? WHERE id = ?;', [new Date(), row.id]);
+  })
+  .then(function () {
+    res.status(200).json(req.session.user);
   })
   .catch(next)
   .done();

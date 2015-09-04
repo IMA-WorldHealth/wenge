@@ -30,7 +30,7 @@ exports.getUserById = function (req, res, next) {
 
   var sql =
     'SELECT user.id, user.username, user.email, role.label AS role ' +
-    'FROM user JOIN role ON user.roleid = role.id WHERE id = ?;';
+    'FROM user JOIN role ON user.roleid = role.id WHERE user.id = ?;';
 
   db.async.get(sql, req.params.id)
   .then(function (row) {

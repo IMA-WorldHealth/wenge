@@ -35,7 +35,8 @@ db.serialize(function () {
     'CREATE TABLE IF NOT EXISTS user (' +
       'id INTEGER PRIMARY KEY, username TEXT, displayname TEXT, ' +
       'email TEXT, password TEXT, roleid INTEGER, lastactive DATE, ' +
-      'avatar TEXT NOT NULL DEFAULT \'/assets/avatar.png\', telephone INTEGER, ' +
+      'avatar TEXT NOT NULL DEFAULT \'/assets/avatar.png\', ' +
+      'telephone INTEGER, hidden BOOLEAN, projectid INTEGER, ' +
       'FOREIGN KEY (projectid) REFERENCES project(id), ' +
       'FOREIGN KEY (roleid) REFERENCES role(id) ' +
     ');'
