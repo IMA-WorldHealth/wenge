@@ -26,6 +26,12 @@ function AuthInjector($rootScope, $q, $location, Session) {
   };
 }
 
+function configAuth($httpProvider) {
+  $httpProvider.interceptors.push(['$injector', function ($injector) {
+    return $injector.get('AuthenticationInjectorFactory');
+  }]);
+}
+
 // configure routes
 function configRoutes($routeProvider) {
   $routeProvider
@@ -49,9 +55,13 @@ function configRoutes($routeProvider) {
     controller : 'ReceiptController as ReceiptCtrl',
     templateUrl : 'modules/requests/receipt.html'
   })
-  .when('/users/:id?', {
+  .when('/users', {
     controller : 'UserController as UserCtrl',
     templateUrl : 'modules/users/users.html'
+  })
+  .when('/users/:id', {
+    controller : 'ProfileController as ProfileCtrl',
+    templateUrl : 'modules/users/profile/profile.html'
   })
   .when('/users/:id/preferences', {
     controller : 'PreferencesController as PreferencesCtrl',
@@ -66,14 +76,6 @@ function configRoutes($routeProvider) {
     templateUrl : 'modules/projects/project.html'
   })
   .otherwise('/');
-}
-
-function configAuth($httpProvider) {
-  $httpProvider.interceptors.push(['$injector', function ($injector) {
-    return $injector.get('AuthenticationInjectorFactory');
-  }
-]);
-
 }
 
 function startup($rootScope, $location, Session) {

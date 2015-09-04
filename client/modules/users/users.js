@@ -1,6 +1,6 @@
 angular.module('AFE')
 .controller('UserController', [
-  'UserService', 'AuthService', 'Session', UserController
+  'UserService', 'Session', UserController
 ]);
 
 /**
@@ -10,12 +10,10 @@ angular.module('AFE')
 * @class UserController 
 * @constructor
 */
-function UserController(UserService, AuthService, Session) {
+function UserController(UserService, Session) {
   var vm = this;
 
-  // cache the user id if we need it
+  // expose data to view
   vm.user = Session;
   vm.users = UserService.read();
-
-  console.log(vm.users);
 }

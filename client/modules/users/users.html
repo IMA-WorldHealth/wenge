@@ -12,12 +12,12 @@
     </thead>
     <tbody>
       <tr ng-repeat="user in UserCtrl.users track by user.id">
-        <td>{{ $index }}</td>
+        <td class="text-center"><span ng-if="user.id === UserCtrl.user.id"><i class="octicon octicon-person"></i></span>{{ user.id === UserCtrl.user.id ?'' : $index }}</td>
         <td>{{ ::user.username }}</td>
         <td>{{ ::user.displayname }}</td>
         <td>{{ ::user.email }}</td>
         <td>{{ ::user.lastactive | date:'medium' }}</td>
-        <td><a ng-href="#/users/{{ ::user.id }}">#</a></td>
+        <td class="text-center"><a ng-href="#/users/{{ ::user.id }}">View Profile</a></td>
       </tr>
     </tbody>
   </table>
