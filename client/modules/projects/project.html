@@ -12,56 +12,58 @@
         <b><i class="octicon octicon-check"></i></b> Sucessfully editted project <b> {{ vm.slave.code }}</b>.
       </div>
 
-      <table class="table table-condensed table-bordered table-hover">
-        <thead>
-          <tr>
-            <th colspan="3">
-              Available Projects
+      <div style="overflow:auto; max-height:300px;">
+        <table class="table table-condensed table-bordered table-hover">
+          <thead>
+            <tr>
+              <th colspan="3">
+                Available Projects
 
-              <span class="pull-right">
-                <span class="btn-group btn-group-xs">
-                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.initAdd()" tooltip="New Project">
-                    <i class="octicon octicon-plus"></i>
+                <span class="pull-right">
+                  <span class="btn-group btn-group-xs">
+                    <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.initAdd()" tooltip="New Project">
+                      <i class="octicon octicon-plus"></i>
+                    </a>
+                    <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.reload()" tooltip="Refresh Projects">
+                      <i class="octicon octicon-sync"></i>
+                    </a>
+                  </span>
+                  <span class="btn-group btn-group-xs">
+                    <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.print()" tooltip="Print Page">
+                      <i class="octicon octicon-file-pdf"></i>
+                    </a>
+                    <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.download()" tooltip="Download Projects">
+                      <i class="octicon octicon-cloud-download"></i>
+                    </a>
+                  </span>
+                </span>
+              </th>
+            </tr>
+            <tr>
+              <th>ID</th>
+              <th>Dot</th>
+              <th style="width:95%;">Code</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="project in ProjectCtrl.projects">
+              <td>{{ project.id }}</td>
+              <td style="text-align:center"><span class="dot" ng-style="{ 'background-color' : project.color }"></span></td>
+              <td>
+                {{ project.code }}
+                <span class="pull-right">
+                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.initEdit(project)">
+                    <i class="octicon octicon-pencil"></i>
                   </a>
-                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.reload()" tooltip="Refresh Projects">
-                    <i class="octicon octicon-sync"></i>
+                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.removeProject(project)">
+                    <i class="octicon octicon-trashcan"></i>
                   </a>
                 </span>
-                <span class="btn-group btn-group-xs">
-                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.print()" tooltip="Print Page">
-                    <i class="octicon octicon-file-pdf"></i>
-                  </a>
-                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.download()" tooltip="Download Projects">
-                    <i class="octicon octicon-cloud-download"></i>
-                  </a>
-                </span>
-              </span>
-            </th>
-          </tr>
-          <tr>
-            <th>ID</th>
-            <th>Dot</th>
-            <th style="width:95%;">Code</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="project in ProjectCtrl.projects">
-            <td>{{ project.id }}</td>
-            <td style="text-align:center"><span class="dot" ng-style="{ 'background-color' : project.color }"></span></td>
-            <td>
-              {{ project.code }}
-              <span class="pull-right">
-                <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.initEdit(project)">
-                  <i class="octicon octicon-pencil"></i>
-                </a>
-                <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.removeProject(project)">
-                  <i class="octicon octicon-trashcan"></i>
-                </a>
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </tab>
 
     <!-- add project form -->

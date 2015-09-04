@@ -1,30 +1,12 @@
 angular.module('AFE')
-.factory('AuthService', ['$http', 'Session', AuthService])
 .controller('LoginController', ['$location', 'AuthService', LoginController]);
 
-function AuthService($http, Session) {
-  var service = {};
-
-  // log the user in
-  service.login = function (credentials) {
-    return $http
-      .post('/login', { username : credentials.username, password : credentials.password })
-      .then(function (res) {
-        Session.create(res.data);
-        return res.data;
-      });
-  };
-
-  // log the user out
-  service.logout = function () {
-    Session.destroy();
-    return $http.get('/logout');
-  };
-
-  return service;
-}
-
-
+/**
+* The view-model for the login page.
+*
+* @class LoginController
+* @constructor
+*/
 function LoginController($location, AuthService) {
   var vm = this;
 

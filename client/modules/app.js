@@ -1,4 +1,9 @@
-var app = angular.module('AFE', ['ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUpload']);
+angular.module('AFE', ['ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUpload'])
+.factory('AuthenticationInjectorFactory', ['$rootScope', '$q', '$location', 'Session', AuthInjector])
+.config(['$httpProvider', configAuth])
+.config(['$routeProvider', configRoutes])
+.run(['$rootScope', '$location', 'Session', startup]);
+
 
 // Intercept server sent errors, potentially rejecting auth errors
 function AuthInjector($rootScope, $q, $location, Session) {
@@ -20,9 +25,6 @@ function AuthInjector($rootScope, $q, $location, Session) {
     }
   };
 }
-
-// ensure that the user is properly connected
-app.factory('AuthenticationInjectorFactory', ['$rootScope', '$q', '$location', 'Session', AuthInjector]);
 
 // configure routes
 function configRoutes($routeProvider) {
@@ -74,7 +76,7 @@ function configAuth($httpProvider) {
 
 }
 
-function run($rootScope, $location, Session) {
+function startup($rootScope, $location, Session) {
 
   function contains(array, value) { return array.indexOf(value) !== -1; }
 
@@ -95,8 +97,3 @@ function run($rootScope, $location, Session) {
     }
   });
 }
-
-// configure and run
-app.config(['$httpProvider', configAuth]);
-app.config(['$routeProvider', configRoutes]);
-app.run(['$rootScope', '$location', 'Session', run]);
