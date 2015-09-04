@@ -2,19 +2,22 @@
   <table class="table table-condensed table-bordered">
     <thead>
       <tr>
+        <th></th>
         <th>User</th>
         <th>Name</th>
         <th>Email</th>
-        <th colspan="2">Active</th>
+        <th>Active</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="user in UserCtrl.users track by user.id">
-        <td>{{ user.username }}</td>
-        <td>{{ user.displayname }}</td>
-        <td>{{ user.email}}</td>
-        <td>{{ user.lastactive | date }}</td>
-        <td><a ng-href="#/users/{{user.id}}">#</a></td>
+        <td>{{ $index }}</td>
+        <td>{{ ::user.username }}</td>
+        <td>{{ ::user.displayname }}</td>
+        <td>{{ ::user.email }}</td>
+        <td>{{ ::user.lastactive | date:'medium' }}</td>
+        <td><a ng-href="#/users/{{ ::user.id }}">#</a></td>
       </tr>
     </tbody>
   </table>

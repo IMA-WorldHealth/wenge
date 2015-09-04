@@ -13,7 +13,8 @@ exports.getUsers = function (req, res, next) {
   'use strict';
 
   var sql =
-    'SELECT user.id, user.username, user.email, role.label AS role ' +
+    'SELECT user.id, user.username, user.displayname, user.email, ' +
+    'role.label AS role, user.hidden, user.lastactive ' +
     'FROM user JOIN role ON user.roleid = role.id;';
 
   db.async.all(sql)
