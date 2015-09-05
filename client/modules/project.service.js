@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 .service('ProjectService', ['$resource', ProjectService]);
 
 // controls CRUD on projects

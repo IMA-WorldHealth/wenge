@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 .service('Session', ['$window', SessionService]);
 
 // Managing a session like this is an elegant way to

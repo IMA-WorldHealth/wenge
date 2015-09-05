@@ -1,5 +1,5 @@
-AFE: Authorization For Expenditure
-==================================
+Wenge
+=====
 
 A web application for creating, viewing, and filtering Authorizations for Expenditure (AFEs).
 

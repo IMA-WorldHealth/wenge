@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 .controller('LoginController', ['$location', 'AuthService', LoginController]);
 
 /**

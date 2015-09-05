@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 
 .controller('NavigationController', ['AuthService', 'Session', '$location', function (AuthService, Session, $location) {
   this.isLoggedIn = function () {

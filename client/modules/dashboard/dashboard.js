@@ -2,7 +2,7 @@
 
   'use strict';
 
-  var app = angular.module('AFE');
+  var app = angular.module('wenge');
 
 
   app.service('DashboardService', ['$http', function ($http) {

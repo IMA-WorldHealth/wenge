@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 .service('AttachmentService', ['FileUploader', AttachmentService]);
 
 function AttachmentService(FileUploader) {

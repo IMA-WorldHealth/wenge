@@ -1,5 +1,5 @@
 
-angular.module('AFE')
+angular.module('wenge')
 .controller('RecoveryController', ['$http', function ($http) {
 
   // alias this

@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 .service('ColorService', ['$resource', ColorService])
 .controller('ProjectController', ['$window', 'ProjectService', 'ColorService', ProjectController]);
 

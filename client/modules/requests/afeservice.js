@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 .service('AFEService', ['$resource', 'Session', AFEService]);
 
 function AFEService($resource, Session) {

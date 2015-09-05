@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 .controller('ReceiptController', ['$scope', '$routeParams', '$location',
   'AFEService', 'UserService', 'ProjectService', ReceiptController]);
 

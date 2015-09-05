@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 .controller('MainController', ['Session', MainController]);
 
 function MainController(Session) {

@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 .controller('ProfileController', [
   '$routeParams', 'UserService', 'AuthService', 'Session', ProfileController
 ]);

@@ -1,4 +1,4 @@
-angular.module('AFE')
+angular.module('wenge')
 .controller('RequestController', ['$scope', '$location', 'AFEService', 'ProjectService', 'Session', 'AttachmentService', RequestController]);
 
 function RequestController($scope, $location, AFEService, ProjectService, Session, AttachmentService) {
