@@ -1,17 +1,22 @@
 Wenge
 =====
 
-A web application for creating, viewing, and filtering Authorizations for Expenditure (AFEs).
+A web application for creating, viewing, and approving Authorizations for Expenditure (AFEs).
+This is an experimental applicaiton written to transition the IMA World Health office in 
+Kinshasa to a paperless AFE system.
 
-### Overview
+### Installation
 
-Every expense must be preceded by a AFE detailing the reason and cost associated with the
-expenditure, recorded in the AFE.  This application digitizes that process.
+To install, use npm.
+```sh
+npm install -g gulp
+npm install
+npm run start
+```
 
+The application depends on `config.js` which is not distributed with this repository.  To obtain
+your own, please contact the developers@imaworldhealth.org.
 
-#### Signature Allocation
-
-TODO
 
 ### LICENSE
 [MIT](./LICENSE)
