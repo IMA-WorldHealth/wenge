@@ -10,8 +10,9 @@ config.js
 *.swo
 *.swn
 
-# npm things
+# npm and things
 node_modules/
+client/vendor/*
 
 # express-session things
 sessions/*
