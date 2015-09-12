@@ -9,7 +9,6 @@ input[type=number] {
       -moz-appearance:textfield;
 }
 
-/* pretty inputs within tables */
 .table-input {
   background-color: inherit;
   border: none;
@@ -36,17 +35,11 @@ input[type=number] {
   font-weight: bold;
 }
 
-.wrapper {
-  width : 850px;
-  margin : 0 auto;
-  padding-bottom: 2.5em;
-}
-
 .dot {
   display : inline-block;
   border-radius: 50%;
   height: 12px;
-  width: 12px;
+  width : 12px;
 }
 
 .currency {
@@ -55,13 +48,6 @@ input[type=number] {
 
 .nav-tabs {
   margin-bottom : 1em;
-}
-
-@media print {
-  a:before,
-  a:after {
-    content : "";
-  }
 }
 
 .avatar {
@@ -79,3 +65,10 @@ input[type=number] {
   -moz-border-radius    : 50%;
   border-radius         : 50%;
  }
+
+@media print {
+  a:before,
+  a[href]:after {
+    content : "" !important;
+  }
+}
