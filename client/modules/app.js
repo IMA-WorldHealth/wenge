@@ -1,4 +1,4 @@
-angular.module('AFE', ['ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUpload'])
+angular.module('wenge', ['ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUpload'])
 .factory('AuthenticationInjectorFactory', ['$rootScope', '$q', '$location', 'Session', AuthInjector])
 .config(['$httpProvider', configAuth])
 .config(['$routeProvider', configRoutes])

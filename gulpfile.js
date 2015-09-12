@@ -1,8 +1,9 @@
 var gulp      = require('gulp'),
     gulpif    = require('gulp-if'),
+    flatten   = require('gulp-flatten'),
     concat    = require('gulp-concat'),
-    rimraf    = require('rimraf'),
-    uglify    = require('gulp-uglify');
+    uglify    = require('gulp-uglify'),
+    rimraf    = require('rimraf');
 
 // toggle to minify scripts
 var MINIFY = false,
@@ -11,7 +12,8 @@ var MINIFY = false,
 var paths = {
   client : {
     scripts: ['client/modules/app.js', 'client/modules/**/*.js'],
-    static : ['!client/*.js', '!client/**/*.js', 'client/*', 'client/**/*']
+    vendor : ['client/vendor/**/*.min.js'],
+    static : ['!client/*.js', '!client/**/*.js', '!client/vendor/*', '!client/vendor/**/*', 'client/*', 'client/**/*']
   },
   server : { 
     scripts : ['server/*.js', 'server/**/*.js'],
@@ -25,14 +27,21 @@ gulp.task('clean', function (fn) {
 
 // concatenates all the client scripts into one
 gulp.task('build-client', function () {
-  gulp.start('client-minify', 'client-move');
+  gulp.start('client-minify', 'client-vendor', 'client-move');
 });
 
+// minify application code if necessary
 gulp.task('client-minify', function () {
   return gulp.src(paths.client.scripts)
     .pipe(gulpif(MINIFY, uglify()))
     .pipe(concat('app.min.js'))
     .pipe(gulp.dest(OUT + 'client/'));
+});
+
+gulp.task('client-vendor', function () {
+  return gulp.src(paths.client.vendor)
+    .pipe(flatten())
+    .pipe(gulp.dest(OUT + 'client/vendor'));
 });
 
 // move the client into the bin directory
