@@ -1,11 +1,22 @@
 angular.module('wenge', ['ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUpload'])
-.factory('AuthenticationInjectorFactory', ['$rootScope', '$q', '$location', 'Session', AuthInjector])
-.config(['$httpProvider', configAuth])
-.config(['$routeProvider', configRoutes])
-.run(['$rootScope', '$location', 'Session', startup]);
+.config(RouteConfig)
+.factory('AuthInterceptor', AuthInterceptor)
+.config(InterceptorConfig)
+.run(Application);
 
-// Intercept server sent errors, potentially rejecting auth errors
-function AuthInjector($rootScope, $q, $location, Session) {
+/* --------------------------------------------------------- */
+
+InterceptorConfig.$inject = ['$httpProvider'];
+
+function InterceptorConfig($httpProvider) {
+  $httpProvider.interceptors.push('AuthInterceptor');
+}
+
+/* --------------------------------------------------------- */
+
+AuthInterceptor.$inject = ['$location', '$q', 'Session'];
+
+function AuthInterceptor($location, $q, Session) {
   return {
 
     // called on server error
@@ -25,14 +36,12 @@ function AuthInjector($rootScope, $q, $location, Session) {
   };
 }
 
-function configAuth($httpProvider) {
-  $httpProvider.interceptors.push(['$injector', function ($injector) {
-    return $injector.get('AuthenticationInjectorFactory');
-  }]);
-}
+/* --------------------------------------------------------- */
+
+RouteConfig.$inject = ['$routeProvider'];
 
 // configure routes
-function configRoutes($routeProvider) {
+function RouteConfig($routeProvider) {
   $routeProvider
   .when('/', {
     controller : 'MainController as MainCtrl',
@@ -62,10 +71,6 @@ function configRoutes($routeProvider) {
     controller : 'ProfileController as ProfileCtrl',
     templateUrl : 'modules/users/profile/profile.html'
   })
-  .when('/users/:id/preferences', {
-    controller : 'PreferencesController as PreferencesCtrl',
-    templateUrl : 'modules/users/preferences.html'
-  })
   .when('/recover', {
     controller  : 'RecoveryController as RecoveryCtrl',
     templateUrl : 'modules/users/recovery/recovery.html'
@@ -77,7 +82,12 @@ function configRoutes($routeProvider) {
   .otherwise('/');
 }
 
-function startup($rootScope, $location, Session) {
+/* --------------------------------------------------------- */
+
+Application.$inject = ['$rootScope', '$location', '$q', 'Session'];
+
+// the application start script
+function Application($rootScope, $location, $q, Session) {
 
   function contains(array, value) { return array.indexOf(value) !== -1; }
 
@@ -88,12 +98,10 @@ function startup($rootScope, $location, Session) {
 
     // NOTE - cannot have a user with id === 0
     if (!Session.id && !contains(publicRoutes, route)) {
-      console.log('Redirecting to public /login', route);
       $location.url('/login');
     }
 
     if (!!Session.id && route === '/login') {
-      console.log('Blocking attempt at accessing login page.');
       $location.url('/');
     }
   });

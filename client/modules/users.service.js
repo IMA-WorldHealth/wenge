@@ -1,5 +1,7 @@
 angular.module('wenge')
-.service('UserService', ['$resource', UserService]);
+.service('UserService', UserService);
+
+UserService.$inject = ['$resource'];
 
 /**
 * The REST interface for interaction with the backend user
@@ -16,7 +18,7 @@ function UserService($resource) {
   vm.datasource = $resource('/users/:id', { id : '@id' }, {
     'update' : { 'method' : 'PUT' }
   });
- 
+
   // CRUD operations
   vm.create = create;
   vm.read = read;

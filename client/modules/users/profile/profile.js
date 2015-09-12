@@ -1,7 +1,9 @@
 angular.module('wenge')
-.controller('ProfileController', [
-  '$routeParams', 'UserService', 'AuthService', 'Session', ProfileController
-]);
+.controller('ProfileController', ProfileController);
+
+ProfileController.$inject = [
+  '$routeParams', 'UserService', 'AuthService', 'Session',
+];
 
 /**
 * The view-model for a single user's profile page.  This controller must allow
@@ -15,5 +17,13 @@ angular.module('wenge')
 * @constructor
 */
 function ProfileController($routeParams, UserService, AuthService, Session) {
-  // TODO
+  var vm = this;
+
+  vm.user = UserService.read($routeParams.id);
+  vm.edittable = function () { return vm.user.id === Session.id; };
+
+  console.log(vm.user);
+
+  /* --------------------------------------------------------------------------- */
+
 }
