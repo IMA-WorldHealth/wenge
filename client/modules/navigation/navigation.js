@@ -1,17 +1,38 @@
 angular.module('wenge')
+.controller('NavigationController', NavigationController);
 
-.controller('NavigationController', ['AuthService', 'Session', '$location', function (AuthService, Session, $location) {
-  this.isLoggedIn = function () {
-    return Session.id;
-  };
+NavigationController.$inject = ['AuthService', 'Session', '$location'];
 
-  this.user = Session;
+function NavigationController(AuthService, Session, $location) {
+  var vm = this;
 
-  this.logout = function () {
-    console.log('clicked logout');
+  // expose to the view model
+  vm.user = Session;
+  vm.logout = logout;
+  vm.links = [{
+    icon : 'diff',
+    url : 'create',
+    title : 'Requests'
+  }, {
+    icon : 'repo',
+    url: 'projects',
+    title : 'Projects'
+  }, {
+    icon : 'organization',
+    url : 'users',
+    title : 'Users'
+  }, {
+    icon : 'circuit-board',
+    url : 'settings',
+    title : 'Settings'
+  }];
+  
+  
+  // logs the current user out
+  function logout() {
     AuthService.logout()
     .then(function () {
       $location.url('/login');
     });
-  };
-}]);
+  }
+}

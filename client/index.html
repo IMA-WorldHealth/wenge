@@ -14,26 +14,30 @@
 <body ng-app='wenge' ng-cloak>
 
   <nav class='navbar navbar-fixed-top' ng-controller='NavigationController as NavCtrl' class="hidden-print">
-    <div class='container-fluid' style='margin: 0 2em;' ng-show="NavCtrl.isLoggedIn()">
+    <div class='container-fluid' style='margin: 0 2em;' ng-show="NavCtrl.user.id">
       <div class='collapse navbar-collapse'>
         <div class='navbar-header'>
           <a class='navbar-brand' href='#/'>
-            <img alt="IMA Logo" src="assets/logo.png" width="50" height="50">
+            <img alt="IMA Logo" src="assets/logo.png" width="45" height="45">
           </a>
         </div>
-        <h2 class="navbar-left">AFE</h2>
+        <h3 class="navbar-left">Wenge</h3>
 
-        <ul class="nav navbar navbar-right">
+        <ul class="nav navbar-nav navbar-right">
           <li class="dropdown" dropdown keyboard-nav>
             <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
-              {{ NavCtrl.user.username }} <i class="octicon octicon-chevron-down"></i>
+               Jump To <i class="octicon octicon-triangle-down"></i>
             </a>
             <ul class="dropdown-menu">
-              <li><a ng-href="#/users/{{ NavCtrl.user.id }}"><i class="octicon octicon-home"></i> My Profile</a></li>
-              <li><a href="#/bugs"><i class="octicon octicon-bug"></i> Report a Bug</a></li>
-              <li><a href="" ng-click="NavCtrl.logout()"><i class="octicon octicon-sign-out"></i> Logout</a></li>
+              <li ng-repeat="item in NavCtrl.links">
+                <a ng-href="#/{{ item.url }}">
+                  <i class="octicon octicon-{{ item.icon }}"></i>
+                  {{ item.title }}
+                </a>
+              </li>
             </ul>
           </li>
+          <li><a href="" ng-click="NavCtrl.logout()"><i class="octicon octicon-sign-out"></i> Logout</a></li>
         </ul>
       </div>
     </div>

@@ -1,7 +1,7 @@
 angular.module('wenge')
-.controller('UserController', [
-  'UserService', 'Session', UserController
-]);
+.controller('UserController', UserController);
+
+UserController.$inject = ['UserService', 'Session'];
 
 /**
 * The view-model for the users page.  Downloads a list of users
