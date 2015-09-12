@@ -4,7 +4,6 @@ angular.module('wenge', ['ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUp
 .config(['$routeProvider', configRoutes])
 .run(['$rootScope', '$location', 'Session', startup]);
 
-
 // Intercept server sent errors, potentially rejecting auth errors
 function AuthInjector($rootScope, $q, $location, Session) {
   return {

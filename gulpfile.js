@@ -1,5 +1,6 @@
 var gulp      = require('gulp'),
     gulpif    = require('gulp-if'),
+    iife      = require('gulp-iife'),
     flatten   = require('gulp-flatten'),
     concat    = require('gulp-concat'),
     uglify    = require('gulp-uglify'),
@@ -35,6 +36,7 @@ gulp.task('client-minify', function () {
   return gulp.src(paths.client.scripts)
     .pipe(gulpif(MINIFY, uglify()))
     .pipe(concat('app.min.js'))
+    .pipe(iife())
     .pipe(gulp.dest(OUT + 'client/'));
 });
 

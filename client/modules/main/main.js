@@ -1,5 +1,7 @@
 angular.module('wenge')
-.controller('MainController', ['Session', MainController]);
+.controller('MainController', MainController);
+
+MainController.$inject = ['Session'];
 
 function MainController(Session) {
   var vm = this;
