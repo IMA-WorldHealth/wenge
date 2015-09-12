@@ -11,10 +11,10 @@ var express     = require('express'),
 var PORT = 4321;
 
 var db = require('./lib/db'),
-    auth = require('./routes/auth'),
-    users = require('./routes/users'),
-    requests = require('./routes/requests'),
-    projects = require('./routes/projects');
+    auth = require('./controllers/auth'),
+    users = require('./controllers/users'),
+    requests = require('./controllers/requests'),
+    projects = require('./controllers/projects');
 
 // compress (gzip) all requests
 app.use(compression());

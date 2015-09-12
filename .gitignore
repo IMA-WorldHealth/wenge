@@ -1,6 +1,7 @@
 # ignore instance data
 data/*
 config.js
+bin/*
 
 # ignore built files
 *.min.js
