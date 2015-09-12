@@ -10,7 +10,8 @@ exports.login = function (req, res, next) {
 
   sql =
     'SELECT user.id, user.username, user.email, user.lastactive, role.label AS role ' +
-    'FROM user JOIN role ON user.roleid = role.id WHERE username = ? AND password = ?;';
+    'FROM user JOIN role ON user.roleid = role.id ' +
+    'WHERE user.username = ? AND user.password = ?;';
 
   // passwords are hashed with sha256 and stored in database
   shasum = crypto.createHash('sha256').update(req.body.password).digest('hex');

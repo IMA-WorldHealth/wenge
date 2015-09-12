@@ -17,8 +17,8 @@ var paths = {
     static : ['!client/*.js', '!client/**/*.js', '!client/vendor/*', '!client/vendor/**/*', 'client/*', 'client/**/*']
   },
   server : { 
-    scripts : ['server/*.js', 'server/**/*.js'],
-    static : ['server/*', 'server/**/*']
+    static : ['server/*', 'server/**/*'],
+    data : ['data/*', 'data/**']
   }
 };
 
@@ -53,7 +53,7 @@ gulp.task('client-move', function () {
 });
 
 gulp.task('build-server', function () {
-  gulp.start('server-move');
+  gulp.start('server-move', 'server-data');
 });
 
 // move the server into the bin/ directory
@@ -61,6 +61,13 @@ gulp.task('server-move', function () {
   return gulp.src(paths.server.static)
     .pipe(gulp.dest(OUT + 'server/'));
 });
+
+// move the server data into the bin/ directory
+gulp.task('server-data', function () {
+  return gulp.src(paths.server.data)
+    .pipe(gulp.dest(OUT + 'data/'));
+});
+
 
 // watch the client for changes and rebuild
 gulp.task('watch', function () {
