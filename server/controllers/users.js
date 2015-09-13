@@ -38,7 +38,6 @@ exports.getUserById = function (req, res, next) {
   db.async.get(sql, req.params.id)
   .then(function (row) {
     if (!row) { return res.status(404).json(); }
-    console.log('row:', row);
     res.status(200).json(row);
   })
   .catch(next)

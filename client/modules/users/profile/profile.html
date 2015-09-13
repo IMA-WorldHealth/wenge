@@ -1,7 +1,81 @@
 <section>
-  <form class="form-horizontal">
-    <div class="avatar">
-      <img ng-src="{{ProfileCtrl.user.avatar}}" width="100" height="100"></img>
+  <form class="form-horizontal" name="UserForm">
+
+    <div class="form-group">
+      <div class="row">
+        <div class="col-sm-4">
+          <img ng-src="{{ ProfileCtrl.user.avatar }}" class="img-thumbnail pull-right" alt="avatar" width="200" height="200"></img>
+        </div>
+        <div class="col-sm-8">
+          <h4>{{ ProfileCtrl.user.displayname }}</h4>
+          <button class="btn btn-sm btn-default" ng-if="ProfileCtrl.editable()">
+            Change your Avatar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2">Display Name</label>
+      <div class="col-xs-3">
+        <input type="text" class="solid-input" ng-model="ProfileCtrl.user.displayname" ng-if="ProfileCtrl.editing">
+        <p class="form-control-static">{{ ProfileCtrl.user.displayname }}</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2">Username</label>
+      <div class="col-xs-3">
+        <input type="text" class="solid-input" ng-model="ProfileCtrl.user.username"  ng-if="ProfileCtrl.editing">
+        <p class="form-control-static">{{ ProfileCtrl.user.username }}</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2">Default Project</label>
+      <div class="col-xs-3">
+        <select class="form-control" ng-options="">
+        <input type="text" class="solid-input" ng-model="ProfileCtrl.user.username"  ng-if="ProfileCtrl.editing">
+        <p class="form-control-static">{{ ProfileCtrl.user.username }}</p>
+      </div>
+    </div>
+
+    <div class="form-group" ng-class="{ 'has-error' : UserForm.$submitted && !UserForm.slave.project }">
+
+      <label class="col-sm-2 control-label">Project</label>
+      <div class="col-sm-3" dropdown keyboard-nav>
+        <a class="btn btn-default dropdown dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" ng-class="{ 'btn-danger' : RequestForm.$submitted && !RequestCtrl.slave.project }" dropdown-toggle>
+          <span class="dot" ng-style="{ 'background-color' : ProfileCtrl.user.project.color }" ng-if="RequestCtrl.slave.project"></span>
+          {{ RequestCtrl.slave.project.code || "Select a Project" }}
+          <i class="octicon octicon-chevron-down"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li ng-repeat="project in RequestCtrl.projects track by project.id">
+            <a ng-click="RequestCtrl.assignProjectId(project)" href="">
+              <span class="dot" ng-style="{ 'background-color' : project.color}"></span> {{ project.code }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2">Address</label>
+      <div class="col-xs-6">
+        <input type="text" class="solid-input" ng-model="ProfileCtrl.user.address" ng-if="ProfileCtrl.editing">
+        <p class="form-control-static" ng-if="!ProfileCtrl.editing">{{ ProfileCtrl.user.displayname }}</p>
+      </div>
+    </div>
+
+    <div class="checkbox col-sm-offset-2" ng-if="ProfileCtrl.editing">
+      <label>
+        <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="ProfileCtrl.user.hidden"> Hidden
+      </label>
+    </div>
+
+    <div class="form-group" ng-if="ProfileCtrl.editable() && !ProfileCtrl.editing">
+      <button class="btn btn-sm btn-primary" ng-click="ProfileCtrl.edit()">Edit User Details</button>
     </div>
   </form>
+
 </section>

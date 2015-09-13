@@ -2,7 +2,7 @@ angular.module('wenge')
 .controller('ProfileController', ProfileController);
 
 ProfileController.$inject = [
-  '$routeParams', 'UserService', 'AuthService', 'Session',
+  '$routeParams', 'UserService', 'ProjectService', 'AuthService', 'Session'
 ];
 
 /**
@@ -16,14 +16,32 @@ ProfileController.$inject = [
 * @class ProfileController
 * @constructor
 */
-function ProfileController($routeParams, UserService, AuthService, Session) {
+function ProfileController($routeParams, UserService, ProjectService, AuthService, Session) {
   var vm = this;
 
+  // get the user information
   vm.user = UserService.read($routeParams.id);
-  vm.edittable = function () { return vm.user.id === Session.id; };
+  vm.projects = ProjectService.load();
 
-  console.log(vm.user);
+  // edit controls
+  vm.edit = edit;
+  vm.editing = false;
+  vm.editable = editable;
 
   /* --------------------------------------------------------------------------- */
 
+  /* A user profile is editable if:
+   *  1) the current user is a super user or
+   *  2) the current user is viewing their own profile.
+   */
+  function editable() {
+    return vm.user.id === Session.id ||
+      vm.user.role === 'superuser';
+  }
+
+  
+  /* Toggle editing on the user profile */
+  function edit() {
+    vm.editing = true;
+  }
 }

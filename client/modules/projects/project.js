@@ -23,9 +23,6 @@ function ColorService($resource) {
 function ProjectController($window, ProjectService, ColorService) {
   var vm = this;
 
-  // Load the projects data
-  ProjectService.load();
-
   // manage tab states
   vm.states = { 'overview' : true, 'add' : false, 'edit' : false };
   vm.goTo = goTo;
