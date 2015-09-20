@@ -1,6 +1,9 @@
 <!doctype html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <base href="/">
+
   <title>Wenge: Expedited Expenses</title>
 
   <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
@@ -10,14 +13,13 @@
   <link rel='stylesheet' href='css/octicons.css'>
   <link rel='stylesheet' href='css/site.css'>
 </head>
-
 <body ng-app='wenge' ng-cloak>
 
   <nav class='navbar navbar-fixed-top' ng-controller='NavigationController as NavCtrl' class="hidden-print">
     <div class='container-fluid' style='margin: 0 2em;' ng-show="NavCtrl.user.id">
       <div class='collapse navbar-collapse'>
         <div class='navbar-header'>
-          <a class='navbar-brand' href='#/' style="padding:10px">
+          <a class='navbar-brand' href='/' style="padding:10px">
             <img alt="Wenge Logo" src="assets/logo.jpg" width="40px" height="40px">
           </a>
         </div>
@@ -30,7 +32,7 @@
             </a>
             <ul class="dropdown-menu">
               <li ng-repeat="item in NavCtrl.links">
-                <a ng-href="#/{{ item.url }}">
+                <a ng-href="/{{ item.url }}">
                   <i class="octicon octicon-{{ item.icon }}"></i>
                   {{ item.title }}
                 </a>

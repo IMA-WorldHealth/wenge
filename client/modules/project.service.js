@@ -1,59 +1,58 @@
 angular.module('wenge')
-.service('ProjectService', ['$resource', ProjectService]);
+.service('ProjectService', ProjectService);
+
+ProjectService.$inject = ['$resource'];
 
 // controls CRUD on projects
 function ProjectService($resource) {
-  var vm = this;
+  var service = this;
 
   // the REST datasource
-  vm.datasource = $resource('/projects/:id', { id : '@id' }, { 'update' : { 'method' : 'PUT' }});
-  vm.load = load;
-
-  // get a new form
-  vm.new = function () { return new vm.datasource(); };
+  service.datasource = $resource('/projects/:id', { id : '@id' }, { 'update' : { 'method' : 'PUT' }});
 
   // CRUD operatins
-  vm.add = add;
-  vm.remove = remove;
-  vm.edit = edit;
-  vm.get = get;
+  service.create = create;
+  service.read   = read;
+  service.update = update;
+  service.delete = del;
+  service.new = function () { return new service.datasource(); };
 
   /* ------------------------------------------------------------------------ */
 
-  // refresh the dataset
-  function load() {
-    vm.projects = vm.datasource.query();
-    return vm.projects;
+  // overloaded read operation
+  // if an ID is supplied, read a single value from the database.  Otherwise,
+  // fetch the entire table into client-side memory.
+  function read(id) {
+    if (id) {
+      return service.datasource.get({ id : id });
+    }
+    service.projects = service.datasource.query();
+    return service.projects;
   }
 
-  // add a new project, updating the project collection
+  // create a new project, updating the project collection
   // when the function completes
-  function add(project) {
+  function create(project) {
     return project.$save(function (data) {
 
       // push the new project onto the stack
-      vm.projects.push(data);
+      service.projects.push(data);
     });
   }
 
-  // fetch a single project
-  function get(id) {
-    return vm.datasource.get({ id : id });
-  }
-
-  // edit an existing project
-  function edit(project) {
+  // update an existing project
+  function update(project) {
     return project.$update(project);
   }
 
   // DELETE a project on the server and remove
   // the project reference from the projects array
-  function remove(project) {
+  function del(project) {
     return project.$remove(function () {
-      var idx = vm.projects.indexOf(project);
-      vm.projects.splice(idx, 1);
+      var idx = service.projects.indexOf(project);
+      service.projects.splice(idx, 1);
     });
   }
 
-  return vm;
+  return service;
 }

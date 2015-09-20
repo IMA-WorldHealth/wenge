@@ -1,55 +1,37 @@
 angular.module('wenge')
-.service('ColorService', ['$resource', ColorService])
-.controller('ProjectController', ['$window', 'ProjectService', 'ColorService', ProjectController]);
+.controller('ProjectController', ProjectController);
 
-// Loads available colors for projects
-function ColorService($resource) {
-  var vm = this;
-
-  vm.datasource = $resource('/colors/:id');
-  vm.load = load;
-
-  // refresh the dataset
-  function load() {
-    vm.colors = vm.datasource.query();
-    return vm.colors;
-  }
-
-  return vm;
-}
-
+ProjectController.$inject = [
+  '$window', 'ProjectService', 'ColorService', 'ProjectStateService'
+];
 
 // View-Model for the project page.
-function ProjectController($window, ProjectService, ColorService) {
+function ProjectController($window, Projects, Colors, State) {
   var vm = this;
 
-  // manage tab states
-  vm.states = { 'overview' : true, 'add' : false, 'edit' : false };
-  vm.goTo = goTo;
-
-  // bind the datasets
-  vm.projects = ProjectService.load();
-  vm.colors = ColorService.load();
+  // bind services to the view, load datasets
+  vm.projects = Projects.read();
+  vm.colors   = Colors.read();
+  vm.state    = State;
 
   // utility functions
   vm.print = function () { $window.print(); };
   vm.download = angular.noop;
   vm.selectColor = selectColor;
-  vm.refresh = ProjectService.load;
+  vm.refresh = Projects.load;
 
   // edit/add/remove projects
-  vm.initAdd = initAdd;
-  vm.saveAdd = saveAdd;
+  vm.initAdd  = initAdd;
+  vm.saveAdd  = saveAdd;
   vm.initEdit = initEdit;
   vm.saveEdit = saveEdit;
   vm.removeProject = removeProject;
 
   /* ------------------------------------------------------------------------ */
 
-  // navigate to tab by id, setting it as active
-  function goTo(state) {
-    for (var s in vm.states) { vm.states[s] = false; }
-    vm.states[state] = true;
+  // error handler
+  function handler(error) {
+    State.message('danger', 'Welp! An error occured. Try again?');
   }
 
   // select a color for the slave project
@@ -60,23 +42,27 @@ function ProjectController($window, ProjectService, ColorService) {
 
   // initialize the add form
   function initAdd() {
-    vm.slave = new ProjectService.datasource();
-    vm.goTo('add');
+    vm.slave = Projects.new();
+    State.go('create');
   }
 
-  // save the new form
+  // save the new project
   function saveAdd(invalid, project) {
+
+    // make sure form is valid
     if (invalid) { return; }
-    ProjectService.add(project)
+
+    Projects.create(project)
     .then(function () {
-      vm.goTo('overview');
+      State.message('success', 'Successfully created "' + project.code + '"');
+      State.go('overview');
     });
   }
 
   // initialize project editing
   function initEdit(project) {
 
-    // go to the editting mode on this project
+    // go to the editing mode on this project
     vm.slave = project;
 
     // get the color name
@@ -86,21 +72,30 @@ function ProjectController($window, ProjectService, ColorService) {
       }
     });
 
-    // go to the editting tab
-    vm.goTo('edit');
+    // go to the editing tab
+    State.go('update');
   }
 
-  // save the editted project
+  // save the edited project
   function saveEdit(invalid, project) {
+
+    // make sure form passes
     if (invalid) { return; }
-    ProjectService.edit(project)
-    .then(function () {
-      vm.goTo('overview');
+
+    Projects.update(project)
+    .then(function (project) {
+      State.message('info', 'Successfully updated "' + project.code + '".');
+      State.go('overview');
+    })
+    .catch(function (error) {
     });
   }
 
   // delete a project
   function removeProject(project) {
-    ProjectService.remove(project);
+    Projects.delete(project)
+    .then(function () {
+      State.message('info', 'You successfully deleted "' + project.code + '".');
+    });
   }
 }

@@ -1,5 +1,5 @@
 angular.module('wenge', ['ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUpload'])
-.config(RouteConfig)
+.config(RouterConfig)
 .factory('AuthInterceptor', AuthInterceptor)
 .config(InterceptorConfig)
 .run(Application);
@@ -38,10 +38,10 @@ function AuthInterceptor($location, $q, Session) {
 
 /* --------------------------------------------------------- */
 
-RouteConfig.$inject = ['$routeProvider'];
+RouterConfig.$inject = ['$routeProvider', '$locationProvider'];
 
 // configure routes
-function RouteConfig($routeProvider) {
+function RouterConfig($routeProvider, $locationProvider) {
   $routeProvider
   .when('/', {
     controller : 'MainController as MainCtrl',
@@ -80,6 +80,9 @@ function RouteConfig($routeProvider) {
     templateUrl : 'modules/projects/project.html'
   })
   .otherwise('/');
+
+  // once API is migrated, undo this comment
+  // $locationProvider.html5Mode(true);
 }
 
 /* --------------------------------------------------------- */

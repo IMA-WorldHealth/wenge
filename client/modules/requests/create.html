@@ -21,7 +21,7 @@
     </div>
 
     <div class="alert alert-success" ng-if="RequestCtrl.posted">
-      <b><i class="octicon octicon-check"></i> Success!</b>  You created a new AFE.  <a ng-href="#/requests/{{ RequestCtrl.posted.id}}">Click here for a printable version.</a>
+      <b><i class="octicon octicon-check"></i> Success!</b>  You created a new AFE.  <a ng-href="/requests/{{ RequestCtrl.posted.id}}">Click here for a printable version.</a>
     </div>
 
     <div class="form-group" ng-class="{ 'has-error' : RequestForm.$submitted && !RequestCtrl.slave.project }">

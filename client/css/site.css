@@ -50,6 +50,25 @@ input[type=number] {
   margin-bottom : 1em;
 }
 
+.table-scrollable {
+  /* disallow bootstrap's spacing */
+  margin-bottom : 0;
+}
+
+.table-scrollable thead tr {
+  /* fallback */
+  width: 97%;
+
+  /* minus scroll bar width */
+  width: -webkit-calc(100% - 16px);
+  width:    -moz-calc(100% - 16px);
+  width:         calc(100% - 16px);
+}
+
+.table-scrollable thead tr th {
+  border-bottom : none;
+}
+
 @media print {
   a:before,
   a[href]:after {

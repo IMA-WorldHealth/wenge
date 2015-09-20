@@ -21,7 +21,7 @@ function ProfileController($routeParams, UserService, ProjectService, AuthServic
 
   // get the user information
   vm.user = UserService.read($routeParams.id);
-  vm.projects = ProjectService.load();
+  vm.projects = ProjectService.read();
 
   // edit controls
   vm.edit = edit;

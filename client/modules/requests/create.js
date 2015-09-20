@@ -5,7 +5,7 @@ function RequestController($scope, $location, AFEService, ProjectService, Sessio
   var vm = this;
 
   // load the project data
-  ProjectService.load();
+  ProjectService.read();
 
   // bind service data
   vm.user = Session;
