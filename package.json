@@ -15,17 +15,19 @@
   "author": "jniles",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.13.2",
+    "body-parser": "^1.14.0",
     "compression": "^1.5.1",
     "express": "^4.13.1",
     "express-session": "^1.11.3",
+    "express-subdomain": "^1.0.3",
     "mailgun-js": "^0.7.1",
     "morgan": "^1.6.1",
-    "multer": "^1.0.3",
+    "multer": "^1.0.5",
     "node-uuid": "^1.4.3",
     "q": "^1.4.1",
-    "session-file-store": "0.0.18",
-    "sqlite3": "^3.0.9"
+    "session-file-store": "^0.0.20",
+    "sqlite3": "^3.0.9",
+    "winston": "^1.0.1"
   },
   "devDependencies": {
     "gulp": "^3.9.0",

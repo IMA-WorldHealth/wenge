@@ -1,9 +1,20 @@
-// project controller
+/**
+* Projects Controller
+*
+* This is responsible for all CRUD routes concerning a project.
+*/
 
 var db = require('../lib/db');
 
+// module exports
+exports.getProjects    = getProjects;
+exports.getProjectById = getProjectById;
+exports.createProject  = createProject;
+exports.updateProject  = updateProject;
+exports.deleteProject  = deleteProject;
+
 // GET /projects
-exports.getProjects = function (req, res, next) {
+function getProjects(req, res, next) {
   'use strict';
 
   db.async.all('SELECT id, code, color FROM project;')
@@ -12,10 +23,10 @@ exports.getProjects = function (req, res, next) {
   })
   .catch(next)
   .done();
-};
+}
 
 // GET projects/:id
-exports.getProjectById = function (req, res, next) {
+function getProjectById(req, res, next) {
   'use strict';
 
   var sql =
@@ -31,10 +42,10 @@ exports.getProjectById = function (req, res, next) {
   })
   .catch(next)
   .done();
-};
+}
 
 // POST /projects
-exports.createProject = function (req, res, next) {
+function createProject(req, res, next) {
   'use strict';
 
   var sql, data = req.body,
@@ -51,10 +62,10 @@ exports.createProject = function (req, res, next) {
     data.id = this.lastID;
     res.status(200).json(data);
   });
-};
+}
 
 // PUT /projects/:id
-exports.editProject = function (req, res, next) {
+function updateProject(req, res, next) {
   'use strict';
 
   var sql, data = req.body;
@@ -67,10 +78,10 @@ exports.editProject = function (req, res, next) {
   })
   .catch(next)
   .done();
-};
+}
 
 // DELETE /projects/:id
-exports.removeProject = function (req, res, next) {
+function deleteProject(req, res, next) {
   'use strict';
 
   var sql =
@@ -82,16 +93,4 @@ exports.removeProject = function (req, res, next) {
   })
   .catch(next)
   .done();
-};
-
-// GET /colors
-exports.getColors = function (req, res, next) {
-  'use strict';
-
-  db.async.all('SELECT code, name FROM color;')
-  .then(function (rows) {
-    res.status(200).json(rows);
-  })
-  .catch(next)
-  .done();
-};
+}

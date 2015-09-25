@@ -1,116 +1,63 @@
+/**
+* Database Connector
+*
+* If the databse does not exist, it wil be build
+*/
 var sqlite3 = require('sqlite3').verbose(),
-    q       = require('q');
+    q       = require('q'),
+    fs      = require('fs'),
+    db;
 
-var db = new sqlite3.Database('./data/database.db');
+// export module routes
+module.exports = setup;
 
-// create asynchronous versions of db functions
-db.async = {};
-db.async.run = q.nbind(db.run, db);
-db.async.get = q.nbind(db.get, db);
-db.async.all = q.nbind(db.all, db);
+// setup function
+function setup(cfg) {
+ 'use strict';
 
-// build the database if it doesn't exist
-db.serialize(function () {
+  // if the databse is already defined, simply return it
+  if (!cfg && db) { return db; }
 
-  // build the colors table
-  db.run(
-    'CREATE TABLE IF NOT EXISTS color (code TEXT, name TEXT, PRIMARY KEY (code));'
-  );
+  // connect to the database
+  db = new sqlite3.Database(cfg.dbPath);
 
-  // build the tip table (adds useful tips to the home screen)
-  db.run(
-    'CREATE TABLE IF NOT EXISTS tip (id INTEGER PRIMARY KEY, body TEXT);'
-  );
+  // create asynchronous versions of db functions
+  db.async = {};
+  db.async.run = q.nbind(db.run, db);
+  db.async.get = q.nbind(db.get, db);
+  db.async.all = q.nbind(db.all, db);
 
-  // build the role table
-  db.run(
-    'CREATE TABLE IF NOT EXISTS role (' +
-      'id INTEGER PRIMARY KEY, label TEXT ' +
-    ');'
-  );
+  // Test to see if db exists.  If not, build it!
+  try {
+    fs.statSync(cfg.dbPath);
+  } catch (e) {
+    buildSchema(db, cfg.dbSchema);
+  }
 
-  // build the user table
-  // this sets the default avatar, etc
-  db.run(
-    'CREATE TABLE IF NOT EXISTS user (' +
-      'id INTEGER PRIMARY KEY, username TEXT, displayname TEXT, ' +
-      'email TEXT, password TEXT, roleid INTEGER, lastactive DATE, ' +
-      'avatar TEXT NOT NULL DEFAULT \'/assets/avatar.png\', ' +
-      'telephone INTEGER, hidden BOOLEAN, projectid INTEGER, ' +
-      'FOREIGN KEY (projectid) REFERENCES project(id), ' +
-      'FOREIGN KEY (roleid) REFERENCES role(id) ' +
-    ');'
-  );
+  return db;
+}
 
-  // build the recover table (for account recovery)
-  db.run(
-    'CREATE TABLE IF NOT EXISTS recover (' +
-      'id INTEGER PRIMARY KEY, userid INTEGER, hash TEXT, expiration DATE, ' +
-      'FOREIGN KEY (userid) REFERENCES user(id)' +
-    ');'
-  );
+// builds the database schema from a file if it does not exist
+function buildSchema(db, schemaPath) {
+  'use strict';
 
-  // build the signature type table
-  db.run(
-    'CREATE TABLE IF NOT EXISTS signaturetype (' +
-      'id INTEGER PRIMARY KEY, type TEXT' +
-    ');'
-  );
-
-  // build the signature table
-  db.run(
-    'CREATE TABLE IF NOT EXISTS signature (' +
-      'id INTEGER PRIMARY KEY, level INTEGER, typeid INTEGER, userid INTEGER, ' +
-      'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, ' +
-      'active BOOLEAN, FOREIGN KEY (userid) REFERENCES user(id), ' +
-      'FOREIGN KEY (typeid) REFERENCES signaturetype(id) ' +
-    ');'
-  );
-
-  // build the project table
-  db.run(
-    'CREATE TABLE IF NOT EXISTS project (' +
-      'id INTEGER PRIMARY KEY, code TEXT, color TEXT, createdby INTEGER, ' +
-      'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, ' +
-      'FOREIGN KEY (createdby) REFERENCES user(id) ' +
-    ');'
-  );
-
-  // build the subproject table
-  db.run(
-    'CREATE TABLE IF NOT EXISTS subproject (' +
-      'id INTEGER PRIMARY KEY, projectid INTEGER, label TEXT, ' +
-      'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, ' +
-      'FOREIGN KEY (projectid) REFERENCES project(id) ' +
-    ');'
-  );
-
-  // build the request table
-  db.run(
-    'CREATE TABLE IF NOT EXISTS request (' +
-      'id INTEGER PRIMARY KEY, projectid INTEGER, date TEXT, beneficiary TEXT, explanation TEXT, ' +
-      'signatureA, signatureB, review TEXT, status TEXT, totalamount REAL, createdby INTEGER, ' +
-      'FOREIGN KEY (projectid) REFERENCES project(id), ' +
-      'FOREIGN KEY (createdby) REFERENCES user(id)' +
-    ');'
-  );
-
-  // build the request detail table
-  db.run(
-    'CREATE TABLE IF NOT EXISTS requestdetail (' +
-      'id INTEGER PRIMARY KEY, requestid INTEGER, item TEXT, budgetcode REAL, ' +
-      'quantity REAL, unit TEXT, unitprice REAL, totalprice REAL, ' +
-      'FOREIGN KEY (requestid) REFERENCES request(id)' +
-    ');'
-  );
-
-  // build the attachment table (for static attachments to requests)
-  db.run(
-    'CREATE TABLE IF NOT EXISTS attachment (' +
-      'id INTEGER PRIMARY KEY, requestid INTEGER, reference TEXT, ' +
-      'FOREIGN KEY (requestid) REFERENCES request(id)' +
-    ');'
-  );
-});
-
-module.exports = db;
+  q.nfcall(fs.readFile, schemaPath, 'utf-8')
+  .then(function (contents) {
+     
+    // SQL statements are split up by two new line characters.  We can split on
+    // these and then map each statement to a databse command.
+    return q.all(
+      contents.split('\n\n')
+      .map(function (line) {
+        return db.run(line.trim());
+      })
+    );
+  })
+  .then(function () {
+    console.log('[DB] [INFO] Finished building database.');
+  })
+  .catch(function (err) {
+    console.log('[DB] [ERROR] ', err);
+  })
+  .done();
+}

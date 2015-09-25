@@ -81,7 +81,7 @@ function RouterConfig($routeProvider, $locationProvider) {
   })
   .otherwise('/');
 
-  // once API is migrated, undo this comment
+  // TODO -- make this work
   // $locationProvider.html5Mode(true);
 }
 

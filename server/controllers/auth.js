@@ -1,10 +1,18 @@
 var db = require('../lib/db'),
     crypto =  require('crypto');
 
+// export module routes
+exports.login = login;
+exports.logout = logout;
+exports.gateway = gateway;
+exports.role = role;
+
 // POST /login
 // Logs a user into the system
-exports.login = function (req, res, next) {
+function login(req, res, next) {
   'use strict';
+
+  console.log('dirname:', __dirname);
 
   var sql, shasum;
 
@@ -34,18 +42,18 @@ exports.login = function (req, res, next) {
   })
   .catch(next)
   .done();
-};
+}
 
 // GET /logout
 // log a user out
-exports.logout = function (req, res, next) {
+function logout(req, res, next) {
   req.session.destroy(function () {
     res.status(200).send();
   });
-};
+}
 
 // ensure a user session exists (middleware)
-exports.gateway = function (req, res, next) {
+function gateway(req, res, next) {
 
   // if a session exists, allow passage
   if (req.session.user) { return next(); }
@@ -57,11 +65,11 @@ exports.gateway = function (req, res, next) {
     code : 'ERR_NO_SESSION',
     reason : 'You are not signed into the server.'
   });
-};
+}
 
 // allow users based on role
-exports.role = function (role) {
+function role(test) {
   return function (req, res, next) {
-    return req.session.role === role ? next() : res.status(403).json({ code : 'ERR_NOT_AUTHORIZED' });
+    return (req.session.role === test) ? next() : res.status(403).json({ code : 'ERR_NOT_AUTHORIZED' });
   };
-};
+}

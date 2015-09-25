@@ -1,20 +1,31 @@
+/**
+* Wenge Server
+*
+* This is the server for the wenge application.
+*/
+
+// import dependencies
 var express     = require('express'),
+    path        = require('path'),
     session     = require('express-session'),
     compression = require('compression'),
     bodyParser  = require('body-parser'),
     morgan      = require('morgan'),
     multer      = require('multer'),
-    attachment  = multer({ dest : 'data/attachments/' }),
+    attachments = multer({ dest : './attachments/' }),
     FileStore   = require('session-file-store')(session),
     app         = express();
 
-var PORT = 4321;
+var config   = require(path.join(__dirname, '../config'));
 
-var db = require('./lib/db'),
-    auth = require('./controllers/auth'),
-    users = require('./controllers/users'),
+var db       = require('./lib/db')(config),
+    auth     = require('./controllers/auth'),
+    users    = require('./controllers/users'),
     requests = require('./controllers/requests'),
-    projects = require('./controllers/projects');
+    projects = require('./controllers/projects'),
+    colors   = require('./controllers/colors');
+
+app.set('appname', config.appname);
 
 // compress (gzip) all requests
 app.use(compression());
@@ -31,12 +42,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // store user sessions in a file store for later lookups
 app.use(session({
-  store : new FileStore(),
+  store  : new FileStore({ reapInterval : -1 }),
   secret : 'x0r world HeaLth',
-  saveUninitialized : false,
   resave : false,
-  unset  : 'destroy',
-  //cookie            : { secure : true }
+  saveUninitialized : false,
+  unset  : 'destroy'
 }));
 
 // First route exposed is /login so that our user can
@@ -50,7 +60,7 @@ app.post('/users/accountrecovery', users.userAccountRecovery);
 app.use(auth.gateway);
 
 // misc
-app.get('/colors', projects.getColors);
+app.get('/colors', colors.getColors);
 
 // user controller
 app.get('/users/:id', users.getUserById);
@@ -64,9 +74,10 @@ app.get('/requests/:id', requests.getRequestsById);
 app.put('/requests/:id', requests.updateRequests);
 app.delete('/requests/:id', requests.deleteRequests);
 
+// TODO
 // handle attachments
 // mas number of attachments is 5
-app.post('/upload', attachment.array('attachment', 5), function (req, res, next) {
+app.post('/upload', attachments.array('attachment', 5), function (req, res, next) {
   'use strict';
 
   res.status(200).json({
@@ -78,8 +89,9 @@ app.post('/upload', attachment.array('attachment', 5), function (req, res, next)
 app.get('/projects', projects.getProjects);
 app.get('/projects/:id', projects.getProjectById);
 app.post('/projects', projects.createProject);
-app.put('/projects/:id', projects.editProject);
-app.delete('/projects/:id', projects.removeProject);
+app.put('/projects/:id', projects.updateProject);
+app.delete('/projects/:id', projects.deleteProject);
+
 
 // error handler
 app.use(function (err, res, req, next) {
@@ -87,10 +99,10 @@ app.use(function (err, res, req, next) {
   res.status(500).send('Something broke!');
 });
 
-app.listen(PORT, function () {
-  console.log('Server is listening on port', PORT);
+app.listen(config.port, function () {
+  console.log('[APP] [INFO] Server is listening on port', config.port);
 });
 
 process.on('uncaughtException', function (err) {
-  console.error('Error:', err.stack);
+  console.error('[APP] [ERROR] ', err.stack);
 });
