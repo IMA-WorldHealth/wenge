@@ -4,11 +4,11 @@
     <div class="form-group">
       <div class="row">
         <div class="col-sm-4">
-          <img ng-src="{{ ProfileCtrl.user.avatar }}" class="img-thumbnail pull-right" alt="avatar" width="200" height="200"></img>
+          <img ng-src="{{ DetailsCtrl.user.avatar }}" class="img-thumbnail pull-right" alt="avatar" width="200" height="200"></img>
         </div>
         <div class="col-sm-8">
-          <h4>{{ ProfileCtrl.user.displayname }}</h4>
-          <button class="btn btn-sm btn-default" ng-if="ProfileCtrl.editable()">
+          <h4>{{ DetailsCtrl.user.displayname }}</h4>
+          <button class="btn btn-sm btn-default" ng-if="DetailsCtrl.editable()">
             Change your Avatar
           </button>
         </div>
@@ -18,16 +18,16 @@
     <div class="form-group">
       <label class="control-label col-sm-2">Display Name</label>
       <div class="col-xs-3">
-        <input type="text" class="solid-input" ng-model="ProfileCtrl.user.displayname" ng-if="ProfileCtrl.editing">
-        <p class="form-control-static">{{ ProfileCtrl.user.displayname }}</p>
+        <input type="text" class="solid-input" ng-model="DetailsCtrl.user.displayname" ng-if="DetailsCtrl.editing">
+        <p class="form-control-static">{{ DetailsCtrl.user.displayname }}</p>
       </div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2">Username</label>
       <div class="col-xs-3">
-        <input type="text" class="solid-input" ng-model="ProfileCtrl.user.username"  ng-if="ProfileCtrl.editing">
-        <p class="form-control-static">{{ ProfileCtrl.user.username }}</p>
+        <input type="text" class="solid-input" ng-model="DetailsCtrl.user.username"  ng-if="DetailsCtrl.editing">
+        <p class="form-control-static">{{ DetailsCtrl.user.username }}</p>
       </div>
     </div>
 
@@ -35,8 +35,8 @@
       <label class="control-label col-sm-2">Default Project</label>
       <div class="col-xs-3">
         <select class="form-control" ng-options="">
-        <input type="text" class="solid-input" ng-model="ProfileCtrl.user.username"  ng-if="ProfileCtrl.editing">
-        <p class="form-control-static">{{ ProfileCtrl.user.username }}</p>
+        <input type="text" class="solid-input" ng-model="DetailsCtrl.user.username"  ng-if="DetailsCtrl.editing">
+        <p class="form-control-static">{{ DetailsCtrl.user.username }}</p>
       </div>
     </div>
 
@@ -45,7 +45,7 @@
       <label class="col-sm-2 control-label">Project</label>
       <div class="col-sm-3" dropdown keyboard-nav>
         <a class="btn btn-default dropdown dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" ng-class="{ 'btn-danger' : RequestForm.$submitted && !RequestCtrl.slave.project }" dropdown-toggle>
-          <span class="dot" ng-style="{ 'background-color' : ProfileCtrl.user.project.color }" ng-if="RequestCtrl.slave.project"></span>
+          <span class="dot" ng-style="{ 'background-color' : DetailsCtrl.user.project.color }" ng-if="RequestCtrl.slave.project"></span>
           {{ RequestCtrl.slave.project.code || "Select a Project" }}
           <i class="octicon octicon-chevron-down"></i>
         </a>
@@ -62,19 +62,19 @@
     <div class="form-group">
       <label class="control-label col-sm-2">Address</label>
       <div class="col-xs-6">
-        <input type="text" class="solid-input" ng-model="ProfileCtrl.user.address" ng-if="ProfileCtrl.editing">
-        <p class="form-control-static" ng-if="!ProfileCtrl.editing">{{ ProfileCtrl.user.displayname }}</p>
+        <input type="text" class="solid-input" ng-model="DetailsCtrl.user.address" ng-if="DetailsCtrl.editing">
+        <p class="form-control-static" ng-if="!DetailsCtrl.editing">{{ DetailsCtrl.user.displayname }}</p>
       </div>
     </div>
 
-    <div class="checkbox col-sm-offset-2" ng-if="ProfileCtrl.editing">
+    <div class="checkbox col-sm-offset-2" ng-if="DetailsCtrl.editing">
       <label>
-        <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="ProfileCtrl.user.hidden"> Hidden
+        <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="DetailsCtrl.user.hidden"> Hidden
       </label>
     </div>
 
-    <div class="form-group" ng-if="ProfileCtrl.editable() && !ProfileCtrl.editing">
-      <button class="btn btn-sm btn-primary" ng-click="ProfileCtrl.edit()">Edit User Details</button>
+    <div class="form-group" ng-if="DetailsCtrl.editable() && !DetailsCtrl.editing">
+      <button class="btn btn-sm btn-primary" ng-click="DetailsCtrl.edit()">Edit User Details</button>
     </div>
   </form>
 

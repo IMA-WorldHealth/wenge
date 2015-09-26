@@ -1,7 +1,7 @@
 angular.module('wenge')
-.controller('ProfileController', ProfileController);
+.controller('UserDetailsController', UserDetailsController);
 
-ProfileController.$inject = [
+UserDetailsController.$inject = [
   '$routeParams', 'UserService', 'ProjectService', 'AuthService', 'Session'
 ];
 
@@ -13,10 +13,10 @@ ProfileController.$inject = [
 * If the user is viewing another profile that has the database flag "hidden"
 * the module will hide all the user's information behind <i>hidden</i> tags.
 *
-* @class ProfileController
+* @class UserDetailsController
 * @constructor
 */
-function ProfileController($routeParams, UserService, ProjectService, AuthService, Session) {
+function UserDetailsController($routeParams, UserService, ProjectService, AuthService, Session) {
   var vm = this;
 
   // get the user information
@@ -39,7 +39,6 @@ function ProfileController($routeParams, UserService, ProjectService, AuthServic
       vm.user.role === 'superuser';
   }
 
-  
   /* Toggle editing on the user profile */
   function edit() {
     vm.editing = true;

@@ -4,48 +4,67 @@
 * This is responsible for all CRUD routes concerning a project.
 */
 
-var db = require('../lib/db');
+var db          = require('../lib/db').db,
+    tools       = require('../lib/tools'),
+    subprojects = require('./subprojects');
 
 // module exports
-exports.getProjects    = getProjects;
-exports.getProjectById = getProjectById;
-exports.createProject  = createProject;
-exports.updateProject  = updateProject;
-exports.deleteProject  = deleteProject;
+exports.create = create;
+exports.read   = read;
+exports.update = update;
+exports.delete = del;
+exports.subprojects = {
+  create : subprojects.create,
+  read   : subprojects.read,
+  update : subprojects.update,
+  delete : subprojects.delete
+};
 
-// GET /projects
-function getProjects(req, res, next) {
+// GET projects/:id?
+function read(req, res, next) {
   'use strict';
 
-  db.async.all('SELECT id, code, color FROM project;')
+  var sql,
+      hasId = (req.params.id !== undefined);
+
+  // if we have a project id, load the project and subprojects
+  if (hasId) {
+    sql =
+      'SELECT p.id, p.code, p.color, s.id AS subid, s.label ' +
+      'FROM project AS p JOIN subproject AS s ON ' +
+        'p.id = s.projectid ' +
+      'WHERE p.id = ?';
+
+  // if we do no project id, load the project and subprojects
+  } else {
+    sql =
+      'SELECT p.id, p.code, p.color, COUNT(s.id) AS subprojects ' +
+      'FROM project AS p JOIN subproject AS s ON ' +
+        'p.id = s.projectid ' +
+      'GROUP BY p.id;';
+  }
+
+  db.async.all(sql, req.params.id)
   .then(function (rows) {
+
+    if (hasId && !rows.length) {
+      return res.status(404).json({});
+    }
+
+    // collect the values into a single JSON object
+    if (hasId) {
+      var project = tools.collect(rows, 'subproject', ['subid', 'label']);
+      return res.status(200).json(project);
+    }
+
     res.status(200).json(rows);
   })
   .catch(next)
   .done();
 }
 
-// GET projects/:id
-function getProjectById(req, res, next) {
-  'use strict';
-
-  var sql =
-    'SELECT p.id, p.code, p.color, s.id AS subid, s.label ' +
-    'FROM project AS p JOIN subproject AS s ON p.id = s.projectid ' +
-    'WHERE p.id = ?';
-
-  // TODO - return a nice tree structure in this format:
-  // { id : xxx, code : xxx, color : xxx, subprojects : [ { id: xxx, label : xxx }, {..}] }
-  db.async.get(sql, req.params.id)
-  .then(function (row) {
-    res.status(200).json(row);
-  })
-  .catch(next)
-  .done();
-}
-
 // POST /projects
-function createProject(req, res, next) {
+function create(req, res, next) {
   'use strict';
 
   var sql, data = req.body,
@@ -53,35 +72,38 @@ function createProject(req, res, next) {
 
   sql = db.prepare('INSERT INTO project (code, color, createdby) VALUES (?,?,?)');
 
+  // TODO -- use async
   sql.run(data.code, data.color, userid, function (err) {
-   
+
     // server error
     if (err) { return next(err); }
 
-    // send the new project back to the client 
+    // send the new project back to the client
     data.id = this.lastID;
     res.status(200).json(data);
   });
 }
 
 // PUT /projects/:id
-function updateProject(req, res, next) {
+function update(req, res, next) {
   'use strict';
 
-  var sql, data = req.body;
+  var sql,
+      data = req.body;
 
-  sql = 'UPDATE project SET code = ?, color = ? WHERE id = ?';
+  sql =
+    'UPDATE project SET code = ?, color = ? WHERE id = ?';
 
   db.async.run(sql, data.code, data.color, req.params.id)
   .then(function () {
-    res.status(200).json(data);
-  })
+    res.status(200).send(this.changes);
+  }.bind(db))
   .catch(next)
   .done();
 }
 
 // DELETE /projects/:id
-function deleteProject(req, res, next) {
+function del(req, res, next) {
   'use strict';
 
   var sql =
@@ -89,8 +111,9 @@ function deleteProject(req, res, next) {
 
   db.async.run(sql, req.params.id)
   .then(function () {
-    res.status(200).json();
+    res.status(200).send(this.changes);
   })
   .catch(next)
   .done();
 }
+

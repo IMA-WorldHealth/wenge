@@ -5,7 +5,7 @@
 * in the future.
 */
 
-var db = require('../lib/db');
+var db = require('../lib/db').db;
 
 // module exports
 exports.getColors = getColors;

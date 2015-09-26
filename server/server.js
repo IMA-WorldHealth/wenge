@@ -25,6 +25,7 @@ var auth     = require('./controllers/auth'),
     users    = require('./controllers/users'),
     requests = require('./controllers/requests'),
     projects = require('./controllers/projects'),
+    accounts = require('./controllers/accounts'),
     colors   = require('./controllers/colors');
 
 // middleware
@@ -34,6 +35,7 @@ app.use(express.static('client'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// session management
 app.use(session({
   store  : new FileStore({ reapInterval : -1 }),
   secret : 'x0r world HeaLth',
@@ -50,21 +52,19 @@ app.use(session({
 app.post('/login', auth.login);
 app.get('/logout', auth.logout);
 
-// TODO make this a separate controller
-app.post('/users/accountrecovery', users.accountRecovery);
+app.post('/accounts/recover', accounts.recover);
 
 // ensure that the user session is defined
 app.use(auth.gateway);
 
 /* "Private" Routes (require authentication) */
 
-app.get('/colors', colors.getColors);
 
 // user controller
-app.get('/users/:id', users.getUsersById);
-app.get('/users', users.getUsers);
-app.post('/users', users.signup);
-app.put('/users/:id', users.updateUsers);
+app.post('/users', users.create);
+app.get('/users/:id?', users.read);
+app.put('/users/:id', auth.owner('id'), users.update);
+app.delete('/users/:id', auth.owner('id'), users.delete);
 
 // request controller
 app.get('/requests', requests.getRequests);
@@ -72,6 +72,21 @@ app.post('/requests', requests.createRequests);
 app.get('/requests/:id', requests.getRequestsById);
 app.put('/requests/:id', requests.updateRequests);
 app.delete('/requests/:id', requests.deleteRequests);
+
+
+// projects controller
+app.post('/projects', projects.create);
+app.get('/projects/:id?', projects.read);
+app.put('/projects/:id', projects.update);
+app.delete('/projects/:id', projects.delete);
+
+app.post('/projects/:projectId/subprojects', projects.subprojects.create);
+app.get('/projects/:projectId/subprojects/:id?', projects.subprojects.read);
+app.put('/projects/:projectId/subprojects/:id', projects.subprojects.update);
+app.delete('/projects/:projectId/subprojects/:id', projects.subprojects.delete);
+
+
+app.get('/colors', colors.getColors);
 
 // TODO
 // handle attachments
@@ -84,18 +99,9 @@ app.post('/upload', attachments.array('attachment', 5), function (req, res, next
   });
 });
 
-
-// projects controller
-app.get('/projects', projects.getProjects);
-app.get('/projects/:id', projects.getProjectById);
-app.post('/projects', projects.createProject);
-app.put('/projects/:id', projects.updateProject);
-app.delete('/projects/:id', projects.deleteProject);
-
-
 // error handler
 app.use(function (err, res, req, next) {
-  console.error('An error occured:', err.stack);
+  console.error('[APP] [ERROR] HTTP Error:', err.stack);
   res.status(500).send('Something broke!');
 });
 
@@ -104,5 +110,5 @@ app.listen(config.port, function () {
 });
 
 process.on('uncaughtException', function (err) {
-  console.error('[APP] [ERROR] ', err.stack);
+  console.error('[APP] [ERROR] Uncaught Error:', err.stack);
 });

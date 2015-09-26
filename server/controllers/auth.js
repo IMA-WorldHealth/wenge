@@ -11,7 +11,7 @@ var db     = require('../lib/db').db,
 exports.login   = login;
 exports.logout  = logout;
 exports.gateway = gateway;
-exports.role    = role;
+exports.owner   = owner;
 
 // POST /login
 // Logs a user into the system
@@ -71,9 +71,17 @@ function gateway(req, res, next) {
   });
 }
 
-// allow users based on role
-function role(test) {
+// blocks a route if not owner or superuser
+function owner(id) {
   return function (req, res, next) {
-    return (req.session.role === test) ? next() : res.status(403).json({ code : 'ERR_NOT_AUTHORIZED' });
+
+    // check if authorized
+    var authorized = 
+      req.session.role !== 'superuser' &&
+      req.session.id === req.params[id];
+
+    return authorized ?
+        next() :
+        res.status(403).json({ code : 'ERR_NOT_AUTHORIZED' });
   };
 }
