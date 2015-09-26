@@ -1,7 +1,3 @@
--- NOTE
--- In order for this to automatically built by lib/db.js, there must be two new
--- lines between each SQL statement.
-
 CREATE TABLE IF NOT EXISTS color (code TEXT, name TEXT, PRIMARY KEY (code));
 
 
@@ -16,7 +12,7 @@ CREATE TABLE IF NOT EXISTS role (
 CREATE TABLE IF NOT EXISTS user (
   id INTEGER PRIMARY KEY, username TEXT, displayname TEXT,
   email TEXT, password TEXT, roleid INTEGER, lastactive DATE,
-  avatar TEXT NOT NULL DEFAULT \/assets/avatar.png\,
+  avatar TEXT NOT NULL DEFAULT '/assets/avatar.png',
   telephone INTEGER, hidden BOOLEAN, projectid INTEGER,
   FOREIGN KEY (projectid) REFERENCES project(id),
   FOREIGN KEY (roleid) REFERENCES role(id)

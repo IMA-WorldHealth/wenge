@@ -4,43 +4,36 @@
 * This is the server for the wenge application.
 */
 
+var path     = require('path'),
+    config   = require(path.join(__dirname, '../config'));
+
 // import dependencies
 var express     = require('express'),
-    path        = require('path'),
     session     = require('express-session'),
     compression = require('compression'),
     bodyParser  = require('body-parser'),
     morgan      = require('morgan'),
     multer      = require('multer'),
-    attachments = multer({ dest : './attachments/' }),
+    attachments = multer({ dest : './server/attachments/' }),
     FileStore   = require('session-file-store')(session),
     app         = express();
 
-var config   = require(path.join(__dirname, '../config'));
+// configure database
+require('./lib/db').setup(config);
 
-var db       = require('./lib/db')(config),
-    auth     = require('./controllers/auth'),
+var auth     = require('./controllers/auth'),
     users    = require('./controllers/users'),
     requests = require('./controllers/requests'),
     projects = require('./controllers/projects'),
     colors   = require('./controllers/colors');
 
-app.set('appname', config.appname);
-
-// compress (gzip) all requests
+// middleware
 app.use(compression());
-
-// log all incoming requests
 app.use(morgan('common'));
-
-// public folder
 app.use(express.static('client'));
-
-// use body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// store user sessions in a file store for later lookups
 app.use(session({
   store  : new FileStore({ reapInterval : -1 }),
   secret : 'x0r world HeaLth',
@@ -49,23 +42,29 @@ app.use(session({
   unset  : 'destroy'
 }));
 
-// First route exposed is /login so that our user can
-// initiate sessions and /logout in case something went
-// wrong.
+/* Server Routes */
+/* -------------------------------------------------------------------------- */
+
+/* "Public" Routes (not behind auth gateway) */
+
 app.post('/login', auth.login);
 app.get('/logout', auth.logout);
-app.post('/users/accountrecovery', users.userAccountRecovery);
+
+// TODO make this a separate controller
+app.post('/users/accountrecovery', users.accountRecovery);
 
 // ensure that the user session is defined
 app.use(auth.gateway);
 
-// misc
+/* "Private" Routes (require authentication) */
+
 app.get('/colors', colors.getColors);
 
 // user controller
-app.get('/users/:id', users.getUserById);
+app.get('/users/:id', users.getUsersById);
 app.get('/users', users.getUsers);
 app.post('/users', users.signup);
+app.put('/users/:id', users.updateUsers);
 
 // request controller
 app.get('/requests', requests.getRequests);
@@ -84,6 +83,7 @@ app.post('/upload', attachments.array('attachment', 5), function (req, res, next
     filenames : req.files.map(function (f) { return f.filename; })
   });
 });
+
 
 // projects controller
 app.get('/projects', projects.getProjects);

@@ -1,15 +1,25 @@
-var db = require('../lib/db'),
+var db = require('../lib/db').db,
     crypto = require('crypto');
 
+// exposed routes
+exports.signup = signup;
+exports.getUsers = getUsers;
+exports.getUsersById = getUsersById;
+exports.updateUsers = updateUsers;
+exports.accountRecovery = accountRecovery;
+
 // POST /users
-exports.signup = function (req, res, next) {
+function signup(req, res, next) {
   'use strict';
 
-  var sql = 'INSERT INTO user (username, email, password, roleid) VALUES (?, ?, ?, ?);';
-};
+  // TODO
+  var sql =
+    'INSERT INTO user (username, email, password, roleid) VALUES (?, ?, ?, ?);';
+
+}
 
 // GET /users
-exports.getUsers = function (req, res, next) {
+function getUsers(req, res, next) {
   'use strict';
 
   var sql =
@@ -23,10 +33,10 @@ exports.getUsers = function (req, res, next) {
   })
   .catch(next)
   .done();
-};
+}
 
 // GET /users/:id
-exports.getUserById = function (req, res, next) {
+function getUsersById(req, res, next) {
   'use strict';
 
   var sql =
@@ -42,10 +52,10 @@ exports.getUserById = function (req, res, next) {
   })
   .catch(next)
   .done();
-};
+}
 
 // PUT /users/:id
-exports.updateUser = function (req, res, next) {
+function updateUsers(req, res, next) {
   'use strict';
 
   var sql, shasum;
@@ -69,19 +79,17 @@ exports.updateUser = function (req, res, next) {
     if (err) { return res.status(500).json(err); }
     res.status(200).send();
   });
-};
+}
 
 // POST /users/accountrecovery
-exports.userAccountRecovery = function (req, res, next) {
+function accountRecovery(req, res, next) {
   'use strict';
 
   var sql =
     'SELECT id, username, email FROM user WHERE email = ?;';
 
-  db.get(sql, [req.body.email], function (err, row) {
-
-    // server error
-    if (err) { return next(err); }
+  db.async.get(sql, [req.body.email])
+  .then(function (row) {
 
     // no data (NOT FOUND)
     if (!row) { return res.status(404).json(); }
@@ -89,7 +97,7 @@ exports.userAccountRecovery = function (req, res, next) {
     // success
     // TODO - code to send email
     res.status(200).json(row);
-  });
-
-};
-
+  })
+  .catch(next)
+  .done();
+}

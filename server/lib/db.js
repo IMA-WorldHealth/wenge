@@ -1,25 +1,42 @@
 /**
 * Database Connector
 *
-* If the databse does not exist, it wil be build
 */
 var sqlite3 = require('sqlite3').verbose(),
     q       = require('q'),
-    fs      = require('fs'),
-    db;
+    fs      = require('fs');
 
 // export module routes
-module.exports = setup;
+var mod = module.exports = {
+  setup : setup,
+  db    : null
+};
 
-// setup function
+/**
+* Initializes a connection to the database using paramters provided in a
+* configuration JSON object.  If the database does not exist, it will
+* automatically build it for you.
+*
+* @param {Object} cfg A configuration JSON with database parameters
+* @returns null
+*/
 function setup(cfg) {
- 'use strict';
+  'use strict';
 
-  // if the databse is already defined, simply return it
-  if (!cfg && db) { return db; }
+  var rebuild, db;
+
+  // Check to see if db exists.  If not, build it from configuration files.
+  try {
+    console.log('[DB] [INFO] Checking to see if database exists...');
+    rebuild = !!fs.statSync(cfg.dbPath);
+    console.log('[DB] [INFO] Using database:', cfg.dbPath);
+  } catch (e) {
+    console.log('[DB] [INFO] No database detected.');
+    rebuild = true;
+  }
 
   // connect to the database
-  db = new sqlite3.Database(cfg.dbPath);
+  db = mod.db = new sqlite3.Database(cfg.dbPath);
 
   // create asynchronous versions of db functions
   db.async = {};
@@ -27,37 +44,62 @@ function setup(cfg) {
   db.async.get = q.nbind(db.get, db);
   db.async.all = q.nbind(db.all, db);
 
-  // Test to see if db exists.  If not, build it!
-  try {
-    fs.statSync(cfg.dbPath);
-  } catch (e) {
-    buildSchema(db, cfg.dbSchema);
-  }
-
-  return db;
+  if (rebuild) { buildDB(db, cfg); }
 }
 
-// builds the database schema from a file if it does not exist
-function buildSchema(db, schemaPath) {
-  'use strict';
+/**
+* Build the database sequentially from .sql files.  The configuration file is
+* expected to contain dbSchema and optionally dbBase paths.  The schema is
+* parsed and built, followed by the base SQL file.
+*
+* NOTE - these files are expected to maintain two new lines betweent each
+* consecutive SQL statement.  Otherwise they will be treated as one (which may
+* be confusing for error handling).
+*
+* @param {Object} db The database connector
+* @param {Object} cfg The JSON configuration object for the database
+*
+*/
+function buildDB(db, cfg) {
 
-  q.nfcall(fs.readFile, schemaPath, 'utf-8')
-  .then(function (contents) {
-     
-    // SQL statements are split up by two new line characters.  We can split on
-    // these and then map each statement to a databse command.
-    return q.all(
-      contents.split('\n\n')
-      .map(function (line) {
-        return db.run(line.trim());
-      })
-    );
+  // build the database schema and base file if defined
+  buildDBFile(db, cfg.dbSchema)
+  .then(function () {
+
+    // if dbBase exists, we also build that
+    if (cfg.dbBase) {
+      return buildDBFile(db, cfg.dbBase);
+    }
   })
   .then(function () {
     console.log('[DB] [INFO] Finished building database.');
   })
-  .catch(function (err) {
-    console.log('[DB] [ERROR] ', err);
+  .catch(function (error) {
+    console.log('[DB] [ERROR] ', error);
   })
   .done();
+}
+
+// parse and execute a database file provided by fPath
+function buildDBFile(db, fPath) {
+  'use strict';
+
+  console.log('[DB] [INFO] Building database using:', fPath);
+
+  return q.nfcall(fs.readFile, fPath, 'utf-8')
+  .then(function (contents) {
+
+    // SQL statements are split up by two new line characters.  We can split on
+    // these and then map each statement to a databse command.
+    return q.all(
+      contents.split('\n\n')
+      .map(function (sql) {
+
+        // replace all newlines (regardless of OS)
+        sql = sql.replace(/(\r\n|\n|\r)/gm,'');
+
+        return db.async.run(sql);
+      })
+    );
+  });
 }

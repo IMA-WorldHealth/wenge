@@ -1,18 +1,22 @@
-var db = require('../lib/db'),
+/**
+* Authentication Controller
+*
+* This controller is responsible for access control to the server. 
+*/
+
+var db     = require('../lib/db').db,
     crypto =  require('crypto');
 
 // export module routes
-exports.login = login;
-exports.logout = logout;
+exports.login   = login;
+exports.logout  = logout;
 exports.gateway = gateway;
-exports.role = role;
+exports.role    = role;
 
 // POST /login
 // Logs a user into the system
 function login(req, res, next) {
   'use strict';
-
-  console.log('dirname:', __dirname);
 
   var sql, shasum;
 

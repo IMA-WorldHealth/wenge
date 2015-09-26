@@ -1,4 +1,4 @@
-var db = require('../lib/db');
+var db = require('../lib/db').db;
 
 // GET /requests?status=open
 // gets all requests.  Expects a query string with
