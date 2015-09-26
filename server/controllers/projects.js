@@ -31,7 +31,7 @@ function read(req, res, next) {
   if (hasId) {
     sql =
       'SELECT p.id, p.code, p.color, s.id AS subid, s.label ' +
-      'FROM project AS p JOIN subproject AS s ON ' +
+      'FROM project AS p LEFT JOIN subproject AS s ON ' +
         'p.id = s.projectid ' +
       'WHERE p.id = ?';
 
@@ -39,7 +39,7 @@ function read(req, res, next) {
   } else {
     sql =
       'SELECT p.id, p.code, p.color, COUNT(s.id) AS subprojects ' +
-      'FROM project AS p JOIN subproject AS s ON ' +
+      'FROM project AS p LEFT JOIN subproject AS s ON ' +
         'p.id = s.projectid ' +
       'GROUP BY p.id;';
   }
@@ -53,7 +53,7 @@ function read(req, res, next) {
 
     // collect the values into a single JSON object
     if (hasId) {
-      var project = tools.collect(rows, 'subproject', ['subid', 'label']);
+      var project = tools.collect(rows, 'subprojects', ['subid', 'label']);
       return res.status(200).json(project);
     }
 

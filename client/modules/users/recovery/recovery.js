@@ -1,25 +1,26 @@
-
 angular.module('wenge')
-.controller('RecoveryController', ['$http', function ($http) {
+.controller('RecoverController', RecoverController);
 
-  // alias this
-  var self = this;
+RecoverController.$inject = ['$http'];
 
-  self.error = false;
-  self.success = false;
+function RecoverController($http) {
+  var vm = this;
+
+  vm.error = false;
+  vm.success = false;
+  vm.submit = submit;
   
   // submit to the server
-  self.submit = function () {
-    self.success = false;
-    self.error = false;
+  function submit() {
+    vm.success = false;
+    vm.error = false;
 
-    $http.post('/users/accountrecovery', { email : self.email })
+    $http.post('/accounts/recover', { email : vm.email })
     .then(function () {
-      self.success = true;
+      vm.success = true;
     })
     .catch(function () {
-      self.error = true;
+      vm.error = true;
     });
-  };
-
-}]);
+  }
+}

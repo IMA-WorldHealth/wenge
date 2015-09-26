@@ -22,10 +22,10 @@ function create(req, res, next) {
   sql =
     'INSERT INTO subproject (projectid, label) VALUES (?, ?);';
 
-  db.async.run(sql, req.params.projectId, data.id)
+  db.async.run(sql, req.params.projectId, data.label)
   .then(function () {
-    res.status(200).send(this.lastID);
-  }.bind(db))
+    res.status(200).send();
+  })
   .catch(next)
   .done();
 }
@@ -70,8 +70,8 @@ function update(req, res, next) {
 
   db.async.run(sql, req.params.projectid, data.label, req.params.id)
   .then(function () {
-    res.status(200).send(this.changes);
-  }.bind(db))
+    res.status(200).send();
+  })
   .catch(next)
   .done();
 }
@@ -85,10 +85,10 @@ function del(req, res, next) {
   sql =
     'DELETE FROM subproject WHERE projectid = ? AND id = ?;';
 
-  db.async.run(sql, req.params.projectid, req.params.id)
+  db.async.run(sql, req.params.projectId, req.params.id)
   .then(function () {
-    res.status(200).send(this.changes);
-  }.bind(db))
+    res.status(200).send();
+  })
   .catch(next)
   .done();
 }

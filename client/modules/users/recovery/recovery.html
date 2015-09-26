@@ -9,29 +9,29 @@
   </div>
 
   <div class="row">
-    <form class="form" name="RecoveryForm" ng-submit="RecoveryCtrl.submit()" novalidate>
+    <form class="form" name="RecoverForm" ng-submit="RecoverCtrl.submit()" novalidate>
     
       <div class="row">
-        <div class="form-group col-md-6" ng-class="{ 'has-error' : RecoveryCtrl.error, 'has-success' : RecoveryCtrl.success }">
+        <div class="form-group col-md-6" ng-class="{ 'has-error' : RecoverCtrl.error, 'has-success' : RecoverCtrl.success }">
           <label>Email Address</label>
-          <input type="email" ng-model="RecoveryCtrl.email" class="solid-input" autofocus required ng-disabled="RecoveryCtrl.success">
+          <input type="email" ng-model="RecoverCtrl.email" class="solid-input" autofocus required ng-disabled="RecoverCtrl.success">
         </div>
       </div>
 
       <div class="row col-md-12">
-        <button type="submit" ng-disabled="RecoveryForm.$invalid" class="btn btn-sm btn-success">
+        <button type="submit" ng-disabled="RecoverForm.$invalid" class="btn btn-sm btn-success">
           Submit
         </button>
       </div>
 
       <div class="row col-md-12" style="margin-top:1em;">
 
-        <p class="alert alert-danger" ng-if="RecoveryCtrl.error">
+        <p class="alert alert-danger" ng-if="RecoverCtrl.error">
           <i class="octicon octicon-alert"></i> I do not recognize that email address.  Please try again.
         </p>
 
-        <p class="alert alert-success" ng-if="RecoveryCtrl.success">
-          <i class="octicon octicon-check"></i> <b>Success!</b>  An email has been sent to <b>{{ RecoveryCtrl.email }}</b>.
+        <p class="alert alert-success" ng-if="RecoverCtrl.success">
+          <i class="octicon octicon-check"></i> <b>Success!</b>  An email has been sent to <b>{{ RecoverCtrl.email }}</b>.
           Please check it for further instructions.
           <a href="#/login">Back to Login</a>
         </p>

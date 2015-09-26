@@ -69,6 +69,12 @@ input[type=number] {
   border-bottom : none;
 }
 
+.list-scrollable {
+  max-height : 550px;
+  overflow-x : hidden;
+  overflow-y : scroll;
+}
+
 @media print {
   a:before,
   a[href]:after {

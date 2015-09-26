@@ -11,7 +11,7 @@ ProjectController.$inject = [
 * @constructor
 * @class ProjectController
 */
-function ProjectController($window, Projects, Colors, State) {
+function ProjectController($window, Projects, State) {
   var vm = this;
 
   // bind services to the view, load datasets

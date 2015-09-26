@@ -2,8 +2,7 @@ angular.module('wenge')
 .controller('ProjectDetailsController', DetailsController);
 
 DetailsController.$inject = [
-  '$routeParams', 'ProjectService', 'ColorService', '$location',
-  'ProjectStateService'
+  '$routeParams', '$http', 'ProjectService', 'ColorService', '$location'
 ];
 
 /**
@@ -13,7 +12,7 @@ DetailsController.$inject = [
 * @constructor
 * @class DetailsController
 */
-function DetailsController($routeParams, Projects, Colors, $location, State) {
+function DetailsController($routeParams, $http, Projects, Colors, $location) {
   var vm = this,
       id = $routeParams.id;
 
@@ -22,6 +21,10 @@ function DetailsController($routeParams, Projects, Colors, $location, State) {
 
   vm.update      = update;
   vm.selectColor = selectColor;
+  vm.createSubproject = createSubproject;
+  vm.saveSubproject = saveSubproject;
+  vm.cancelSubproject = cancelSubproject;
+  vm.deleteSubproject = deleteSubproject;
 
   /* ------------------------------------------------------------------------ */
 
@@ -33,13 +36,45 @@ function DetailsController($routeParams, Projects, Colors, $location, State) {
 
   // saves the project in the database
   function update(invalid) {
-    
+
     if (invalid) { return; }
 
     Projects.update(vm.project)
     .then(function () {
-      State.message('success', 'Successfully updated ' + vm.project.code + '.');
       $location.url('/projects');
     });
+  }
+
+  function deleteSubproject(subproject) {
+    $http.delete('projects/' + id + '/subprojects/' + subproject.subid)
+    .then(function () {
+
+      console.log('deleted');
+
+      // remove the subproject (without need to refresh)
+      vm.project.subprojects = vm.project.subprojects.filter(function (sub) {
+        return sub.subid !== subproject.subid;
+      });
+    });
+  }
+
+  function createSubproject() {
+    vm.subproject = { projectid: id };
+  }
+
+  function saveSubproject() {
+    $http.post('projects/' + id + '/subprojects', vm.subproject)
+    .then(function () {
+      vm.subproject = undefined;
+
+      // refresh the project
+      Projects.read(id).$promise.then(function (project) {
+       vm.project = project;
+      });
+    });
+  }
+
+  function cancelSubproject() {
+    vm.subproject = undefined;
   }
 }

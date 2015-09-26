@@ -75,7 +75,7 @@ function RouterConfig($routeProvider, $locationProvider) {
     templateUrl : 'modules/users/details/details.html'
   })
   .when('/recover', {
-    controller  : 'RecoveryController as RecoveryCtrl',
+    controller  : 'RecoverController as RecoverCtrl',
     templateUrl : 'modules/users/recovery/recovery.html'
   })
   .when('/projects', {

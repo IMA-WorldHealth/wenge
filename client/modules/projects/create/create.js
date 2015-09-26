@@ -2,7 +2,7 @@ angular.module('wenge')
 .controller('ProjectCreateController', CreateController);
 
 CreateController.$inject = [
-  'ProjectService', 'ColorService', '$location', 'ProjectStateService'
+  'ProjectService', 'ColorService', '$location',
 ];
 
 /**
@@ -11,7 +11,7 @@ CreateController.$inject = [
 * @constructor
 * @class CreateController
 */
-function CreateController(Projects, Colors, $location, State) {
+function CreateController(Projects, Colors, $location) {
   var vm = this;
 
   // initiaze a new project
@@ -36,7 +36,6 @@ function CreateController(Projects, Colors, $location, State) {
 
     Projects.create(vm.project)
     .then(function () {
-      State.message('success', 'Successfully created ' + vm.project.code + '.');
       $location.url('/projects');
     });
   }

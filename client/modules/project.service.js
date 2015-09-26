@@ -8,7 +8,9 @@ function ProjectService($resource) {
   var service = this;
 
   // the REST datasource
-  service.datasource = $resource('/projects/:id', { id : '@id' }, { 'update' : { 'method' : 'PUT' }});
+  service.datasource = $resource('/projects/:id', { id : '@id' }, {
+    'update' : { 'method' : 'PUT' }
+  });
 
   // CRUD operatins
   service.create = create;
@@ -42,7 +44,7 @@ function ProjectService($resource) {
 
   // update an existing project
   function update(project) {
-    return project.$update(project);
+    return project.$update();
   }
 
   // DELETE a project on the server and remove

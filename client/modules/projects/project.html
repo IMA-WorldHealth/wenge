@@ -44,7 +44,7 @@
   </table>
   <table class="table table-condensed table-bordered table-hover">
     <tbody>
-      <tr dir-paginate="project in ProjectCtrl.projects | itemsPerPage: 4">
+      <tr dir-paginate="project in ProjectCtrl.projects | itemsPerPage: 12">
         <td style="width:30px; text-align:center;">{{ project.id }}</td>
         <td style="width:35px; text-align:center;"><span class="dot" ng-style="{ 'background-color' : project.color }"></span></td>
         <td>
