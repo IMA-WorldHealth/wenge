@@ -27,6 +27,10 @@ function UserDetailsController($routeParams, UserService, ProjectService, AuthSe
   vm.edit = edit;
   vm.editing = false;
   vm.editable = editable;
+  vm.save = save;
+  vm.setProject = setProjectId;
+
+  console.log(vm.user);
 
   /* --------------------------------------------------------------------------- */
 
@@ -42,5 +46,13 @@ function UserDetailsController($routeParams, UserService, ProjectService, AuthSe
   /* Toggle editing on the user profile */
   function edit() {
     vm.editing = true;
+  }
+
+  function setProjectId() {
+    // TODO
+  }
+
+  function save() {
+    // TODO
   }
 }

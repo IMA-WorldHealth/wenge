@@ -1,4 +1,7 @@
-angular.module('wenge', ['ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUpload'])
+angular.module('wenge', [
+  'ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUpload',
+  'angularUtils.directives.dirPagination'
+])
 .config(RouterConfig)
 .factory('AuthInterceptor', AuthInterceptor)
 .config(InterceptorConfig)
@@ -78,6 +81,10 @@ function RouterConfig($routeProvider, $locationProvider) {
   .when('/projects', {
     controller  : 'ProjectController as ProjectCtrl',
     templateUrl : 'modules/projects/project.html'
+  })
+  .when('/projects/create', {
+    controller  : 'ProjectCreateController as CreateCtrl',
+    templateUrl : 'modules/projects/create/create.html'
   })
   .when('/projects/:id', {
     controller  : 'ProjectDetailsController as DetailsCtrl',

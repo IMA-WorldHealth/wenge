@@ -8,6 +8,7 @@
         </div>
         <div class="col-sm-8">
           <h4>{{ DetailsCtrl.user.displayname }}</h4>
+          <h5><i class="octicon octicon-calendar"></i> Last Active : {{ DetailsCtrl.user.lastactive | date }}</h5>
           <button class="btn btn-sm btn-default" ng-if="DetailsCtrl.editable()">
             Change your Avatar
           </button>
@@ -15,55 +16,64 @@
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" ng-switch="DetailsCtrl.editing">
       <label class="control-label col-sm-2">Display Name</label>
-      <div class="col-xs-3">
-        <input type="text" class="solid-input" ng-model="DetailsCtrl.user.displayname" ng-if="DetailsCtrl.editing">
-        <p class="form-control-static">{{ DetailsCtrl.user.displayname }}</p>
+      <div class="col-sm-3">
+        <input type="text" class="solid-input" ng-model="DetailsCtrl.user.displayname" ng-switch-when="true">
+        <p class="form-control-static" ng-switch-default>{{ DetailsCtrl.user.displayname }}</p>
       </div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2">Username</label>
-      <div class="col-xs-3">
-        <input type="text" class="solid-input" ng-model="DetailsCtrl.user.username"  ng-if="DetailsCtrl.editing">
+      <div class="col-sm-3">
         <p class="form-control-static">{{ DetailsCtrl.user.username }}</p>
       </div>
     </div>
 
-    <div class="form-group">
-      <label class="control-label col-sm-2">Default Project</label>
-      <div class="col-xs-3">
-        <select class="form-control" ng-options="">
-        <input type="text" class="solid-input" ng-model="DetailsCtrl.user.username"  ng-if="DetailsCtrl.editing">
-        <p class="form-control-static">{{ DetailsCtrl.user.username }}</p>
-      </div>
-    </div>
-
-    <div class="form-group" ng-class="{ 'has-error' : UserForm.$submitted && !UserForm.slave.project }">
-
+    <div class="form-group" ng-switch="DetailsCtrl.editing">
       <label class="col-sm-2 control-label">Project</label>
-      <div class="col-sm-3" dropdown keyboard-nav>
+
+      <div class="col-sm-3" dropdown keyboard-nav ng-switch-when="true">
         <a class="btn btn-default dropdown dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" ng-class="{ 'btn-danger' : RequestForm.$submitted && !RequestCtrl.slave.project }" dropdown-toggle>
           <span class="dot" ng-style="{ 'background-color' : DetailsCtrl.user.project.color }" ng-if="RequestCtrl.slave.project"></span>
-          {{ RequestCtrl.slave.project.code || "Select a Project" }}
+          {{ DetailsCtrl.user.project.code }}
           <i class="octicon octicon-chevron-down"></i>
         </a>
         <ul class="dropdown-menu">
-          <li ng-repeat="project in RequestCtrl.projects track by project.id">
-            <a ng-click="RequestCtrl.assignProjectId(project)" href="">
+          <li ng-repeat="project in DetailsCtrl.projects track by project.id">
+            <a ng-click="DetailsCtrl.setProject(project)" href="">
               <span class="dot" ng-style="{ 'background-color' : project.color}"></span> {{ project.code }}
             </a>
           </li>
         </ul>
       </div>
+
+      <div class="col-sm-6" ng-switch-default>
+        <p class="form-control-static">{{ DetailsCtrl.user.project.code }}</p>
+      </div>
+    </div>
+
+    <div class="form-group" ng-switch="DetailsCtrl.editing">
+      <label class="control-label col-sm-2">Address</label>
+      <div class="col-sm-6">
+        <input type="text" class="solid-input" ng-model="DetailsCtrl.user.address" ng-switch-when="true">
+        <p class="form-control-static" ng-switch-default>{{ DetailsCtrl.user.address }}</p>
+      </div>
+    </div>
+
+    <div class="form-group" ng-switch="DetailsCtrl.editing">
+      <label class="control-label col-sm-2">Email</label>
+      <div class="col-sm-6">
+        <input type="email" class="solid-input" ng-model="DetailsCtrl.user.email" ng-switch-when="true">
+        <p class="form-control-static" ng-switch-default>{{ DetailsCtrl.user.email }}</p>
+      </div>
     </div>
 
     <div class="form-group">
-      <label class="control-label col-sm-2">Address</label>
-      <div class="col-xs-6">
-        <input type="text" class="solid-input" ng-model="DetailsCtrl.user.address" ng-if="DetailsCtrl.editing">
-        <p class="form-control-static" ng-if="!DetailsCtrl.editing">{{ DetailsCtrl.user.displayname }}</p>
+      <label class="control-label col-sm-2">Role</label>
+      <div class="col-sm-6">
+        <p class="form-control-static">{{ DetailsCtrl.user.role }}</p>
       </div>
     </div>
 
@@ -73,9 +83,10 @@
       </label>
     </div>
 
-    <div class="form-group" ng-if="DetailsCtrl.editable() && !DetailsCtrl.editing">
-      <button class="btn btn-sm btn-primary" ng-click="DetailsCtrl.edit()">Edit User Details</button>
+    <div class="form-group" ng-if="DetailsCtrl.editable()">
+      <button class="btn btn-sm btn-primary" ng-click="DetailsCtrl.edit()" ng-if="!DetailsCtrl.editing" >Edit User Details</button>
+      <button class="btn btn-sm btn-primary" ng-click="DetailsCtrl.save()" ng-if="DetailsCtrl.editing">Save Changes</button>
     </div>
-  </form>
 
+  </form>
 </section>

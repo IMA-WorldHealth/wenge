@@ -96,8 +96,8 @@ function update(req, res, next) {
 
   db.async.run(sql, data.code, data.color, req.params.id)
   .then(function () {
-    res.status(200).send(this.changes);
-  }.bind(db))
+    res.status(200).send();
+  })
   .catch(next)
   .done();
 }
@@ -111,7 +111,7 @@ function del(req, res, next) {
 
   db.async.run(sql, req.params.id)
   .then(function () {
-    res.status(200).send(this.changes);
+    res.status(200).send();
   })
   .catch(next)
   .done();

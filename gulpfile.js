@@ -17,7 +17,7 @@ var paths = {
   client : {
     dir    : path.join(cfg.buildDir, 'client'),
     scripts: ['client/modules/app.js', 'client/modules/**/*.js'],
-    vendor : ['client/vendor/**/*.min.js'],
+    vendor : ['client/vendor/**/*.min.js', 'client/vendor/**/dirPagination.js'],
     static : ['!client/*.js', '!client/**/*.js', '!client/vendor/*', '!client/vendor/**/*', 'client/*', 'client/**/*']
   },
   server : { 

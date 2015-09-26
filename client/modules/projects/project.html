@@ -3,147 +3,68 @@
   <!-- alerts -->
   <alert ng-repeat="message in ProjectCtrl.state.messages" type="{{ message.type }}" close="ProjectCtrl.state.close($index)">
     <strong>
-      <i class="octicon" ng-class="{ 'octicon-check' : message.type === 'success', 'octicon-alert' : message.type === 'danger' }"></i>
+      <i class="octicon" ng-class="{ 'octicon-check' : message.type === 'success', 'octicon-alert' : message.type === 'danger', 'octicon-info' : message.type === 'info' }"></i>
     </strong>
     {{ message.text }}
   </alert>
 
-  <!-- main overview tab -->
-  <section ng-show="ProjectCtrl.state.active === 'overview'">
+  <!-- overview table -->
+  <table class="table table-condensed table-bordered table-scrollable">
+    <thead>
+      <tr>
+        <th colspan="3">
+          Available Projects
 
-      <table class="table table-condensed table-bordered table-scrollable">
-        <thead>
-          <tr>
-            <th colspan="3">
-              Available Projects
+          <span class="pull-right">
+            <span class="btn-group btn-group-xs">
+              <a href="#/projects/create" class="btn btn-xs btn-default" tooltip="New Project" tooltip-popup-delay="200">
+                <i class="octicon octicon-plus"></i>
+              </a>
+              <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.reload()" tooltip="Refresh Projects" tooltip-popup-delay="200">
+                <i class="octicon octicon-sync"></i>
+              </a>
+            </span>
+            <span class="btn-group btn-group-xs">
+              <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.print()" tooltip="Print Page" tooltip-popup-delay="400" tooltip-animation="false">
+                <i class="octicon octicon-file-pdf"></i>
+              </a>
+              <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.download()" tooltip="Download Projects" tooltip-popup-delay="200">
+                <i class="octicon octicon-cloud-download"></i>
+              </a>
+            </span>
+          </span>
+        </th>
+      </tr>
+      <tr>
+        <th style="width:30px;">ID</th>
+        <th style="width:35px;">Dot</th>
+        <th>Code</th>
+      </tr>
+    </thead>
+  </table>
+  <table class="table table-condensed table-bordered table-hover">
+    <tbody>
+      <tr dir-paginate="project in ProjectCtrl.projects | itemsPerPage: 4">
+        <td style="width:30px; text-align:center;">{{ project.id }}</td>
+        <td style="width:35px; text-align:center;"><span class="dot" ng-style="{ 'background-color' : project.color }"></span></td>
+        <td>
+          <span class="label label-primary">{{ project.subprojects }}</span>
 
-              <span class="pull-right">
-                <span class="btn-group btn-group-xs">
-                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.initAdd()" tooltip="New Project" tooltip-popup-delay="200">
-                    <i class="octicon octicon-plus"></i>
-                  </a>
-                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.reload()" tooltip="Refresh Projects" tooltip-popup-delay="200">
-                    <i class="octicon octicon-sync"></i>
-                  </a>
-                </span>
-                <span class="btn-group btn-group-xs">
-                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.print()" tooltip="Print Page" tooltip-popup-delay="200">
-                    <i class="octicon octicon-file-pdf"></i>
-                  </a>
-                  <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.download()" tooltip="Download Projects" tooltip-popup-delay="200">
-                    <i class="octicon octicon-cloud-download"></i>
-                  </a>
-                </span>
-              </span>
-            </th>
-          </tr>
-          <tr>
-            <th style="width:30px;">ID</th>
-            <th style="width:35px;">Dot</th>
-            <th>Code</th>
-          </tr>
-        </thead>
-      </table>
-      <table class="table table-condensed table-bordered table-hover">
-        <tbody>
-          <tr ng-repeat="project in ProjectCtrl.projects">
-            <td style="width:30px; text-align:center">{{ project.id }}</td>
-            <td style="width:35px; text-align:center"><span class="dot" ng-style="{ 'background-color' : project.color }"></span></td>
-            <td>
-              {{ project.code }}
-              <span class="pull-right">
-                <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.initEdit(project)">
-                  <i class="octicon octicon-pencil"></i>
-                </a>
-                <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.removeProject(project)">
-                  <i class="octicon octicon-trashcan"></i>
-                </a>
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-  </section>
+          {{ project.code }}
 
-  <!-- create new project form -->
-  <section ng-show="ProjectCtrl.state.active === 'create'">
-    <form name="AddForm" class="form-horizontal" ng-submit="ProjectCtrl.saveAdd(AddForm.$invalid, ProjectCtrl.slave)" novalidate>
-      <fieldset>
-        <legend>
-          <i class="octicon octicon-plus"></i> Create a Project
-        </legend>
-
-        <div class="form-group" ng-class="{ 'has-error' : AddForm.$submitted && AddForm.code.$invalid }">
-          <label for="code" class="col-sm-1 control-label">Code</label>
-          <div class="col-sm-6">
-            <input name="code" ng-model="ProjectCtrl.slave.code" class="solid-input" type="text" required />
-            <p class="help-block" ng-show='AddForm.$submitted && AddForm.code.$invalid'>
-              You must enter a code.
-            </p>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="color" class="col-sm-1 control-label">Color</label>
-          <div class="dropdown col-sm-6" dropdown keyboard-nav>
-            <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
-              <span class="dot" ng-style="{ 'background-color' : ProjectCtrl.slave.color }" ng-if="ProjectCtrl.slave.colorname"></span>
-              {{ ProjectCtrl.slave.colorname || "Select a Color" }}
-              <i class="octicon octicon-chevron-down"></i>
+          <span class="pull-right">
+            <a ng-href="#/projects/{{ project.id }}" class="btn btn-xs btn-default">
+              <i class="octicon octicon-pencil"></i>
             </a>
-            <ul class="dropdown-menu">
-              <li ng-repeat="color in ProjectCtrl.colors | limitTo:12">
-                <a ng-click="ProjectCtrl.selectColor(ProjectCtrl.slave, color)" href="">
-                  <span class="dot" ng-style="{ 'background-color' : color.code }"></span> {{ color.name}}
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-md btn-success col-sm-offset-1">Submit</button>
-      </fieldset>
-    </form>
-  </section>
-
-  <!-- edit project form -->
-  <section ng-show="ProjectCtrl.state.active === 'update'">
-    <form name="EditForm" class="form-horizontal" ng-submit="ProjectCtrl.saveEdit(EditForm.$invalid, ProjectCtrl.slave)" novalidate>
-      <fieldset>
-        <legend>
-          <i class="octicon octicon-pencil"></i> Edit Project
-        </legend>
-
-        <div class="form-group" ng-class="{ 'has-error' : EditForm.$submitted && EditForm.code.$invalid }">
-          <label for="code" class="col-sm-1 control-label">Code</label>
-          <div class="col-sm-6">
-            <input name="code" ng-model="ProjectCtrl.slave.code" class="solid-input" type="text" required />
-            <p class="help-block" ng-show='EditForm.$submitted && EditForm.code.$invalid'>
-              You must enter a code.
-            </p>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="color" class="col-sm-1 control-label">Color</label>
-          <div class="dropdown col-sm-6" dropdown keyboard-nav>
-            <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
-              <span class="dot" ng-style="{ 'background-color' : ProjectCtrl.slave.color }" ng-if="ProjectCtrl.slave.colorname"></span>
-              {{ ProjectCtrl.slave.colorname || "Select a Color" }}
-              <i class="octicon octicon-chevron-down"></i>
+            <a href="" class="btn btn-xs btn-default" ng-click="ProjectCtrl.delete(project)">
+              <i class="octicon octicon-trashcan"></i>
             </a>
-            <ul class="dropdown-menu">
-              <li ng-repeat="color in ProjectCtrl.colors | limitTo:12">
-                <a ng-click="ProjectCtrl.selectColor(ProjectCtrl.slave, color)" href="">
-                  <span class="dot" ng-style="{ 'background-color' : color.code }"></span> {{ color.name}}
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-        <button type="submit" class="btn btn-md btn-success col-sm-offset-1">Submit</button>
-      </fieldset>
-    </form>
-  </section>
+  <dir-pagination-controls></dir-pagination-controls>
+
 </section>
