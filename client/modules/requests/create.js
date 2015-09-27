@@ -1,22 +1,23 @@
 angular.module('wenge')
-.controller('RequestController', ['$scope', '$location', 'AFEService', 'ProjectService', 'Session', 'AttachmentService', RequestController]);
+.controller('RequestCreateController', RequestCreateController);
 
-function RequestController($scope, $location, AFEService, ProjectService, Session, AttachmentService) {
+RequestCreateController.$inject = [
+  '$scope', '$location', 'RequestService', 'ProjectService', 'Session', 'AttachmentService'
+];
+
+function RequestCreateController($scope, $location, Requests, Projects, Session, Attachments) {
   var vm = this;
-
-  // load the project data
-  ProjectService.read();
 
   // bind service data
   vm.user = Session;
-  vm.requests = AFEService.requests;
-  vm.projects = ProjectService.projects;
-  vm.uploader = AttachmentService;
+  vm.requests = Requests.read();
+  vm.projects = Projects.read();
+  vm.uploader = Attachments.uploader;
 
   // creation
-  vm.slave = AFEService.record();
+  vm.slave = Requests.new();
   vm.total = 0;
-  vm.retotal = function () { vm.total = AFEService.total(vm.slave); };
+  vm.retotal = function () { vm.total = Requests.total(vm.slave); };
 
   // form mechanics
   vm.submit = submit;
@@ -38,10 +39,13 @@ function RequestController($scope, $location, AFEService, ProjectService, Sessio
   }
 
   // submits the form to the server, after validation checks
-  function submit(invalid, slave) {
+  function submit(invalid) {
+
+    // alias
+    var slave = vm.slave;
 
     // detect errors on detail rows (set the $error property)
-    if (!AFEService.valid(slave)) {
+    if (!Requests.valid()) {
       slave.$invalid = true;
       return;
     } else {
@@ -53,14 +57,14 @@ function RequestController($scope, $location, AFEService, ProjectService, Sessio
 
     // if we got past the first two checks, we are able to submit
     // to the server.
-    AFEService.create(slave)
+    Requests.create(slave)
     .then(function (record) {
 
       // reset the form to a prestine state (for validation)
       $scope.RequestForm.$setPristine();
 
       // set up a new record
-      vm.slave = AFEService.record();
+      vm.slave = Requests.new();
 
       // assign the newly posted record here
       vm.posted = record;

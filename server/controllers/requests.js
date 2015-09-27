@@ -1,34 +1,68 @@
-var db = require('../lib/db').db;
+/**
+* Requests Module
+*
+* This module is responsible for providing full CRUD on the requests table.
+*/
 
-// GET /requests?status=open
+var db    = require('../lib/db').db,
+    tools = require('../lib/tools');
+
+// module exports
+exports.create = create;
+exports.read   = read;
+exports.update = update;
+exports.delete = del;
+
+// GET /requests/:id?
 // gets all requests.  Expects a query string with
 // ?status = { 'open', 'closed' }
-exports.getRequests = function (req, res, next) {
+function read(req, res, next) {
   'use strict';
 
-  var sql =
+  var sql,
+      hasId = (req.params.id !== undefined);
+
+  sql =
     'SELECT r.id, r.projectid, r.date, r.beneficiary, r.explanation, r.signatureA, ' +
-      'r.signatureB, r.review, rd.item, rd.budgetcode, rd.quantity, rd.unit, ' +
-      'rd.unitprice, rd.totalprice, r.status ' +
-    'FROM request r JOIN requestdetail rd ON r.id = rd.requestid;';
+      'r.signatureB, r.review, r.status, rd.item, rd.budgetcode, rd.quantity, ' +
+      'rd.unit, rd.unitprice, rd.totalprice ' +
+    'FROM request r JOIN requestdetail rd ON ' +
+      'r.id = rd.requestid';
 
-  db.all(sql, function (err, rows) {
+  if (hasId) {
+    sql += ' WHERE r.id = ?;';
+  }
 
-    // server error
-    if (err) { return res.status(500).json(err); }
+  db.async.all(sql, [req.params.id])
+  .then(function (rows) {
+
+    if (hasId && !rows.length) {
+      return res.status(404).send();
+    }
+
+    if (hasId) {
+      var request = tools.collect(rows, 'details', [
+        'totalprice', 'unitprice', 'unit', 'quantity', 'budgetcode', 'item'
+      ]);
+
+      return res.status(200).json(request);
+    }
 
     // in this case, an empty result is a positive result
     // not an error.  No rows is a result.
     res.status(200).json(rows);
-  });
-};
+  })
+  .catch(next)
+  .done();
+}
 
 // POST /requests
 // Expects a request body and request detail lines
-exports.createRequests = function (req, res, next) {
+function create(req, res, next) {
   'use strict';
 
-  var requestStmt, detailStmt,
+  var requestStmt,
+      detailStmt,
       data = req.body,
       userid = req.session.user.id;
 
@@ -57,75 +91,26 @@ exports.createRequests = function (req, res, next) {
         res.status(200).json({ id : requestid });
       });
     });
-
   });
 
   // finalize request statement
   requestStmt.finalize();
-
-};
-
-// GET /requests/:id
-exports.getRequestsById = function (req, res, next) {
-  'use strict';
-
-  var sql, row, response;
-
-  sql =
-    'SELECT r.id, r.projectid, r.date, r.beneficiary, r.explanation, r.signatureA, ' +
-      'r.signatureB, r.review, rd.item, rd.budgetcode, rd.quantity, rd.unit, ' +
-      'rd.unitprice, rd.totalprice, r.status, r.createdby ' +
-    'FROM request r JOIN requestdetail rd ON r.id = rd.requestid ' +
-    'WHERE r.id = ?;';
-
-  db.async.all(sql, req.params.id)
-  .then(function (rows) {
-    if (!rows) { return res.status(404).json(); }
-
-    // FIXME - this is a bit of hack
-    row = rows[0];
-    response = {
-      id                   : row.id,
-      projectid            : row.projectid,
-      date                 : new Date(row.date),
-      beneficiary          : row.beneficiary,
-      explanation          : row.explanation,
-      signatureAccounting  : row.signatureA,
-      signatureProgramming : row.signatureB,
-      review               : row.review,
-      status               : row.status,
-      createdby            : row.createdby,
-      details : rows.map(function (rd) {
-        return {
-          item       : rd.item,
-          budgetcode : rd.budgetcode,
-          unitprice  : rd.unitprice,
-          totalprice : rd.totalprice,
-          quantity   : rd.quantity,
-          unit       : rd.unit
-        };
-      })
-    };
-
-    res.status(200).json(response);
-  })
-  .catch(next)
-  .done();
-};
+}
 
 // PUT /requests/:id
 // TODO
-exports.updateRequests = function (req, res, next) {
+function update(req, res, next) {
   'use strict';
-};
+}
 
 // DELETE /requests/:id
-// TODO - 404 vs 200
-exports.deleteRequests = function (req, res, next) {
+function del(req, res, next) {
   'use strict';
 
-  db.run('DELETE FROM request WHERE id = ?', [req.params.id], function (err) {
-    if (err) { return next(err); }
+  db.async.run('DELETE FROM request WHERE id = ?', [req.params.id])
+  .then(function () {
     res.status(200).send();
-  });
-};
+  })
+  .catch(next)
+  .done();
+}

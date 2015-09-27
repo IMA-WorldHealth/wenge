@@ -67,12 +67,10 @@ app.put('/users/:id', auth.owner('id'), users.update);
 app.delete('/users/:id', auth.owner('id'), users.delete);
 
 // request controller
-app.get('/requests', requests.getRequests);
-app.post('/requests', requests.createRequests);
-app.get('/requests/:id', requests.getRequestsById);
-app.put('/requests/:id', requests.updateRequests);
-app.delete('/requests/:id', requests.deleteRequests);
-
+app.post('/requests', requests.create);
+app.get('/requests/:id?', requests.read);
+app.put('/requests/:id', requests.update);
+app.delete('/requests/:id', requests.delete);
 
 // projects controller
 app.post('/projects', projects.create);

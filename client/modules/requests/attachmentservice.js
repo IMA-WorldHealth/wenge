@@ -1,21 +1,25 @@
 angular.module('wenge')
-.service('AttachmentService', ['FileUploader', AttachmentService]);
+.service('AttachmentService', AttachmentService);
+
+AttachmentService.$inject = ['FileUploader'];
 
 function AttachmentService(FileUploader) {
+  var service = this;
 
-  var uploader = new FileUploader({
+  service.uploader = new FileUploader({
     url        : '/upload',
     alias      : 'attachment',
     autoUpload : true,
     queueLimit : 5
   });
 
-  uploader.onErrorItem = function(fileItem, response, status, headers) {
+  service.uploader.onErrorItem = function(fileItem, response, status, headers) {
     console.info('onErrorItem', fileItem, response, status, headers);
   };
-  uploader.onCompleteAll = function() {
+
+  service.uploader.onCompleteAll = function() {
     console.info('onCompleteAll');
   };
 
-  return uploader;
+  return service;
 }

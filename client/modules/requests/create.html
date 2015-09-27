@@ -1,5 +1,5 @@
 <section>
-  <form name="RequestForm" class="form-horizontal" ng-submit="RequestCtrl.submit(RequestCtrl.$invalid, RequestCtrl.slave)" novalidate>
+  <form name="RequestForm" class="form-horizontal" ng-submit="RequestCtrl.submit(RequestCtrl.$invalid)" novalidate>
 
     <legend>
       Application For Expenditure
@@ -21,7 +21,7 @@
     </div>
 
     <div class="alert alert-success" ng-if="RequestCtrl.posted">
-      <b><i class="octicon octicon-check"></i> Success!</b>  You created a new AFE.  <a ng-href="/requests/{{ RequestCtrl.posted.id}}">Click here for a printable version.</a>
+      <b><i class="octicon octicon-check"></i> Success!</b>  You created a new Request.  <a ng-href="/requests/{{ RequestCtrl.posted.id}}">Click here for a printable version.</a>
     </div>
 
     <div class="form-group" ng-class="{ 'has-error' : RequestForm.$submitted && !RequestCtrl.slave.project }">
@@ -75,10 +75,14 @@
 
     <div class="form-group">
       <label class="col-sm-1 control-label">Attachments</label>
-      <input type="file" class="btn btn-sm" nv-file-select uploader="RequestCtrl.uploader" multiple />
-      <span class="label" ng-if="RequestCtrl.uploader.queue.length > 0" ng-class="{ 'label-warning' : RequestCtrl.uploader.progress < 100, 'label-success' : RequestCtrl.uploader.progress === 100 }">
-        {{ RequestCtrl.uploader.progress === 100 ? "Complete" : "Attaching ..." }} {{ RequestCtrl.uploader.progress }} %
-      </span>
+      <div class="col-sm-6">
+        <input type="file" class="btn btn-sm" nv-file-select uploader="RequestCtrl.uploader" multiple />
+      </div>
+      <div class="col-sm-5">
+        <span class="label" ng-if="RequestCtrl.uploader.queue.length > 0" ng-class="{ 'label-warning' : RequestCtrl.uploader.progress < 100, 'label-success' : RequestCtrl.uploader.progress === 100 }">
+          {{ RequestCtrl.uploader.progress === 100 ? "Complete" : "Attaching ..." }} {{ RequestCtrl.uploader.progress }} %
+        </span>
+      </div>
     </div>
 
     <table class="table table-bordered table-condensed">

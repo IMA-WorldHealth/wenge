@@ -54,29 +54,29 @@ function RouterConfig($routeProvider, $locationProvider) {
     controller  : 'LoginController as LoginCtrl',
     templateUrl : 'modules/login/login.html'
   })
-  .when('/dashboard', {
-    controller  : 'DashboardController as DashboardCtrl',
-    templateUrl : 'modules/dashboard/dashboard.html'
+  .when('/recover', {
+    controller  : 'RecoverController as RecoverCtrl',
+    templateUrl : 'modules/users/recovery/recovery.html'
   })
-  .when('/create', {
-    controller  : 'RequestController as RequestCtrl',
+  .when('/requests/create', {
+    controller  : 'RequestCreateController as CreateCtrl',
     templateUrl : 'modules/requests/create.html'
   })
   .when('/requests/:id', {
-    controller  : 'ReceiptController as ReceiptCtrl',
+    controller  : 'RequestReceiptController as ReceiptCtrl',
     templateUrl : 'modules/requests/receipt.html'
   })
   .when('/users', {
     controller  : 'UserController as UserCtrl',
     templateUrl : 'modules/users/users.html'
   })
+  .when('/users/create', {
+    controller  : 'UserCreateController as CreateCtrl',
+    templateUrl : 'modules/users/create/create.html'
+  })
   .when('/users/:id', {
     controller  : 'UserDetailsController as DetailsCtrl',
     templateUrl : 'modules/users/details/details.html'
-  })
-  .when('/recover', {
-    controller  : 'RecoverController as RecoverCtrl',
-    templateUrl : 'modules/users/recovery/recovery.html'
   })
   .when('/projects', {
     controller  : 'ProjectController as ProjectCtrl',

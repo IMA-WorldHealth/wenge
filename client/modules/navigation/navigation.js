@@ -31,7 +31,7 @@ function NavigationController(AuthService, Session, $location) {
   vm.logout = logout;
   vm.links = [{
     icon : 'diff',
-    url : 'create',
+    url : 'requests/create',
     title : 'Requests'
   }, {
     icon : 'repo',
