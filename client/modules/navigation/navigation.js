@@ -1,8 +1,28 @@
 angular.module('wenge')
+.directive('wengeNavigation', wengeNavigation);
+
+function wengeNavigation() {
+  return {
+    restrict : 'E',
+    scope : {},
+    templateUrl : 'modules/navigation/navigation.html',
+    controller : 'NavigationController',
+    controllerAs : 'NavCtrl',
+    bindToController : true
+  };
+}
+
+
+angular.module('wenge')
 .controller('NavigationController', NavigationController);
 
 NavigationController.$inject = ['AuthService', 'Session', '$location'];
 
+/**
+* NavigationControlller
+*
+* Bound to the above navigation directive.
+*/
 function NavigationController(AuthService, Session, $location) {
   var vm = this;
 
