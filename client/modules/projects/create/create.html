@@ -21,7 +21,7 @@
             <label for="color" class="col-sm-1 control-label">Color</label>
             <div class="dropdown col-sm-10" dropdown keyboard-nav>
               <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
-                <span class="dot" ng-style="{ 'background-color' : CreateCtrl.project.color }"></span>
+                <span class="dot" ng-style="{ 'background-color' : CreateCtrl.project.color }" ng-if="CreateCtrl.project.color"></span>
                 {{ CreateCtrl.project.colorname || "Select a Color" }}
                 <i class="octicon octicon-chevron-down"></i>
               </a>

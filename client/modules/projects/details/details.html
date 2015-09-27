@@ -1,45 +1,46 @@
 <section>
-  <form name="EditForm" class="form-horizontal" ng-submit="DetailsCtrl.update(EditForm.$invalid)" novalidate>
     <div class="row">
       <div class="col-sm-6">
-        <fieldset>
-          <legend>
-            <i class="octicon octicon-pencil"></i> Edit Project
-          </legend>
+        <form name="EditForm" class="form-horizontal" ng-submit="DetailsCtrl.update(EditForm.$invalid)" novalidate>
+          <fieldset>
+            <legend>
+              <i class="octicon octicon-pencil"></i> Edit Project
+            </legend>
 
 
-          <div class="form-group" ng-class="{ 'has-error' : EditForm.$submitted && EditForm.code.$invalid }">
-            <label for="code" class="col-sm-1 control-label">Code</label>
-            <div class="col-sm-10">
-              <input name="code" ng-model="DetailsCtrl.project.code" class="solid-input" type="text" required />
-              <p class="help-block" ng-show='EditForm.$submitted && EditForm.code.$invalid'>
-                You must enter a code.
-              </p>
+            <div class="form-group" ng-class="{ 'has-error' : EditForm.$submitted && EditForm.code.$invalid }">
+              <label for="code" class="col-sm-1 control-label">Code</label>
+              <div class="col-sm-10">
+                <input name="code" ng-model="DetailsCtrl.project.code" class="solid-input" type="text" required />
+                <p class="help-block" ng-show='EditForm.$submitted && EditForm.code.$invalid'>
+                  You must enter a code.
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div class="form-group"  ng-class="{ 'has-error' : EditForm.$submitted && !DetailsCtrl.project.color }">
-            <label for="color" class="col-sm-1 control-label">Color</label>
-            <div class="dropdown col-sm-6" dropdown keyboard-nav>
-              <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
-                <span class="dot" ng-style="{ 'background-color' : DetailsCtrl.project.color }" ng-if="DetailsCtrl.project.color"></span>
-                {{ DetailsCtrl.project.colorname || "Select a Color" }} <i class="octicon octicon-chevron-down"></i>
-              </a>
-              <ul class="dropdown-menu">
-                <li ng-repeat="color in DetailsCtrl.colors | limitTo:18">
-                  <a ng-click="DetailsCtrl.selectColor(color)" href="">
-                    <span class="dot" ng-style="{ 'background-color' : color.code }"></span> {{ color.name}}
-                  </a>
-                </li>
-              </ul>
+            <div class="form-group"  ng-class="{ 'has-error' : EditForm.$submitted && !DetailsCtrl.project.color }">
+              <label for="color" class="col-sm-1 control-label">Color</label>
+              <div class="dropdown col-sm-6" dropdown keyboard-nav>
+                <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
+                  <span class="dot" ng-style="{ 'background-color' : DetailsCtrl.project.color }" ng-if="DetailsCtrl.project.color"></span>
+                  {{ DetailsCtrl.project.colorname || "Select a Color" }} <i class="octicon octicon-chevron-down"></i>
+                </a>
+                <ul class="dropdown-menu">
+                  <li ng-repeat="color in DetailsCtrl.colors | limitTo:18">
+                    <a ng-click="DetailsCtrl.selectColor(color)" href="">
+                      <span class="dot" ng-style="{ 'background-color' : color.code }"></span> {{ color.name}}
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
 
-          <div class="form-group">
-            <button type="submit" class="btn btn-md btn-success">Submit</button>
-            <a href="#/projects" class="btn btn-md btn-default">Cancel</a>
-          </div>
-        </fieldset>
+            <div class="form-group">
+              <button type="submit" class="btn btn-md btn-success">Submit</button>
+              <a href="#/projects" class="btn btn-md btn-default">Cancel</a>
+            </div>
+          </fieldset>
+        </form>
       </div>
 
       <div class="col-sm-6">
@@ -57,10 +58,10 @@
               <div class="input-group">
                 <input type="text" class="form-control" ng-model="DetailsCtrl.subproject.label" placeholder="Enter a subproject code.">
                 <span class="input-group-btn">
-                  <button class="btn btn-default" ng-click="DetailsCtrl.saveSubproject()">
+                  <button type="button" class="btn btn-default" ng-click="DetailsCtrl.saveSubproject()">
                     <i class="octicon octicon-check text-success"></i>
                   </button>
-                  <button class="btn btn-default" ng-click="DetailsCtrl.cancelSubproject()">
+                  <button type="button" class="btn btn-default" ng-click="DetailsCtrl.cancelSubproject()">
                     <i class="octicon octicon-trashcan text-danger"></i>
                   </button>
                 </span>
@@ -70,13 +71,14 @@
           <ul class="list-group list-scrollable">
             <li class="list-group-item" ng-repeat="subproject in DetailsCtrl.project.subprojects | orderBy:'label'">
               {{ subproject.label }}
-              <button class="close pull-right" ng-click="DetailsCtrl.deleteSubproject(subproject)">
+              <button type="button" class="close pull-right" ng-click="DetailsCtrl.deleteSubproject(subproject)">
                 <span aria-hidden="true">&times;</span>
               </button>
             </li>
           </ul>
         </div>
       </div>
+
     </div>
-  </form>
+  </div>
 </section>

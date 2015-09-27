@@ -1,7 +1,7 @@
 <section>
 
   <!-- alerts -->
-  <alert ng-repeat="message in ProjectCtrl.state.messages" type="{{ message.type }}" close="ProjectCtrl.state.close($index)">
+  <alert ng-repeat="message in ProjectCtrl.state.messages" type="{{ message.type }}" close="ProjectCtrl.state.close($index)" class="hidden-print">
     <strong>
       <i class="octicon" ng-class="{ 'octicon-check' : message.type === 'success', 'octicon-alert' : message.type === 'danger', 'octicon-info' : message.type === 'info' }"></i>
     </strong>

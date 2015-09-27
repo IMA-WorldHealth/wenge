@@ -2,17 +2,18 @@ angular.module('wenge')
 .controller('ProjectDetailsController', DetailsController);
 
 DetailsController.$inject = [
-  '$routeParams', '$http', 'ProjectService', 'ColorService', '$location'
+  '$routeParams', '$http', '$location', '$window', 'ProjectService',
+  'ColorService'
 ];
 
 /**
-* This controller is responsible for updating a project, including adding
-* subprojects.
+* This controller is responsible for updating a project, including adding,
+* updateing, and removing subprojects.
 *
 * @constructor
 * @class DetailsController
 */
-function DetailsController($routeParams, $http, Projects, Colors, $location) {
+function DetailsController($routeParams, $http, $location, $window, Projects, Colors) {
   var vm = this,
       id = $routeParams.id;
 
@@ -45,23 +46,30 @@ function DetailsController($routeParams, $http, Projects, Colors, $location) {
     });
   }
 
+  // removes the subproject from the database
   function deleteSubproject(subproject) {
-    $http.delete('projects/' + id + '/subprojects/' + subproject.subid)
-    .then(function () {
+    var bool =
+      $window.confirm('Are you sure you want to delete ' + subproject.label + '?');
 
-      console.log('deleted');
+    if (bool) {
 
-      // remove the subproject (without need to refresh)
-      vm.project.subprojects = vm.project.subprojects.filter(function (sub) {
-        return sub.subid !== subproject.subid;
+      $http.delete('projects/' + id + '/subprojects/' + subproject.subid)
+      .then(function () {
+
+        // remove the subproject (without need to refresh)
+        vm.project.subprojects = vm.project.subprojects.filter(function (sub) {
+          return sub.subid !== subproject.subid;
+        });
       });
-    });
+    }
   }
 
+  // create a new working subproject
   function createSubproject() {
     vm.subproject = { projectid: id };
   }
 
+  // save teh subproject to the database
   function saveSubproject() {
     $http.post('projects/' + id + '/subprojects', vm.subproject)
     .then(function () {

@@ -28,9 +28,15 @@ function ProjectController($window, Projects, State) {
 
   // delete a project
   function del(project) {
-    Projects.delete(project)
-    .then(function () {
-      State.message('info', 'You successfully deleted "' + project.code + '".');
-    });
+
+    var bool =
+      $window.confirm('Are you sure you want to delete ' + project.code + '?');
+
+    if (bool) {
+      Projects.delete(project)
+      .then(function () {
+        State.message('info', 'Successfully deleted "' + project.code + '".');
+      });
+    }
   }
 }
