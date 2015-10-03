@@ -9,32 +9,20 @@ CREATE TABLE IF NOT EXISTS role (
 );
 
 
+CREATE TABLE IF NOT EXISTS signature  (
+  id INTEGER PRIMARY KEY, public TEXT, private TEXT, type TEXT
+);
+
+
 CREATE TABLE IF NOT EXISTS user (
   id INTEGER PRIMARY KEY, username TEXT, displayname TEXT,
   email TEXT, password TEXT, roleid INTEGER, lastactive DATE,
   avatar TEXT NOT NULL DEFAULT '/assets/avatar.png',
   telephone INTEGER, hidden BOOLEAN, projectid INTEGER,
+  signatureid INTEGER, resethash TEXT,
+  FOREIGN KEY (signatureid) REFERENCES signature(id),
   FOREIGN KEY (projectid) REFERENCES project(id),
   FOREIGN KEY (roleid) REFERENCES role(id)
-);
-
-
-CREATE TABLE IF NOT EXISTS recover (
-  id INTEGER PRIMARY KEY, userid INTEGER, hash TEXT, expiration DATE,
-  FOREIGN KEY (userid) REFERENCES user(id)
-);
-
-
-CREATE TABLE IF NOT EXISTS signaturetype (
-  id INTEGER PRIMARY KEY, type TEXT
-);
-
-
-CREATE TABLE IF NOT EXISTS signature (
-  id INTEGER PRIMARY KEY, level INTEGER, typeid INTEGER, userid INTEGER,
-  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  active BOOLEAN, FOREIGN KEY (userid) REFERENCES user(id),
-  FOREIGN KEY (typeid) REFERENCES signaturetype(id)
 );
 
 
@@ -53,10 +41,18 @@ CREATE TABLE IF NOT EXISTS subproject (
 
 
 CREATE TABLE IF NOT EXISTS request (
-  id INTEGER PRIMARY KEY, projectid INTEGER, date TEXT, beneficiary TEXT, explanation TEXT,
-  signatureA, signatureB, review TEXT, status TEXT, totalamount REAL, createdby INTEGER,
+  id INTEGER PRIMARY KEY, projectid INTEGER, date TEXT, beneficiary TEXT,
+  explanation TEXT, review TEXT, status TEXT, totalamount REAL,
+  createdby INTEGER,
   FOREIGN KEY (projectid) REFERENCES project(id),
   FOREIGN KEY (createdby) REFERENCES user(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS requestsignature (
+  id INTEGER PRIMARY KEY, requestid INTEGER, signatureid INTEGER, challenge TEXT,
+  FOREIGN KEY (requestid) REFERENCES request(id),
+  FOREIGN KEY (signatureid) REFERENCES signature(id)
 );
 
 
@@ -67,7 +63,7 @@ CREATE TABLE IF NOT EXISTS requestdetail (
 );
 
 
-CREATE TABLE IF NOT EXISTS attachment (
+CREATE TABLE IF NOT EXISTS requestattachment (
   id INTEGER PRIMARY KEY, requestid INTEGER, reference TEXT,
   FOREIGN KEY (requestid) REFERENCES request(id)
 );
