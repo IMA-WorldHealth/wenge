@@ -2,7 +2,8 @@ angular.module('wenge')
 .controller('RequestCreateController', RequestCreateController);
 
 RequestCreateController.$inject = [
-  '$location', 'RequestService', 'ProjectService', 'Session', 'AttachmentService'
+  '$location', 'RequestService', 'ProjectService', 'Session', 'AttachmentService',
+  'MessageFactory'
 ];
 
 /**
@@ -13,7 +14,7 @@ RequestCreateController.$inject = [
 * @class RequestCreateController
 * @constructor
 */
-function RequestCreateController($location, Requests, Projects, Session, Attachments) {
+function RequestCreateController($location, Requests, Projects, Session, Attachments, Messages) {
   var vm = this;
 
   // bind service data
@@ -21,6 +22,9 @@ function RequestCreateController($location, Requests, Projects, Session, Attachm
   vm.requests = Requests.read();
   vm.projects = Projects.read();
   vm.uploader = Attachments.uploader;
+
+  // bind message service
+  vm.messanger = Messages;
 
   // creation
   vm.request = Requests.new();
@@ -33,9 +37,6 @@ function RequestCreateController($location, Requests, Projects, Session, Attachm
   vm.addRow = addRow;
   vm.removeRow = removeRow;
   vm.attachment = attachment;
-
-  // assign temp data
-  vm.noop = angular.noop; // FIXME/TODO
 
   /* ----------------------------------------------------------------------- */
 
@@ -50,7 +51,7 @@ function RequestCreateController($location, Requests, Projects, Session, Attachm
   function submit(invalid) {
 
     if (vm.request.details.length < 1) {
-      
+            
     }
 
 

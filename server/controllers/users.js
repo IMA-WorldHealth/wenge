@@ -1,17 +1,32 @@
 /**
 * Users Controller
 *
-* This controller implements CRUD on the users table.
+* This controller implements CRUD on the users table.  It is also responsible
+* for handling account resets for an individal user by generating a unique ID
+* and mailing it back to the user.
 */
 
-var db = require('../lib/db').db,
-    crypto = require('crypto');
+var fs     = require('fs'),
+    path   = require('path'),
+    crypto = require('crypto'),
+    uuid   = require('node-uuid');
+
+var db     = require('../lib/db').db,
+    mailer = require('../lib/mailer');
 
 // exposed routes
-exports.create = create;
-exports.read = read;
-exports.update = update ;
-exports.delete = del;
+exports.create  = create;
+exports.read    = read;
+exports.update  = update ;
+exports.delete  = del;
+exports.recover = recover;
+
+var emails = {
+  recover: fs.readFileSync(path.join(__dirname, '../emails/recover.html'), 'utf8'),
+  signup:  fs.readFileSync(path.join(__dirname, '../emails/signup.html'), 'utf8')
+};
+
+/* -------------------------------------------------------------------------- */
 
 // POST /users
 function create(req, res, next) {
@@ -40,9 +55,7 @@ function read(req, res, next) {
     'role.label AS role, user.hidden, user.lastactive ' +
     'FROM user JOIN role ON user.roleid = role.id';
 
-  if (hasId) {
-    sql += ' WHERE user.id = ?;';
-  }
+  if (hasId) { sql += ' WHERE user.id = ?;'; }
 
   db.async.all(sql, [req.params.id])
   .then(function (rows) {
@@ -97,6 +110,39 @@ function del(req, res, next) {
   db.async.run(sql, [req.params.id])
   .then(function () {
     res.status(200).send(this.changes).bind(db);
+  })
+  .catch(next)
+  .done();
+}
+
+// POST /users/recover
+function recover(req, res, next) {
+  'use strict';
+
+  var sql, message;
+
+  sql =
+    'SELECT user.id, user.username, user.email FROM user WHERE email = ?;';
+
+  db.async.get(sql, [req.body.email])
+  .then(function (user) {
+    if (!user) { return res.status(404).json({ code: 'ERR_NO_USER' }); }
+
+    // compose the message.  The params key will be used to template into the
+    // HTML message with a templating library.
+    message = {
+      subject: 'Password Reset Request',
+      html: emails.recover,
+      params : {
+        token : uuid.v4(),
+        address : user.email
+      }
+    };
+
+    return mailer.send(user.email, message);
+  })
+  .then(function (body) {
+    res.status(200).json(body);
   })
   .catch(next)
   .done();

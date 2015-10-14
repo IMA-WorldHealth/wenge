@@ -52,7 +52,7 @@ app.use(session({
 app.post('/login', auth.login);
 app.get('/logout', auth.logout);
 
-app.post('/accounts/recover', accounts.recover);
+app.post('/users/recover', users.recover);
 
 // ensure that the user session is defined
 app.use(auth.gateway);

@@ -13,12 +13,8 @@
       </span>
     </legend>
 
-    <div class="alert alert-danger" ng-if="RequestForm.$submitted && (RequestForm.$invalid || CreateCtrl.request.$invalid)">
+    <alert type="danger" close="1" ng-if="RequestForm.$submitted && RequestForm.$invalid">
       <b><i class="octicon octicon-alert"></i> Warning</b> There are some errors in your request.  Please correct these and submit the form again.
-    </div>
-
-    <alert type="danger">
-
     </alert>
 
     <div class="form-group" ng-class="{ 'has-error' : RequestForm.$submitted && !CreateCtrl.request.project }">
