@@ -1,11 +1,11 @@
 {
   "name": "wenge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": "https://github.com/IMA-WorldHealth/AFE",
   "description": "Electronic Authorization for Expense Forms",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"There are no tests yet!\" && exit 0",
     "app": "gulp build && cd bin && node server/server.js"
   },
   "keywords": [
@@ -20,7 +20,6 @@
     "compression": "^1.5.1",
     "express": "^4.13.1",
     "express-session": "^1.11.3",
-    "express-subdomain": "^1.0.3",
     "helmet": "^0.12.0",
     "mailcomposer": "^2.1.0",
     "mailgun-js": "^0.7.1",
