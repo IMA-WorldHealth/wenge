@@ -1,7 +1,7 @@
 Wenge
 =====
 
-[![Circle CI](https://circleci.com/gh/IMA-WorldHealth/wenge.svg?style=svg)](https://circleci.com/gh/IMA-WorldHealth/wenge)
+[![Circle CI](https://circleci.com/gh/IMA-WorldHealth/wenge.svg?style=shield)](https://circleci.com/gh/IMA-WorldHealth/wenge)
 [![Dependency Status](https://david-dm.org/IMA-WorldHealth/wenge.svg)](https://david-dm.org/IMA-WorldHealth/wenge)
 [![devDependency Status](https://david-dm.org/IMA-WorldHealth/wenge/dev-status.svg)](https://david-dm.org/IMA-WorldHealth/wenge#info=devDependencies)
 
