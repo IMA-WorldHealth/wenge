@@ -9,11 +9,10 @@
   <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 
-  <link rel='stylesheet' href='css/bootstrap.min.css'>
-  <link rel='stylesheet' href='css/octicons.css'>
-  <link rel='stylesheet' href='css/site.css'>
+  <link rel='stylesheet' href='styles.min.css'>
 </head>
-<body ng-app='wenge' ng-cloak>
+
+<body ng-app='wenge' ng-cloak ng-strict-di>
 
   <wenge-navigation></wenge-navigation>
 
@@ -21,12 +20,7 @@
     <ng-view></ng-view>
   </main>
 
-  <script src='vendor/angular.min.js'></script>
-  <script src='vendor/angular-route.min.js'></script>
-  <script src='vendor/angular-resource.min.js'></script>
-  <script src='vendor/angular-file-upload.min.js'></script>
-  <script src='vendor/ui-bootstrap-tpls.min.js'></script>
-  <script src='vendor/dirPagination.js'></script>
+  <script src='vendor.min.js'></script>
   <script src='app.min.js'></script>
 </body>
 </html>

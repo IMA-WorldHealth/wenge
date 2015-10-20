@@ -3,24 +3,28 @@ var cfg  = require('./config'),
 
 var gulp      = require('gulp'),
     gulpif    = require('gulp-if'),
-    iife      = require('gulp-iife'),
+    sourcemaps = require('gulp-sourcemaps'),
     flatten   = require('gulp-flatten'),
     concat    = require('gulp-concat'),
+    nano      = require('gulp-cssnano'),
+    uncss     = require('gulp-uncss'),
+    iife      = require('gulp-iife'),
     uglify    = require('gulp-uglify'),
     rimraf    = require('rimraf');
 
 // toggle to minify scripts
-var MINIFY = false;
+var MINIFY = true;
 
 var paths = {
   config : 'config.js',
   client : {
     dir    : path.join(cfg.buildDir, 'client'),
     scripts: ['client/modules/app.js', 'client/modules/**/*.js'],
-    vendor : ['client/vendor/**/*.min.js', 'client/vendor/**/dirPagination.js'],
-    static : ['!client/*.js', '!client/**/*.js', '!client/vendor/*', '!client/vendor/**/*', 'client/*', 'client/**/*']
+    vendor : ['!client/vendor/angular-bootstrap/ui-bootstrap.min.js', 'client/vendor/**/*.min.js', 'client/vendor/**/dirPagination.js'],
+    styles : ['client/css/*.css'],
+    static : ['!client/*.js', '!client/**/*.js', '!client/css/*', '!client/vendor/*', '!client/vendor/**/*', 'client/*', 'client/**/*']
   },
-  server : { 
+  server : {
     dir    : path.join(cfg.buildDir, 'server'),
     static : ['server/*.js', 'server/**/*'],
   },
@@ -36,22 +40,32 @@ gulp.task('clean', function (fn) {
 
 // concatenates all the client scripts into one
 gulp.task('build-client', function () {
-  gulp.start('client-minify', 'client-vendor', 'client-move');
+  gulp.start('client-js-minify', 'client-css-minify', 'client-vendor', 'client-move');
 });
 
 // minify application code if necessary
-gulp.task('client-minify', function () {
+gulp.task('client-js-minify', function () {
   return gulp.src(paths.client.scripts)
-    .pipe(gulpif(MINIFY, uglify()))
-    .pipe(concat('app.min.js'))
+    .pipe(sourcemaps.init())
+    .pipe(gulpif(MINIFY, uglify({ mangle : true })))
+    .pipe(concat('app.min.js', { newLine: ';' }))
     .pipe(iife())
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest(paths.client.dir));
+});
+
+gulp.task('client-css-minify', function () {
+  return gulp.src(paths.client.styles)
+    .pipe(concat('styles.min.css'))
+    .pipe(gulpif(MINIFY, nano()))
     .pipe(gulp.dest(paths.client.dir));
 });
 
 gulp.task('client-vendor', function () {
   return gulp.src(paths.client.vendor)
-    .pipe(flatten())
-    .pipe(gulp.dest(path.join(paths.client.dir, 'vendor')));
+    .pipe(gulpif(MINIFY, uglify({ mangle : true })))
+    .pipe(concat('vendor.min.js', { newLine: ';'}))
+    .pipe(gulp.dest(paths.client.dir));
 });
 
 // move the client into the bin directory
@@ -86,7 +100,7 @@ gulp.task('watch', function () {
   gulp.watch(paths.client.static, ['build-client']);
 });
 
-// build task for npm run start 
+// build task for npm run start
 gulp.task('build', ['clean'], function () {
   gulp.start('build-client', 'build-server', 'config-move');
 });

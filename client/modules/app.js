@@ -5,6 +5,7 @@ angular.module('wenge', [
 .config(RouterConfig)
 .factory('AuthInterceptor', AuthInterceptor)
 .config(InterceptorConfig)
+.config(CompilerConfig)
 .run(Application);
 
 /* --------------------------------------------------------- */
@@ -13,6 +14,14 @@ InterceptorConfig.$inject = ['$httpProvider'];
 
 function InterceptorConfig($httpProvider) {
   $httpProvider.interceptors.push('AuthInterceptor');
+}
+
+/* --------------------------------------------------------- */
+
+CompilerConfig.$inject = ['$compileProvider'];
+
+function CompilerConfig($compileProvider) {
+  $compileProvider.debugInfoEnabled(false);
 }
 
 /* --------------------------------------------------------- */

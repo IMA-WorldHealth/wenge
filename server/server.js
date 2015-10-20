@@ -16,6 +16,7 @@ var express     = require('express'),
     multer      = require('multer'),
     attachments = multer({ dest : './server/attachments/' }),
     FileStore   = require('session-file-store')(session),
+    helmet      = require('helmet'),
     app         = express();
 
 // configure database
@@ -31,6 +32,7 @@ var auth     = require('./controllers/auth'),
 // middleware
 app.use(compression());
 app.use(morgan('common'));
+app.use(helmet());
 app.use(express.static('client'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -41,7 +43,7 @@ app.use(session({
   secret : 'x0r world HeaLth',
   resave : false,
   saveUninitialized : false,
-  unset  : 'destroy'
+  unset  : 'destroy',
 }));
 
 /* Server Routes */
