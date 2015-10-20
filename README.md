@@ -11,7 +11,7 @@ Kinshasa to a paperless AFE system.
 
 ### Installation
 
-You need [nodejs](www.nodejs.org) and [sqlite3]().  To install, use npm.
+You need [nodejs](https://nodejs.org) and [sqlite3](https://www.sqlite.org/).  To install, use npm.
 ```sh
 npm install -g gulp bower
 npm install
@@ -20,7 +20,7 @@ npm run app
 ```
 
 The application depends on `config.js` which is not distributed with this repository.  To obtain
-your own, please contact the [developers@imaworldhealth.xyz](<developers@imaworldhealth.xyz)
+your own, please contact the [developers@imaworldhealth.xyz](<developers@imaworldhealth.xyz>)
 
 ### Testing
 
@@ -49,7 +49,8 @@ npm test
  - [ ] Implement email-based signin (tokens) 
  - [ ] Enable token-based signing
  - [ ] Full HTTP API tests written using `chai-http`
- - [ ] Automatic deployment using CircleCI
+ - [ ] Automatic deployment using [CircleCI](https://circleci.com/)
+ - [ ] HTTPS certificates using [LetsEncrypt](https://letsencrypt.org/)
 
 ### LICENSE
 [MIT](./LICENSE)
