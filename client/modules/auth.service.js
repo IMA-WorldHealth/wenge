@@ -1,5 +1,7 @@
 angular.module('wenge')
-.service('AuthService', ['$http', 'Session', AuthService]);
+.service('AuthService', AuthService);
+
+AuthService.$inject = [ '$http', 'Session', 'NavigationService' ];
 
 /**
 * The authentication and authorization service to facilitate logins and control
@@ -8,7 +10,7 @@ angular.module('wenge')
 * @class AuthService
 * @constructor
 */
-function AuthService($http, Session) {
+function AuthService($http, Session, Nav) {
   var vm = this;
 
   // log the user in
@@ -17,6 +19,7 @@ function AuthService($http, Session) {
       .post('/login', { username : credentials.username, password : credentials.password })
       .then(function (res) {
         Session.create(res.data);
+        Nav.visible = true;
         return res.data;
       });
   };
@@ -24,6 +27,7 @@ function AuthService($http, Session) {
   // log the user out
   vm.logout = function () {
     Session.destroy();
+    Nav.visible = false;
     return $http.get('/logout');
   };
 

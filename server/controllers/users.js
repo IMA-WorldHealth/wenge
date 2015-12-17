@@ -9,7 +9,8 @@
 var fs     = require('fs'),
     path   = require('path'),
     crypto = require('crypto'),
-    uuid   = require('node-uuid');
+    uuid   = require('node-uuid'),
+    ursa   = require('ursa');
 
 var db     = require('../lib/db').db,
     mailer = require('../lib/mailer');
@@ -20,24 +21,106 @@ exports.read    = read;
 exports.update  = update ;
 exports.delete  = del;
 exports.recover = recover;
+exports.invite = invite;
 
 var emails = {
   recover: fs.readFileSync(path.join(__dirname, '../emails/recover.html'), 'utf8'),
-  signup:  fs.readFileSync(path.join(__dirname, '../emails/signup.html'), 'utf8')
+  invitation :  fs.readFileSync(path.join(__dirname, '../emails/invitation.html'), 'utf8')
 };
 
 /* -------------------------------------------------------------------------- */
 
+// POST /users/invite
+// Invite a new user to sign up for wenge.  This route will store an invitation
+// uuid and associated email, to be confirmed.
+//
+// NOTE -- This invitation should include the users role and their signature type,
+// if any.
+function invite(req, res, next) {
+  'use strict';
+
+  var id, sql,
+      data = req.body;
+
+  // generate a uuid for this person
+  id = uuid.v4();
+
+  sql =
+    'INSERT INTO invitation (id, email) VALUES (?, ?);';
+
+  // store the invitation in the database
+  db.async.run(sql, [id, data.email])
+  .then(function () {
+
+    // now that we've stored the new invitation, we should compose an email
+    // message to the person, letting them know that they have a pending
+    // invitation
+
+    message = {
+      subject: 'Invitation to Wenge',
+      html: emails.invitation,
+      params : {
+        token : id,
+        address : data.email
+      }
+    };
+
+    // send the message
+    return mailer.send(data.email, message);
+  })
+  .then(function (body) {
+    
+    // Success! Report to the client that we have successfully invited
+    // a new user.
+    res.status(200).json(body);
+  })
+  .catch(next)
+  .done();
+}
+
 // POST /users
+// Creates a new user after an invitation has been sent out.  It deletes the
+// reference to the invitation if the user is successfully created.
 function create(req, res, next) {
   'use strict';
 
-  var sql =
-    'INSERT INTO user (username, email, password, roleid) VALUES (?, ?, ?, ?);';
+  var sql,
+      data = req.body;
 
-  db.async.run(sql)
+  // first thing we must do is check the invitation ID to see if we actually
+  // sent the user an invitation.
+  sql =
+    'SELECT email, timestamp FROM invitations WHERE id = ?;';
+
+  db.async.get(sql, [data.invitationId])
+  .then(function (row) {
+    var params = [
+      data.username, data.displayname, data.email, data.password,
+      data.telephone, data.roleid, data.hidden
+    ];
+
+    // next, we must create the user
+    sql =
+      'INSERT INTO user (username, displayname, email, password, telephone, roleid, hidden) ' +
+      'VALUES (?, ?, ?, ?, ? ?);';
+
+    return db.async.run(sql, params);
+  })
   .then(function () {
-    res.status(200).send(this.lastID);
+
+    // finally, we create a signature keypair for the user
+    var pk = ursa.generatePrivateKey(4096),
+        pubk = pk.toPublicPem('utf8'),
+        privk = pk.toPrivatePem('utf8');
+
+    sql =
+      'INSERT INTO signature (public, private, type) VALUES (?, ?, ?);';
+
+    // TODO -- get the type of signature from the invitation
+    return db.async.run(sql, [pubk, privk, 'normal']);
+  })
+  .then(function () {
+    res.status(200).json();
   })
   .catch(next)
   .done();

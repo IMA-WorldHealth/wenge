@@ -16,18 +16,19 @@ function wengeNavigation() {
 angular.module('wenge')
 .controller('NavigationController', NavigationController);
 
-NavigationController.$inject = ['AuthService', 'Session', '$location'];
+NavigationController.$inject = ['AuthService', 'Session', '$location', 'NavigationService'];
 
 /**
 * NavigationControlller
 *
 * Bound to the above navigation directive.
 */
-function NavigationController(AuthService, Session, $location) {
+function NavigationController(AuthService, Session, $location, NavService) {
   var vm = this;
 
   // expose to the view model
   vm.user = Session;
+  vm.service = NavService;
   vm.logout = logout;
   vm.links = [{
     icon : 'diff',
@@ -46,8 +47,8 @@ function NavigationController(AuthService, Session, $location) {
     url : 'settings',
     title : 'Settings'
   }];
-  
-  
+
+
   // logs the current user out
   function logout() {
     AuthService.logout()

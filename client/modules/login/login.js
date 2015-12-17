@@ -1,5 +1,7 @@
 angular.module('wenge')
-.controller('LoginController', ['$location', 'AuthService', LoginController]);
+.controller('LoginController', LoginController);
+
+LoginController.$inject = [ '$location', 'AuthService', 'NavigationService' ];
 
 /**
 * The view-model for the login page.
@@ -7,8 +9,11 @@ angular.module('wenge')
 * @class LoginController
 * @constructor
 */
-function LoginController($location, AuthService) {
+function LoginController($location, AuthService, Nav) {
   var vm = this;
+
+  // make sure the navigation panel is not visible on this page
+  Nav.visible = false;
 
   vm.credentials = {};
   vm.error = false;

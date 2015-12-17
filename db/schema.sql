@@ -14,6 +14,12 @@ CREATE TABLE IF NOT EXISTS signature  (
 );
 
 
+CREATE TABLE IF NOT EXISTS invitation (
+  id TEXT PRIMARY KEY, email TEXT,
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
 CREATE TABLE IF NOT EXISTS user (
   id INTEGER PRIMARY KEY, username TEXT, displayname TEXT,
   email TEXT, password TEXT, roleid INTEGER, lastactive DATE,

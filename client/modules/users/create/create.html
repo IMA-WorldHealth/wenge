@@ -1,0 +1,76 @@
+<section>
+
+  <alert type="info">
+    <strong><i class="octicon octicon-light-bulb"></i> Welcome to Wenge!</strong>
+    <p>
+      Take a few minutes to configure your account details, and you will be all set to sign in.
+    </p>
+  </alert>
+
+  <form name="CreateForm" ng-submit="CreateCtrl.submit(CreateForm.$invalid)" novalidate>
+    <fieldset>
+      <legend>Account Creation</legend>
+
+      <div class="form-group has-feedback">
+        <label>Username</label>
+        <input class="form-control" type="text" name="username" ng-model="CreateCtrl.form.username" required>
+        <p class="help-block">
+          You will sign in with this name.
+        </p>
+      </div>
+
+      <div class="form-group has-feedback" ng-class="{ 'has-success' : CreateForm.password.$valid && CreateForm.== CreateForm.}">
+        <label>Display Name</label>
+        <input  class="form-control" type="text" name="displayname" ng-model="CreateCtrl.form.displayname" required>
+        <p class="help-block">
+          This name will appear on printed documents.
+        </p>
+      </div>
+
+      <div class="form-group has-feedback" ng-class="{ 'has-success' : CreateForm.password.$valid && CreateCtrl.matching, 'has-error' : CreateForm.$submitted && !CreateCtrl.matching }">
+        <label>Password</label>
+        <input class="form-control" type="password" name="password" ng-model="CreateCtrl.form.password" ng-minlength="8" ng-change="CreateCtrl.checkMatching()" required>
+        <i class="octicon octicon-check form-control-feedback" aria-hidden="true" ng-if="CreateCtrl.matching"></i>
+        <i class="octicon octicon-stop form-control-feedback" aria-hidden="true" ng-if="!CreateCtrl.matching"></i>
+        <p class="help-block">
+          Miniumum of 8 characters in length.
+        </p>
+        <p class="help-block" ng-if="CreateForm.$submitted && !CreateCtrl.matching">
+          Passwords do not match.
+        </p>
+      </div>
+
+      <div class="form-group has-feedback" ng-class="{ 'has-success' : CreateForm.confirmPassword.$valid && CreateCtrl.matching, 'has-error' : CreateForm.$submitted && !CreateCtrl.matching }">
+        <label>Confirm Password </label>
+        <input  class="form-control" type="password" name="confirmPassword" ng-model="CreateCtrl.form.confirmPassword" ng-minlength="8" ng-change="CreateCtrl.checkMatching()" required>
+        <i class="octicon octicon-check form-control-feedback" aria-hidden="true" ng-if="CreateCtrl.matching"></i>
+        <i class="octicon octicon-stop form-control-feedback" aria-hidden="true" ng-if="!CreateCtrl.matching"></i>
+      </div>
+
+      <div class="form-group has-feedback" ng-class="{ 'has-success' : CreateForm.$dirty && CreateForm.email.$valid, 'has-error' : CreateForm.$dirty && CreateForm.email.$invalid }">
+        <label>Email Address</label>
+        <input  class="form-control" type="email" name="email" ng-model="CreateCtrl.form.email" required>
+        <i class="octicon octicon-check form-control-feedback" aria-hidden="true" ng-if="CreateForm.$dirty && CreateForm.email.$valid"></i>
+        <i class="octicon octicon-stop form-control-feedback" aria-hidden="true" ng-if="CreateForm.$dirty && CreateForm.email.$invalid"></i>
+      </div>
+
+      <div class="form-group has-feedback" ng-class="{ 'has-success' : CreateForm.telephone.$dirty && CreateForm.telephone.$valid, 'has-error' : CreateForm.telephone.$dirty && CreateForm.telephone.$invalid }">
+        <label>Telephone Number</label>
+        <input  class="form-control" type="tel" name="telephone" ng-model="CreateCtrl.form.telephone">
+        <p class="help-block" ng-if="CreateForm.$submitted && CreateForm.telephone.$invalid">
+          This is not a valid telephone number.
+        </p>
+      </div>
+
+      <div class="form-group checkbox">
+        <label>
+          <input type="checkbox" name="hidden" ng-model="CreateCtrl.form.hidden" ng-true-value="1" ng-false-value="0">
+          Make my profile private.
+        </label>
+      </div>
+
+      <input type="submit" class="btn btn-success">
+
+    </fieldset>
+  </form>
+</section>

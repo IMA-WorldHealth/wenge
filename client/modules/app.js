@@ -59,13 +59,25 @@ function RouterConfig($routeProvider, $locationProvider) {
     controller  : 'MainController as MainCtrl',
     templateUrl : 'modules/main/main.html'
   })
+
+  // public routes, accessible without need of signin
   .when('/login', {
     controller  : 'LoginController as LoginCtrl',
     templateUrl : 'modules/login/login.html'
   })
-  .when('/recover', {
-    controller  : 'RecoverController as RecoverCtrl',
+  .when('/accounts/recover', {
+    controller  : 'AccountRecoverController as RecoverCtrl',
     templateUrl : 'modules/users/recover/recover.html'
+  })
+  .when('/accounts/create', {
+    controller  : 'AccountCreateController as CreateCtrl',
+    templateUrl : 'modules/users/create/create.html'
+  })
+
+  // private routes
+  .when('/requests', {
+    controller : 'RequestController as RequestCtrl',
+    templateUrl : 'modules/requests/requests.html'
   })
   .when('/requests/create', {
     controller  : 'RequestCreateController as CreateCtrl',
@@ -79,9 +91,9 @@ function RouterConfig($routeProvider, $locationProvider) {
     controller  : 'UserController as UserCtrl',
     templateUrl : 'modules/users/users.html'
   })
-  .when('/users/create', {
-    controller  : 'UserCreateController as CreateCtrl',
-    templateUrl : 'modules/users/create/create.html'
+  .when('/users/invite', {
+    controller : 'UserInviteController as InviteCtrl',
+    templateUrl : 'modules/users/invite/invite.html'
   })
   .when('/users/:id', {
     controller  : 'UserDetailsController as DetailsCtrl',
@@ -116,14 +128,16 @@ function Application($rootScope, $location, $q, Session) {
 
   // make sure that the user is authenticated
   $rootScope.$on('$routeChangeStart', function (event, next) {
-    var publicRoutes = ['/recover', '/users/account/reset', '/login'],
+    var publicRoutes = ['/accounts/', '/login'],
         route = next.originalPath;
 
     // NOTE - cannot have a user with id === 0
+    // do not let users access private pages without a session
     if (!Session.id && !contains(publicRoutes, route)) {
       $location.url('/login');
     }
 
+    // do not let logged in users access the login page
     if (!!Session.id && route === '/login') {
       $location.url('/');
     }
