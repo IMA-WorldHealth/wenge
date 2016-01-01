@@ -4,6 +4,8 @@ Wenge
 [![Circle CI](https://circleci.com/gh/IMA-WorldHealth/wenge.svg?style=shield)](https://circleci.com/gh/IMA-WorldHealth/wenge)
 [![Dependency Status](https://david-dm.org/IMA-WorldHealth/wenge.svg)](https://david-dm.org/IMA-WorldHealth/wenge)
 [![devDependency Status](https://david-dm.org/IMA-WorldHealth/wenge/dev-status.svg)](https://david-dm.org/IMA-WorldHealth/wenge#info=devDependencies)
+[![bitHound Overall Score](https://www.bithound.io/github/IMA-WorldHealth/wenge/badges/score.svg)](https://www.bithound.io/github/IMA-WorldHealth/wenge)
+
 
 Wenge is a web application for creating, reviewing, and approving Authorizations for Expenditure (AFEs).
 This is an experimental application written to transition the IMA World Health office in

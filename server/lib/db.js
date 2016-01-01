@@ -14,13 +14,12 @@ var mod = module.exports = {
 
 /**
 * Initializes a connection to the database using paramters provided in a
-* configuration JSON object.  If the database does not exist, it will
+* configuration JSON object (via .env).  If the database does not exist, it will
 * automatically build it for you.
 *
-* @param {Object} cfg A configuration JSON with database parameters
 * @returns null
 */
-function setup(cfg) {
+function setup() {
   'use strict';
 
   var rebuild, db;
@@ -28,15 +27,15 @@ function setup(cfg) {
   // Check to see if db exists.  If not, build it from configuration files.
   try {
     console.log('[DB] [INFO] Checking to see if database exists...');
-    rebuild = !!fs.statSync(cfg.dbPath);
-    console.log('[DB] [INFO] Using database:', cfg.dbPath);
+    rebuild = !!fs.statSync(process.env.DB_PATH);
+    console.log('[DB] [INFO] Using database:', process.env.DB_PATH);
   } catch (e) {
     console.log('[DB] [INFO] No database detected.');
     rebuild = true;
   }
 
   // connect to the database
-  db = mod.db = new sqlite3.Database(cfg.dbPath);
+  db = mod.db = new sqlite3.Database(process.env.DB_PATH);
 
   // create asynchronous versions of db functions
   db.async = {};
@@ -44,31 +43,32 @@ function setup(cfg) {
   db.async.get = q.nbind(db.get, db);
   db.async.all = q.nbind(db.all, db);
 
-  if (rebuild) { buildDB(db, cfg); }
+  // rebuild the database if necessary
+  if (rebuild) { buildDB(db); }
 }
 
 /**
 * Build the database sequentially from .sql files.  The configuration file is
-* expected to contain dbSchema and optionally dbBase paths.  The schema is
-* parsed and built, followed by the base SQL file.
+* expected to contain DB_SCHEMA and optionally DB_DATA paths.  The schema is
+* parsed and built, followed by the data SQL file.
 *
 * NOTE - these files are expected to maintain two new lines betweent each
 * consecutive SQL statement.  Otherwise they will be treated as one (which may
 * be confusing for error handling).
 *
 * @param {Object} db The database connector
-* @param {Object} cfg The JSON configuration object for the database
 *
 */
-function buildDB(db, cfg) {
+function buildDB(db) {
+  'use strict';
 
   // build the database schema and base file if defined
-  buildDBFile(db, cfg.dbSchema)
+  buildDBFile(db, process.env.DB_SCHEMA)
   .then(function () {
 
     // if dbBase exists, we also build that
-    if (cfg.dbBase) {
-      return buildDBFile(db, cfg.dbBase);
+    if (process.env.DB_DATA) {
+      return buildDBFile(db, process.env.DB_DATA);
     }
   })
   .then(function () {

@@ -4,11 +4,12 @@
 * This is the server for the wenge application.
 */
 
-var path     = require('path'),
-    config   = require(path.join(__dirname, '../config'));
+// load environmental variables 
+require('dotenv').load();
 
 // import dependencies
 var express     = require('express'),
+    path        = require('path'),
     session     = require('express-session'),
     compression = require('compression'),
     bodyParser  = require('body-parser'),
@@ -20,8 +21,9 @@ var express     = require('express'),
     app         = express();
 
 // configure database
-require('./lib/db').setup(config);
+require('./lib/db').setup();
 
+// route endpoints
 var auth     = require('./controllers/auth'),
     users    = require('./controllers/users'),
     requests = require('./controllers/requests'),
@@ -40,10 +42,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // session management
 app.use(session({
   store  : new FileStore({ reapInterval : -1 }),
-  secret : 'x0r world HeaLth',
+  secret : 'x0r WorLd HeaLth',
   resave : false,
   saveUninitialized : false,
-  unset  : 'destroy',
+  unset  : 'destroy'
 }));
 
 /* Server Routes */
@@ -105,8 +107,8 @@ app.use(function (err, res, req, next) {
   res.status(500).send('Something broke!');
 });
 
-app.listen(config.port, function () {
-  console.log('[APP] [INFO] Server is listening on port', config.port);
+app.listen(process.env.PORT, function () {
+  console.log('[APP] [INFO] Server is listening on port', process.env.PORT);
 });
 
 process.on('uncaughtException', function (err) {

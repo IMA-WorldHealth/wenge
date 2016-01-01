@@ -1,5 +1,4 @@
 # ignore instance data
-config.js
 bin/*
 db/base.sql
 
@@ -20,3 +19,6 @@ sessions/*
 
 # log files
 *.log
+
+# ignore environment config
+.env

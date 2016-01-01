@@ -8,9 +8,11 @@
 * in params.
 */
 
-var cfg      = require('../../config'),
-    composer = require('mailcomposer'),
-    mailgun  = require('mailgun-js')(cfg.mailgun),
+var composer = require('mailcomposer'),
+    mailgun  = require('mailgun-js')({
+      apiKey : process.env.MAILGUN_KEY,
+      domain : process.env.MAILGUN_DOMAIN
+    }),
     tmpl     = require('blueimp-tmpl').tmpl,
     q        = require('q');
 
@@ -21,7 +23,7 @@ function send(address, data) {
 
   var dfd = q.defer();
 
-  data.from = cfg.appname + '@' + cfg.mailgun.domain;
+  data.from = process.env.APP + '@' + process.env.MAILGUN_DOMAIN;
   data.to = address;
 
   // template in the parameters before configurting MIME type
