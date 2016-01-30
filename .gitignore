@@ -1,6 +1,6 @@
 # ignore instance data
-bin/*
-db/base.sql
+db/data.sql
+dest/*
 
 # ignore built files
 *.min.js
