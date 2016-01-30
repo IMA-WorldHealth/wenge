@@ -24,7 +24,15 @@ var paths = {
     dir:    path.join(process.env.BUILD_DIR, 'client'),
     js:     ['client/modules/app.js', 'client/modules/**/*.js'],
     sass:   ['sass/*.scss'],
-    vendor: ['client/vendor/**/*.min.js'],
+    vendor: [
+      'client/vendor/angular/*.min.js',
+      'client/vendor/angular-route/*.min.js',
+      'client/vendor/angular-moment/*.min.js',
+      'client/vendor/angular-file-upload/dist/*.min.js',
+      'client/vendor/angular-bootstrap/*.min.js',
+      'client/vendor/angular-resource/*.min.js',
+      'client/vendor/angular-ui-grid/*.min.js'
+    ],
     static: ['!client/**/*.js', '!client/css/*', '!client/vendor/*', '!client/vendor/**/*', 'client/*', 'client/**/*']
   },
   server:   {

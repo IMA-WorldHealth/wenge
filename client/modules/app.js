@@ -1,6 +1,5 @@
 angular.module('wenge', [
-  'ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUpload',
-  'angularUtils.directives.dirPagination'
+  'ngRoute', 'ngResource', 'ui.bootstrap', 'angularFileUpload', 'ui.grid'
 ])
 .config(RouterConfig)
 .factory('AuthInterceptor', AuthInterceptor)
@@ -34,10 +33,10 @@ function AuthInterceptor($location, $q, Session) {
     // called on server error
     responseError : function (response) {
 
-      // if the server sends back a 403 "Not Authorized",
+      // if the server sends back a 403 'Not Authorized',
       // and the code is ERR_NO_SESSION, we have had a session timeout
       // on the server.  Redirect to login
-      if (response.status === 403 && response.data.code === "ERR_NO_SESSION") {
+      if (response.status === 403 && response.data.code === 'ERR_NO_SESSION') {
         console.log('[AUTH] No session found!');
         Session.destroy();
         $location.url('/login');
@@ -50,10 +49,10 @@ function AuthInterceptor($location, $q, Session) {
 
 /* --------------------------------------------------------- */
 
-RouterConfig.$inject = ['$routeProvider', '$locationProvider'];
+RouterConfig.$inject = ['$routeProvider'];
 
 // configure routes
-function RouterConfig($routeProvider, $locationProvider) {
+function RouterConfig($routeProvider) {
   $routeProvider
   .when('/', {
     controller  : 'MainController as MainCtrl',
@@ -75,17 +74,17 @@ function RouterConfig($routeProvider, $locationProvider) {
   })
 
   // private routes
-  .when('/requests', {
-    controller : 'RequestController as RequestCtrl',
-    templateUrl : 'modules/requests/requests.html'
+  .when('/vouchers', {
+    controller : 'VoucherController as VoucherCtrl',
+    templateUrl : 'modules/vouchers/vouchers.html'
   })
-  .when('/requests/create', {
-    controller  : 'RequestCreateController as CreateCtrl',
-    templateUrl : 'modules/requests/create.html'
+  .when('/vouchers/create', {
+    controller  : 'VoucherCreateController as CreateCtrl',
+    templateUrl : 'modules/vouchers/create.html'
   })
-  .when('/requests/:id', {
-    controller  : 'RequestReceiptController as ReceiptCtrl',
-    templateUrl : 'modules/requests/receipt.html'
+  .when('/vouchers/:id', {
+    controller  : 'VoucherReceiptController as ReceiptCtrl',
+    templateUrl : 'modules/vouchers/receipt.html'
   })
   .when('/users', {
     controller  : 'UserController as UserCtrl',
