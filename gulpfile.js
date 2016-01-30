@@ -1,16 +1,17 @@
 var path = require('path');
 
-var gulp       = require('gulp'),
-    gulpif     = require('gulp-if'),
-    sourcemaps = require('gulp-sourcemaps'),
-    flatten    = require('gulp-flatten'),
-    concat     = require('gulp-concat'),
-    nano       = require('gulp-cssnano'),
-    uncss      = require('gulp-uncss'),
-    iife       = require('gulp-iife'),
-    sass       = require('gulp-sass'),
-    uglify     = require('gulp-uglify'),
-    rimraf     = require('rimraf');
+var gulp         = require('gulp'),
+    gulpif       = require('gulp-if'),
+    sourcemaps   = require('gulp-sourcemaps'),
+    flatten      = require('gulp-flatten'),
+    concat       = require('gulp-concat'),
+    nano         = require('gulp-cssnano'),
+    uncss        = require('gulp-uncss'),
+    autoprefixer = require('gulp-autoprefixer'),
+    iife         = require('gulp-iife'),
+    sass         = require('gulp-sass'),
+    uglify       = require('gulp-uglify'),
+    rimraf       = require('rimraf');
 
 // load environmental variables
 require('dotenv').load();
@@ -59,8 +60,11 @@ gulp.task('client-js', function () {
 
 gulp.task('client-styles', function () {
   return gulp.src(paths.client.sass)
+    .pipe(sourcemaps.init())
     .pipe(sass().on('error', sass.logError))
+    .pipe(autoprefixer())
     .pipe(gulpif(PRODUCTION, nano()))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(path.join(paths.client.dir, 'css')));
 });
 
