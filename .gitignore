@@ -21,4 +21,5 @@ sessions/*
 *.log
 
 # ignore environment config
-.env
+.env.*
+!.env.sample

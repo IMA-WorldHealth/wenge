@@ -1,40 +1,39 @@
-var path = require('path');
+const path = require('path');
 
-var gulp         = require('gulp'),
-    gulpif       = require('gulp-if'),
-    sourcemaps   = require('gulp-sourcemaps'),
-    flatten      = require('gulp-flatten'),
-    concat       = require('gulp-concat'),
-    nano         = require('gulp-cssnano'),
-    uncss        = require('gulp-uncss'),
-    autoprefixer = require('gulp-autoprefixer'),
-    iife         = require('gulp-iife'),
-    sass         = require('gulp-sass'),
-    uglify       = require('gulp-uglify'),
-    rimraf       = require('rimraf');
+const gulp         = require('gulp');
+const gulpif       = require('gulp-if');
+const sourcemaps   = require('gulp-sourcemaps');
+const concat       = require('gulp-concat');
+const nano         = require('gulp-cssnano');
+const autoprefixer = require('gulp-autoprefixer');
+const iife         = require('gulp-iife');
+const sass         = require('gulp-sass');
+const uglify       = require('gulp-uglify');
+const rimraf       = require('rimraf');
 
 // load environmental variables
-require('dotenv').load();
+var envPath = `.env.${ process.env.NODE_ENV.toLowerCase().trim() }`;
+require('dotenv').load({ path : envPath });
 
-// are we in development or production mode?
-var PRODUCTION = (process.env.ENV === 'production');
+// are we n development or production mode?
+var PRODUCTION = (process.env.NODE_ENV.toLowerCase().trim()  === 'production');
 
 // paths for building app components
 var paths = {
-  client:    {
-    dir:     path.join(process.env.BUILD_DIR, 'client'),
-    js: ['client/modules/app.js', 'client/modules/**/*.js'],
-    sass:    ['sass/*.scss'],
-    vendor:  ['!client/vendor/angular-bootstrap/ui-bootstrap.min.js', 'client/vendor/**/*.min.js', 'client/vendor/**/dirPagination.js'],
-    static:  ['!client/*.js', '!client/**/*.js', '!client/css/*', '!client/vendor/*', '!client/vendor/**/*', 'client/*', 'client/**/*']
+  client:   {
+    dir:    path.join(process.env.BUILD_DIR, 'client'),
+    js:     ['client/modules/app.js', 'client/modules/**/*.js'],
+    sass:   ['sass/*.scss'],
+    vendor: ['client/vendor/**/*.min.js'],
+    static: ['!client/**/*.js', '!client/css/*', '!client/vendor/*', '!client/vendor/**/*', 'client/*', 'client/**/*']
   },
-  server:    {
-    dir:     path.join(process.env.BUILD_DIR, 'server'),
-    static:  ['server/*.js', 'server/**/*'],
+  server:   {
+    dir:    path.join(process.env.BUILD_DIR, 'server'),
+    static: ['server/*.js', 'server/**/*']
   },
-  db:        {
-    dir:     path.join(process.env.BUILD_DIR, 'db'),
-    static:  ['db/*']
+  db:       {
+    dir:    path.join(process.env.BUILD_DIR, 'db'),
+    static: ['db/*']
   }
 };
 
@@ -70,8 +69,10 @@ gulp.task('client-styles', function () {
 
 gulp.task('client-vendor', function () {
   return gulp.src(paths.client.vendor)
+    .pipe(sourcemaps.init())
     .pipe(gulpif(PRODUCTION, uglify({ mangle : true })))
-    .pipe(concat('vendor.min.js', { newLine: ';'}))
+    .pipe(concat('vendor.min.js', { newLine: '\n;'}))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(paths.client.dir));
 });
 
@@ -82,7 +83,12 @@ gulp.task('client-move', function () {
 });
 
 gulp.task('build-server', function () {
-  gulp.start('server-move', 'db-move');
+  gulp.start('server-move', 'vars-move', 'db-move');
+});
+
+gulp.task('vars-move', function () {
+  return gulp.src(envPath)
+    .pipe(gulp.dest(process.env.BUILD_DIR));
 });
 
 // move the server into the bin/ directory
@@ -102,14 +108,9 @@ gulp.task('watch', function () {
   gulp.watch(paths.client.static, ['build-client']);
 });
 
-gulp.task('env', function () {
-  gulp.src('.env')
-    .pipe(gulp.dest(process.env.BUILD_DIR));
-});
-
 // build task for npm run start
 gulp.task('build', ['clean'], function () {
-  gulp.start('build-client', 'build-server', 'env');
+  gulp.start('build-client', 'build-server');
 });
 
 // default task runner

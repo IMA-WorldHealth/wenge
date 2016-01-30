@@ -4,8 +4,9 @@
 * This is the server for the wenge application.
 */
 
-// load environmental variables 
-require('dotenv').load();
+// load environmental variables
+var envPath = `.env.${ process.env.NODE_ENV.toLowerCase().trim() }`;
+require('dotenv').load({ path : envPath });
 
 // import dependencies
 var express     = require('express'),
@@ -16,7 +17,7 @@ var express     = require('express'),
     morgan      = require('morgan'),
     multer      = require('multer'),
     attachments = multer({ dest : './server/attachments/' }),
-    FileStore   = require('session-file-store')(session),
+    SQLiteStore = require('connect-sqlite3')(session),
     helmet      = require('helmet'),
     app         = express();
 
@@ -41,11 +42,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // session management
 app.use(session({
-  store  : new FileStore({ reapInterval : -1 }),
-  secret : 'x0r WorLd HeaLth',
+  store  : new SQLiteStore(),
+  secret : process.env.SESS_SECRET,
   resave : false,
   saveUninitialized : false,
-  unset  : 'destroy'
+  unset  : 'destroy',
+  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 1 week
 }));
 
 /* Server Routes */
@@ -87,8 +89,7 @@ app.get('/projects/:projectId/subprojects/:id?', projects.subprojects.read);
 app.put('/projects/:projectId/subprojects/:id', projects.subprojects.update);
 app.delete('/projects/:projectId/subprojects/:id', projects.subprojects.delete);
 
-
-app.get('/colors', colors.getColors);
+app.get('/colors', colors.read);
 
 // TODO
 // handle attachments
@@ -113,4 +114,5 @@ app.listen(process.env.PORT, function () {
 
 process.on('uncaughtException', function (err) {
   console.error('[APP] [ERROR] Uncaught Error:', err.stack);
+  process.exit(1);
 });

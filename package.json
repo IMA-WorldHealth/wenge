@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"There are no tests yet!\" && exit 0",
-    "app": "gulp build && cd dest && node server/server.js"
+    "dev": "export NODE_ENV=development && gulp build && cd dest && node server/server.js",
+    "app": "export NODE_ENV=production && gulp build && cd dest && node server/server.js"
   },
   "keywords": [
     "AFE",
@@ -39,7 +40,6 @@
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
     "gulp-cssnano": "^2.1.0",
-    "gulp-eslint": "^1.1.1",
     "gulp-flatten": "^0.2.0",
     "gulp-if": "^2.0.0",
     "gulp-iife": "0.2.4",

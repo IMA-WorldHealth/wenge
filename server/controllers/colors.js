@@ -8,11 +8,11 @@
 var db = require('../lib/db').db;
 
 // module exports
-exports.getColors = getColors;
+exports.read = read;
 
 
 // GET /colors
-function getColors(req, res, next) {
+function read(req, res, next) {
   'use strict';
 
   db.async.all('SELECT code, name FROM color;')

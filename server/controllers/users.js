@@ -6,14 +6,14 @@
 * and mailing it back to the user.
 */
 
-var fs     = require('fs'),
-    path   = require('path'),
-    crypto = require('crypto'),
-    uuid   = require('node-uuid'),
-    ursa   = require('ursa');
+const fs     = require('fs');
+const path   = require('path');
+const crypto = require('crypto');
+const uuid   = require('node-uuid');
+const ursa   = require('ursa');
 
-var db     = require('../lib/db').db,
-    mailer = require('../lib/mailer');
+const db     = require('../lib/db').db;
+const mailer = require('../lib/mailer');
 
 // exposed routes
 exports.create  = create;
@@ -23,7 +23,7 @@ exports.delete  = del;
 exports.recover = recover;
 exports.invite = invite;
 
-var emails = {
+const emails = {
   recover: fs.readFileSync(path.join(__dirname, '../emails/recover.html'), 'utf8'),
   invitation :  fs.readFileSync(path.join(__dirname, '../emails/invitation.html'), 'utf8')
 };
@@ -56,7 +56,7 @@ function invite(req, res, next) {
     // message to the person, letting them know that they have a pending
     // invitation
 
-    message = {
+    var message = {
       subject: 'Invitation to Wenge',
       html: emails.invitation,
       params : {
@@ -69,7 +69,7 @@ function invite(req, res, next) {
     return mailer.send(data.email, message);
   })
   .then(function (body) {
-    
+
     // Success! Report to the client that we have successfully invited
     // a new user.
     res.status(200).json(body);
@@ -93,7 +93,7 @@ function create(req, res, next) {
     'SELECT email, timestamp FROM invitations WHERE id = ?;';
 
   db.async.get(sql, [data.invitationId])
-  .then(function (row) {
+  .then(function () {
     var params = [
       data.username, data.displayname, data.email, data.password,
       data.telephone, data.roleid, data.hidden
@@ -202,7 +202,7 @@ function del(req, res, next) {
 function recover(req, res, next) {
   'use strict';
 
-  var sql, message;
+  var sql;
 
   sql =
     'SELECT user.id, user.username, user.email FROM user WHERE email = ?;';
@@ -213,7 +213,7 @@ function recover(req, res, next) {
 
     // compose the message.  The params key will be used to template into the
     // HTML message with a templating library.
-    message = {
+    var message = {
       subject: 'Password Reset Request',
       html: emails.recover,
       params : {
