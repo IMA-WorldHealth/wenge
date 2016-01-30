@@ -17,12 +17,12 @@ You need [nodejs](https://nodejs.org) and [sqlite3](https://www.sqlite.org/).  T
 ```sh
 npm install -g gulp bower
 npm install
-bower intall
+bower install
 npm run app
 ```
 
-The application depends on `config.js` which is not distributed with this repository.  To obtain
-your own, please contact the [developers@imaworldhealth.xyz](<developers@imaworldhealth.xyz>)
+The application depends on `.env` which is not distributed with this repository.  To create your own,
+please follow the guidelines in `.env.sample`.  Otherwise, email the developers [developers@imaworldhealth.org](<developers@imaworldhealth.org>)
 
 ### Testing
 
@@ -47,10 +47,9 @@ npm test
  - [x] Implement project management
  - [x] Automatic database builds
  - [x] Automatic testing
- - [ ] Development/production environmental variable switch
- - [ ] Implement email-based signin (tokens) 
- - [ ] Enable token-based signing
- - [ ] Full HTTP API tests written using `chai-http`
+ - [X] Development/production environmental variable switch
+ - [ ] Implement email-based signin (tokens)
+ - [ ] Full HTTP API tests written using `mocha`/`chai-http`
  - [ ] Automatic deployment using [CircleCI](https://circleci.com/)
  - [ ] HTTPS certificates using [LetsEncrypt](https://letsencrypt.org/)
 
