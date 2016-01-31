@@ -1,19 +1,19 @@
-<nav class='navbar navbar-defailt' class="hidden-print">
-  <div class='container-fluid' style='margin: 0 2em;' ng-if="NavCtrl.service.visible">
-    <div class='collapse navbar-collapse'>
-      <div class='navbar-header'>
-        <a class='navbar-brand' href='/' style="padding:10px" tabindex="-1">
+<nav class="navbar navbar-defailt" class="hidden-print">
+  <div class="container-fluid" style="margin: 0 2em;" ng-if="NavCtrl.service.visible">
+    <div class="collapse navbar-collapse">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/" style="padding:10px" tabindex="-1">
           <img alt="Wenge Logo" src="assets/logo.jpg" width="40px" height="40px">
         </a>
       </div>
       <h3 class="navbar-left">Wenge</h3>
 
       <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown" dropdown keyboard-nav>
-          <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" dropdown-toggle>
+        <li uib-dropdown keyboard-nav>
+          <a role="button" uib-dropdown-toggle>
              Jump To <i class="octicon octicon-triangle-down"></i>
           </a>
-          <ul class="dropdown-menu">
+          <ul uib-dropdown-menu>
             <li ng-repeat="item in NavCtrl.links">
               <a ng-href="#/{{ item.url }}">
                 <i class="octicon octicon-{{ item.icon }}"></i>
@@ -22,7 +22,11 @@
             </li>
           </ul>
         </li>
-        <li><a href="" ng-click="NavCtrl.logout()"><i class="octicon octicon-sign-out"></i> Logout</a></li>
+        <li>
+          <a href="" ng-click="NavCtrl.logout()">
+            <i class="octicon octicon-sign-out"></i> Logout
+          </a>
+        </li>
       </ul>
     </div>
   </div>

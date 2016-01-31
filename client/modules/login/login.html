@@ -1,29 +1,30 @@
-<div class="col-md-4 col-md-offset-4" style="margin-top:12em;">
-  <form class="form" name="LoginForm" ng-submit="LoginCtrl.login(credentials)" novalidate>
-    <fieldset>
+<div class="row">
+  <div class="col-xs-12 col-sm-4 col-sm-offset-4" style="margin-top:12em;">
+    <form name="LoginForm" ng-submit="LoginCtrl.login(credentials)" novalidate>
+      <fieldset>
 
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input name="username" ng-model="credentials.username" class="solid-input" type="text" autofocus tabindex="0" required />
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input name="password" ng-model="credentials.password" class="solid-input" type="password" required />
-      </div>
-
-      <div class="form-group">
-        <button class="btn btn-sm btn-success" type="submit" ng-disabled="LoginForm.$invalid">
-          Sign In
-        </button>
-        <a href="#/accounts/recover" class="pull-right">
-          <i class="octicon octicon-shield"></i> Account Recovery</a>
+        <div class="form-group">
+          <label for="user">User</label>
+          <input name="user" ng-model="credentials.username" class="form-control" type="text" autofocus tabindex="0" required />
         </div>
-    </fieldset>
-  </form>
 
-  <div ng-if="LoginCtrl.error" class="text-danger">
-    <i class="octicon octicon-alert"></i> <b>Bad username and password combination.</b>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input name="password" ng-model="credentials.password" class="form-control" type="password" required />
+        </div>
+
+        <div class="form-group">
+          <button class="btn btn-sm btn-success" type="submit" ng-disabled="LoginForm.$invalid">
+            Sign In
+          </button>
+          <a href="#/accounts/recover" class="pull-right">
+            <i class="octicon octicon-shield"></i> Account Recovery</a>
+          </div>
+      </fieldset>
+    </form>
+
+    <div ng-if="LoginCtrl.error" class="text-danger">
+      <i class="octicon octicon-alert"></i> <b>Bad username and password combination.</b>
+    </div>
   </div>
-
 </div>
