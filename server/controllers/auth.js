@@ -28,7 +28,7 @@ function login(req, res, next) {
   // passwords are hashed with sha256 and stored in database
   shasum = crypto.createHash('sha256').update(req.body.password).digest('hex');
 
-  db.async.get(sql, req.body.username, shasum)
+  db.getAsync(sql, req.body.username, shasum)
   .then(function (row) {
 
     // no user found!  Respond with a 403 'Not Authorized'
@@ -39,7 +39,7 @@ function login(req, res, next) {
     req.session.user = row;
 
     // update the lastactive field
-    return db.async.run('UPDATE user SET lastactive = ? WHERE id = ?;', [new Date(), row.id]);
+    return db.runAsync('UPDATE user SET lastactive = ? WHERE id = ?;', [new Date(), row.id]);
   })
   .then(function () {
     res.status(200).json(req.session.user);

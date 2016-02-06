@@ -22,7 +22,7 @@ function create(req, res, next) {
   sql =
     'INSERT INTO subproject (projectid, label) VALUES (?, ?);';
 
-  db.async.run(sql, req.params.projectId, data.label)
+  db.runAsync(sql, req.params.projectId, data.label)
   .then(function () {
     res.status(200).send();
   })
@@ -33,7 +33,7 @@ function create(req, res, next) {
 // GET /projects/:projectId/subprojects/:id?
 function read(req, res, next) {
   'use strict';
-  
+
   var sql,
       hasId = (req.params.id !== undefined);
 
@@ -46,7 +46,7 @@ function read(req, res, next) {
     sql += ' AND s.id = ?;';
   }
 
-  db.async.all(sql, [req.params.projectid, req.params.id])
+  db.allAsync(sql, [req.params.projectid, req.params.id])
   .then(function (rows) {
     if (hasId && !rows.length) {
       return res.status(404).json();
@@ -68,7 +68,7 @@ function update(req, res, next) {
   sql =
     'UPDATE subproject SET projectid = ?, label = ? WHERE id = ?';
 
-  db.async.run(sql, req.params.projectid, data.label, req.params.id)
+  db.runAsync(sql, req.params.projectid, data.label, req.params.id)
   .then(function () {
     res.status(200).send();
   })
@@ -85,7 +85,7 @@ function del(req, res, next) {
   sql =
     'DELETE FROM subproject WHERE projectid = ? AND id = ?;';
 
-  db.async.run(sql, req.params.projectId, req.params.id)
+  db.runAsync(sql, req.params.projectId, req.params.id)
   .then(function () {
     res.status(200).send();
   })

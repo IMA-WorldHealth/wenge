@@ -44,7 +44,7 @@ function read(req, res, next) {
       'GROUP BY p.id;';
   }
 
-  db.async.all(sql, req.params.id)
+  db.allAsync(sql, req.params.id)
   .then(function (rows) {
 
     if (hasId && !rows.length) {
@@ -94,7 +94,7 @@ function update(req, res, next) {
   sql =
     'UPDATE project SET code = ?, color = ? WHERE id = ?';
 
-  db.async.run(sql, data.code, data.color, req.params.id)
+  db.runAsync(sql, data.code, data.color, req.params.id)
   .then(function () {
     res.status(200).send();
   })
@@ -109,7 +109,7 @@ function del(req, res, next) {
   var sql =
     'DELETE FROM project WHERE id = ?;';
 
-  db.async.run(sql, req.params.id)
+  db.runAsync(sql, req.params.id)
   .then(function () {
     res.status(200).send();
   })

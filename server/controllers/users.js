@@ -63,7 +63,7 @@ function invite(req, res, next) {
     'INSERT INTO invitation (id, email) VALUES (?, ?);';
 
   // store the invitation in the database
-  db.async.run(sql, [id, data.email])
+  db.runAsync(sql, [id, data.email])
   .then(function () {
 
     // now that we've stored the new invitation, we should compose an email
@@ -106,7 +106,7 @@ function create(req, res, next) {
   sql =
     'SELECT email, timestamp FROM invitations WHERE id = ?;';
 
-  db.async.get(sql, [ data.invitationId ])
+  db.getAsync(sql, [ data.invitationId ])
   .then(function () {
     var params = [
       data.username, data.displayname, data.email, data.password,
@@ -118,7 +118,7 @@ function create(req, res, next) {
       'INSERT INTO user (username, displayname, email, password, telephone, roleid, hidden) ' +
       'VALUES (?, ?, ?, ?, ? ?);';
 
-    return db.async.run(sql, params);
+    return db.runAsync(sql, params);
   })
   .then(function () {
     let dfd = q.defer();
@@ -147,7 +147,7 @@ function create(req, res, next) {
     sql =
       'INSERT INTO signature (public, private, type) VALUES (?, ?, ?);';
 
-    return db.async.run(sql, [keypair.public, keypair.private, 'normal']);
+    return db.runAsync(sql, [keypair.public, keypair.private, 'normal']);
   })
   .then(function () {
     res.status(200).json();
@@ -169,7 +169,7 @@ function detail(req, res, next) {
       'FROM user JOIN role ON user.roleid = role.id ' +
       'WHERE user.id = ?';
 
-  db.async.get(sql, [req.params.id])
+  db.getAsync(sql, [req.params.id])
   .then(function (user) {
     if (!user) {
       return res.sendStatus(404);
@@ -191,7 +191,7 @@ function list(req, res, next) {
   var sql =
     'SELECT user.id, user.username, user.displayname FROM user;';
 
-  db.async.all(sql)
+  db.allAsync(sql)
   .then(function (rows) {
     res.status(200).json(rows);
   })
@@ -217,7 +217,7 @@ function update(req, res, next) {
   sql =
     'UPDATE user SET username = ?, password = ?, email = ? WHERE id = ?;';
 
-  db.async.run(sql, [req.body.username, shasum, req.body.email, req.params.id])
+  db.runAsync(sql, [req.body.username, shasum, req.body.email, req.params.id])
   .then(function () {
     res.status(200).send(this.changes);
   })
@@ -232,7 +232,7 @@ function del(req, res, next) {
   var sql =
     'DELETE FROM user WHERE id = ?';
 
-  db.async.run(sql, [req.params.id])
+  db.runAsync(sql, [req.params.id])
   .then(function () {
     res.status(200).send(this.changes).bind(db);
   })
@@ -249,7 +249,7 @@ function recover(req, res, next) {
   sql =
     'SELECT user.id, user.username, user.email FROM user WHERE email = ?;';
 
-  db.async.get(sql, [req.body.email])
+  db.getAsync(sql, [req.body.email])
   .then(function (user) {
     if (!user) { return res.status(404).json({ code: 'ERR_NO_USER' }); }
 

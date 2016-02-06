@@ -16,7 +16,7 @@ function recover(req, res, next) {
   var sql =
     'SELECT id, username, email FROM user WHERE email = ?;';
 
-  db.async.get(sql, [req.body.email])
+  db.getAsync(sql, [req.body.email])
   .then(function (row) {
 
     // no data (NOT FOUND)

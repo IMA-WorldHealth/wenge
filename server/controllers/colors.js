@@ -14,7 +14,7 @@ exports.read = read;
 function read(req, res, next) {
   'use strict';
 
-  db.async.all('SELECT code, name FROM color;')
+  db.allAsync('SELECT code, name FROM color;')
   .then(function (rows) {
     res.status(200).json(rows);
   })

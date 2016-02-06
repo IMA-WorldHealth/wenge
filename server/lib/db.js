@@ -1,9 +1,9 @@
 /**
 * Database Connector
 */
-var sqlite3 = require('sqlite3').verbose(),
-    q       = require('q'),
-    fs      = require('fs');
+const sqlite3 = require('sqlite3').verbose();
+const P       = require('bluebird');
+const fs      = P.promisifyAll(require('fs'));
 
 const logger = require('../logger');
 
@@ -25,18 +25,15 @@ function database() {
     rebuild = !!fs.statSync(process.env.DB_PATH);
     logger.debug('[DB] Building database from %s', process.env.DB_PATH);
   } catch (e) {
-    logger.info('[DB] Did not find database at %s', process.env.DB_PATH);
+    logger.debug('[DB] Did not find database at %s', process.env.DB_PATH);
     rebuild = true;
   }
 
   /** connect to the database file */
   let db = new sqlite3.Database(process.env.DB_PATH);
 
-  // create asynchronous versions of db functions
-  db.async = {};
-  db.async.run = q.nbind(db.run, db);
-  db.async.get = q.nbind(db.get, db);
-  db.async.all = q.nbind(db.all, db);
+  /** replace all methods with promise equivalents */
+  P.promisifyAll(db);
 
   /** rebuild the database if necessary */
   if (rebuild) { buildDB(db); }
@@ -68,7 +65,7 @@ function buildDB(db) {
   buildDBFile(db, process.env.DB_SCHEMA)
   .then(function () {
 
-    // if dbBase exists, we also build that
+    // if DB_DATA exists, we also build that
     if (process.env.DB_DATA) {
       return buildDBFile(db, process.env.DB_DATA);
     }
@@ -83,24 +80,23 @@ function buildDB(db) {
 }
 
 // parse and execute a database file provided by fPath
-function buildDBFile(db, fPath) {
+function buildDBFile(db, file) {
   'use strict';
 
-  logger.debug('[DB] Reading file %s.', fPath);
+  logger.debug('[DB] Reading file %s.', file);
 
-  return q.nfcall(fs.readFile, fPath, 'utf-8')
+  return fs.readFileAsync(file, 'utf-8')
   .then(function (contents) {
 
     // SQL statements are split up by two new line characters.  We can split on
     // these and then map each statement to a databse command.
-    return q.all(
+    return P.all(
       contents.split('\n\n')
       .map(function (sql) {
 
         // replace all newlines (regardless of OS)
         sql = sql.replace(/(\r\n|\n|\r)/gm,'');
-
-        return db.async.run(sql);
+        return db.runAsync(sql);
       })
     );
   });
