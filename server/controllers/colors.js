@@ -5,11 +5,10 @@
 * in the future.
 */
 
-var db = require('../lib/db').db;
+var db = require('../lib/db');
 
 // module exports
 exports.read = read;
-
 
 // GET /colors
 function read(req, res, next) {

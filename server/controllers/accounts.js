@@ -5,7 +5,7 @@
 *
 */
 
-var db = require('../lib/db').db;
+var db = require('../lib/db');
 
 exports.recover = recover;
 

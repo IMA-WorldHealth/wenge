@@ -5,7 +5,7 @@
   "description": "Electronic Authorization for Expense Forms",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"There are no tests yet!\" && exit 0",
+    "test": "npm run dev & && sleep 5 && mocha",
     "dev": "export NODE_ENV=development && gulp build && cd dest && node server/server.js",
     "app": "export NODE_ENV=production && gulp build && cd dest && node server/server.js"
   },
@@ -23,6 +23,7 @@
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "helmet": "^1.1.0",
+    "lodash": "^4.2.1",
     "mailcomposer": "^3.3.2",
     "mailgun-js": "^0.7.1",
     "morgan": "^1.6.1",
@@ -31,11 +32,12 @@
     "node-uuid": "^1.4.3",
     "q": "^1.4.1",
     "sqlite3": "^3.0.9",
-    "winston": "2.1.1"
+    "winston": "^2.1.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "chai-http": "^1.0.0",
+    "chai-datetime": "^1.4.0",
+    "chai-http": "^2.0.1",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
@@ -47,7 +49,6 @@
     "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.1",
-    "gulp-uncss": "^1.0.4",
     "mocha": "^2.4.5",
     "rimraf": "^2.5.1"
   }

@@ -4,7 +4,7 @@
 * This is responsible for all CRUD routes concerning a subproject.
 */
 
-var db = require('../lib/db').db;
+var db = require('../lib/db');
 
 // module exports
 exports.create = create;

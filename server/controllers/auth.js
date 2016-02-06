@@ -4,8 +4,8 @@
 * This controller is responsible for access control to the server. 
 */
 
-var db     = require('../lib/db').db,
-    crypto =  require('crypto');
+const db     = require('../lib/db');
+const crypto =  require('crypto');
 
 // export module routes
 exports.login   = login;
@@ -50,7 +50,7 @@ function login(req, res, next) {
 
 // GET /logout
 // log a user out
-function logout(req, res, next) {
+function logout(req, res) {
   req.session.destroy(function () {
     res.status(200).send();
   });

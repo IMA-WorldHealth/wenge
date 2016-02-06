@@ -1,41 +1,36 @@
 /**
 * Database Connector
-*
 */
 var sqlite3 = require('sqlite3').verbose(),
     q       = require('q'),
     fs      = require('fs');
 
-// export module routes
-var mod = module.exports = {
-  setup : setup,
-  db    : null
-};
+const logger = require('../logger');
 
 /**
 * Initializes a connection to the database using paramters provided in a
 * configuration JSON object (via .env).  If the database does not exist, it will
 * automatically build it for you.
 *
-* @returns null
+* @returns {function} db - a database connection
 */
-function setup() {
+function database() {
   'use strict';
 
-  var rebuild, db;
+  var rebuild;
 
-  // Check to see if db exists.  If not, build it from configuration files.
+  /** Check to see if db exists.  If not, build it from provided base files */
   try {
-    console.log('[DB] [INFO] Checking to see if database exists...');
+    logger.debug('Setting up database ... ');
     rebuild = !!fs.statSync(process.env.DB_PATH);
-    console.log('[DB] [INFO] Using database:', process.env.DB_PATH);
+    logger.debug('[DB] Building database from %s', process.env.DB_PATH);
   } catch (e) {
-    console.log('[DB] [INFO] No database detected.');
+    logger.info('[DB] Did not find database at %s', process.env.DB_PATH);
     rebuild = true;
   }
 
-  // connect to the database
-  db = mod.db = new sqlite3.Database(process.env.DB_PATH);
+  /** connect to the database file */
+  let db = new sqlite3.Database(process.env.DB_PATH);
 
   // create asynchronous versions of db functions
   db.async = {};
@@ -43,9 +38,14 @@ function setup() {
   db.async.get = q.nbind(db.get, db);
   db.async.all = q.nbind(db.all, db);
 
-  // rebuild the database if necessary
+  /** rebuild the database if necessary */
   if (rebuild) { buildDB(db); }
+
+  return db;
 }
+
+/** expose the database to other modules */
+module.exports = database();
 
 /**
 * Build the database sequentially from .sql files.  The configuration file is
@@ -62,6 +62,8 @@ function setup() {
 function buildDB(db) {
   'use strict';
 
+  logger.debug('[DB] Starting database rebuild.');
+
   // build the database schema and base file if defined
   buildDBFile(db, process.env.DB_SCHEMA)
   .then(function () {
@@ -72,10 +74,10 @@ function buildDB(db) {
     }
   })
   .then(function () {
-    console.log('[DB] [INFO] Finished building database.');
+    logger.debug('[DB] Finished rebuilding database.');
   })
   .catch(function (error) {
-    console.log('[DB] [ERROR] ', error);
+    logger.error('[DB] Database building errored with %j', error);
   })
   .done();
 }
@@ -84,7 +86,7 @@ function buildDB(db) {
 function buildDBFile(db, fPath) {
   'use strict';
 
-  console.log('[DB] [INFO] Building database using:', fPath);
+  logger.debug('[DB] Reading file %s.', fPath);
 
   return q.nfcall(fs.readFile, fPath, 'utf-8')
   .then(function (contents) {

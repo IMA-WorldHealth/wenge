@@ -4,8 +4,8 @@
 * This module is responsible for providing full CRUD on the requests table.
 */
 
-var db    = require('../lib/db').db,
-    tools = require('../lib/tools');
+const db    = require('../lib/db');
+const tools = require('../lib/tools');
 
 // module exports
 exports.create = create;
@@ -101,6 +101,7 @@ function create(req, res, next) {
 // TODO
 function update(req, res, next) {
   'use strict';
+  next();
 }
 
 // DELETE /requests/:id

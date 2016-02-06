@@ -9,23 +9,38 @@
 const fs     = require('fs');
 const path   = require('path');
 const crypto = require('crypto');
+const fork   = require('child_process').fork;
+const q      = require('q');
 const uuid   = require('node-uuid');
-const ursa   = require('ursa');
 
-const db     = require('../lib/db').db;
+const db     = require('../lib/db');
 const mailer = require('../lib/mailer');
 
-// exposed routes
+/** creates a new user **/
 exports.create  = create;
-exports.read    = read;
-exports.update  = update ;
+
+/** lists all users registered in the database */
+exports.list = list;
+
+/** get the user details of a single user */
+exports.detail = detail;
+
+/** updates a particular user */
+exports.update  = update;
+
+/** deletes a user from the database */
 exports.delete  = del;
+
+/** sends a recovery email to the user */
 exports.recover = recover;
+
+/** sends an invitation to an email address */
 exports.invite = invite;
 
+/** emails templates */
 const emails = {
-  recover: fs.readFileSync(path.join(__dirname, '../emails/recover.html'), 'utf8'),
-  invitation :  fs.readFileSync(path.join(__dirname, '../emails/invitation.html'), 'utf8')
+  recover:    fs.readFileSync(path.join(__dirname, '../emails/recover.html'), 'utf8'),
+  invitation: fs.readFileSync(path.join(__dirname, '../emails/invitation.html'), 'utf8')
 };
 
 /* -------------------------------------------------------------------------- */
@@ -39,13 +54,12 @@ const emails = {
 function invite(req, res, next) {
   'use strict';
 
-  var id, sql,
-      data = req.body;
+   var data = req.body;
 
   // generate a uuid for this person
-  id = uuid.v4();
+  let id = uuid.v4();
 
-  sql =
+  let sql =
     'INSERT INTO invitation (id, email) VALUES (?, ?);';
 
   // store the invitation in the database
@@ -92,7 +106,7 @@ function create(req, res, next) {
   sql =
     'SELECT email, timestamp FROM invitations WHERE id = ?;';
 
-  db.async.get(sql, [data.invitationId])
+  db.async.get(sql, [ data.invitationId ])
   .then(function () {
     var params = [
       data.username, data.displayname, data.email, data.password,
@@ -107,17 +121,33 @@ function create(req, res, next) {
     return db.async.run(sql, params);
   })
   .then(function () {
+    let dfd = q.defer();
 
-    // finally, we create a signature keypair for the user
-    var pk = ursa.generatePrivateKey(4096),
-        pubk = pk.toPublicPem('utf8'),
-        privk = pk.toPrivatePem('utf8');
+    // spin up a new worker instance of the RSA library
+    let worker = fork('../lib/rsa');
+
+    // ask the RSA library to create a new
+    worker.send({ action : 'keypair'});
+
+    // listen to the workers actions in case it errors out.
+    worker.on('message', (message) => {
+      if (message.error) {
+        dfd.reject(message);
+      } else {
+        dfd.resolve(message);
+      }
+      worker.kill();
+    });
+
+    /** @todo -- get the type of signature from the invitation */
+    return dfd.promise;
+  })
+  .then(function (keypair) {
 
     sql =
       'INSERT INTO signature (public, private, type) VALUES (?, ?, ?);';
 
-    // TODO -- get the type of signature from the invitation
-    return db.async.run(sql, [pubk, privk, 'normal']);
+    return db.async.run(sql, [keypair.public, keypair.private, 'normal']);
   })
   .then(function () {
     res.status(200).json();
@@ -126,29 +156,44 @@ function create(req, res, next) {
   .done();
 }
 
-// GET /users/:id?
-function read(req, res, next) {
+/**
+ * @method detail
+ *
+ * @description returns the details of a single user in the database.  If the
+ * user does not exist, returns a 404.
+ */
+function detail(req, res, next) {
+  var sql =
+      'SELECT user.id, user.username, user.displayname, user.email, ' +
+      'role.label AS role, user.hidden, user.lastactive ' +
+      'FROM user JOIN role ON user.roleid = role.id ' +
+      'WHERE user.id = ?';
+
+  db.async.get(sql, [req.params.id])
+  .then(function (user) {
+    if (!user) {
+      return res.sendStatus(404);
+    }
+    res.status(200).json(user);
+  })
+  .catch(next)
+  .done();
+}
+
+/**
+ * @method list
+ *
+ * @description returns a (potentially empty) list of all users in the database.
+ */
+function list(req, res, next) {
   'use strict';
 
-  var sql,
-      hasId = (req.params.id !== undefined);
+  var sql =
+    'SELECT user.id, user.username, user.displayname FROM user;';
 
-  sql =
-    'SELECT user.id, user.username, user.displayname, user.email, ' +
-    'role.label AS role, user.hidden, user.lastactive ' +
-    'FROM user JOIN role ON user.roleid = role.id';
-
-  if (hasId) { sql += ' WHERE user.id = ?;'; }
-
-  db.async.all(sql, [req.params.id])
+  db.async.all(sql)
   .then(function (rows) {
-
-    if (hasId && !rows.length) {
-      return res.status(404).json({});
-    }
-
-    // only send single JSON object if hasId
-    res.status(200).json(hasId ? rows[0] : rows);
+    res.status(200).json(rows);
   })
   .catch(next)
   .done();
@@ -162,10 +207,7 @@ function update(req, res, next) {
 
   // TODO - super user override
   if (req.params.id !== req.session.user.id) {
-    res.status(403).json({
-      code : 'ERR_RESTRICTED_OPERATION',
-      reason : 'Users can only edit their own personal information'
-    });
+    return res.sendStatus(403);
   }
 
   // hash password with sha256 and store in db
