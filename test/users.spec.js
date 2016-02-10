@@ -5,11 +5,28 @@ const expect = chai.expect;
 /** set up testing helpers */
 helpers.setup(chai);
 
-describe('Users', function () {
+describe('Users (signup)', function () {
+  var agent = chai.request.agent(helpers.url);
+
+  it('GET /users/invite/:id should error for an unknown id', function () {
+    agent.get('/users/invite/100')
+    .then(function (res) {
+      helpers.errored(res);
+    })
+    .catch(helpers.handler);
+  });
+
+  it('POST /users/invite should invite a user to the system');
+
+});
+
+/** test that the API behaves correctly for authenticated users */
+describe('Users (authenticated)', function () {
   'use strict';
 
   var agent = chai.request.agent(helpers.url);
 
+  // new user to create
   var user = {
     username : 'test',
     email : 'test@test.example',
@@ -23,16 +40,17 @@ describe('Users', function () {
 
   it('GET /users should return a list of users', function () {
     return agent.get('/users')
-      .then(function (res) {
+    .then(function (res) {
 
-        // make sure the API is conformant
-        helpers.api.read(res);
+      // make sure the API is conformant
+      helpers.api.read(res);
 
-        // we only have a single user in test datat
-        expect(res.body).to.have.length(1);
-        expect(res.body[0]).to.have.property('id', 'username', 'email');
-        expect(res.body[0].username).to.equal('jniles');
-      });
+      // we only have a single user in test datat
+      expect(res.body).to.have.length(1);
+      expect(res.body[0]).to.have.property('id', 'username', 'email');
+      expect(res.body[0].username).to.equal('jniles');
+    })
+    .catch(helpers.handler);
   });
 
   it('GET /users/:id should return a single user', function () {

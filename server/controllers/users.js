@@ -15,6 +15,13 @@ const uuid   = require('node-uuid');
 
 const db     = require('../lib/db');
 const mailer = require('../lib/mailer');
+const logger = require('../lib/logger');
+
+// default to 5 seconds of timeout
+const timeout = process.env.KEY_TIMOUT || 5000;
+
+// spin up a new worker instance of the RSA worker
+let worker = fork('../lib/RSAWorker');
 
 /** creates a new user **/
 exports.create  = create;
@@ -123,26 +130,36 @@ function create(req, res, next) {
   .then(function () {
     let dfd = q.defer();
 
-    // spin up a new worker instance of the RSA library
-    let worker = fork('../lib/rsa');
+    logger.info('Attempting to generate keypair');
 
-    // ask the RSA library to create a new
-    worker.send({ action : 'keypair'});
+    // ask the RSA library to create a new keypair for a user
+    worker.send('keypair');
+
+    // set a timer in case the worker takes too long
+    let timer = setTimeout(() => {
+
+      // throw an error
+      dfd.reject('TIMEOUT');
+
+      // kill the child process with impunity
+      worker.kill();
+
+      // restart a new worker as needed
+      worker = fork('../lib/RSAWorker');
+    }, timeout);
 
     // listen to the workers actions in case it errors out.
-    worker.on('message', (message) => {
-      if (message.error) {
-        dfd.reject(message);
-      } else {
-        dfd.resolve(message);
-      }
-      worker.kill();
+    worker.on('message', (msg) => {
+      dfd.resolve(msg);
+      clearTimeout(timer);
     });
 
     /** @todo -- get the type of signature from the invitation */
     return dfd.promise;
   })
   .then(function (keypair) {
+
+    logger.info('generated the following keypair:', keypair);
 
     sql =
       'INSERT INTO signature (public, private, type) VALUES (?, ?, ?);';
