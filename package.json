@@ -25,7 +25,7 @@
     "express-session": "^1.13.0",
     "helmet": "^1.1.0",
     "lodash": "^4.2.1",
-    "mailcomposer": "^3.4.0",
+    "mailcomposer": "^3.5.0",
     "mailgun-js": "^0.7.1",
     "morgan": "^1.6.1",
     "multer": "^1.0.5",
