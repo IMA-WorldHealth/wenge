@@ -17,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.2.2",
-    "body-parser": "^1.14.0",
+    "body-parser": "^1.15.0",
     "compression": "^1.6.1",
     "connect-sqlite3": "^0.9.7",
     "dotenv": "^2.0.0",
