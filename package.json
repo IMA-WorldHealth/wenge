@@ -32,7 +32,7 @@
     "node-rsa": "^0.3.2",
     "node-uuid": "^1.4.3",
     "sqlite3": "^3.0.9",
-    "winston": "^2.1.1"
+    "winston": "^2.2.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
