@@ -17,6 +17,9 @@ function configure() {
   /** log to the console */
   logger.add(winston.transports.Console);
 
+  /** log exceptions to the console */
+  logger.handleExceptions(new winston.transports.Console({ colorize : true, json: true}));
+
   /** log errors to a file (no matter what the actual log level is) */
   var errFile = process.env.LOG_ERROR_FILE || 'errors.log';
   logger.add(winston.transports.File, {

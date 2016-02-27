@@ -1,17 +1,17 @@
 {
   "name": "wenge",
   "version": "0.1.1",
-  "repository": "https://github.com/IMA-WorldHealth/AFE",
+  "repository": "https://github.com/IMA-WorldHealth/wenge",
   "description": "Electronic Authorization for Expense Forms",
   "main": "index.js",
   "scripts": {
-    "test": "(npm run dev &) && sleep 5 && mocha",
-    "dev": "export NODE_ENV=development && gulp build && cd dest && node server/server.js",
-    "app": "export NODE_ENV=production && gulp build && cd dest && node server/server.js"
+    "test": "(npm run development &) && sleep 5 && mocha",
+    "development": "./bin/development.sh",
+    "production": "./bin/production.sh"
   },
   "keywords": [
-    "AFE",
-    "IMA World Health"
+    "IMA World Health",
+    "logistics"
   ],
   "author": "jniles",
   "license": "MIT",
@@ -24,20 +24,22 @@
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "helmet": "^1.1.0",
-    "mailcomposer": "^3.5.0",
     "lodash": "^4.3.0",
+    "mailcomposer": "^3.5.0",
     "mailgun-js": "^0.7.1",
     "morgan": "^1.6.1",
     "multer": "^1.0.5",
     "node-rsa": "^0.3.2",
     "node-uuid": "^1.4.3",
     "sqlite3": "^3.0.9",
-    "winston": "^2.1.1"
+    "winston": "^2.1.1",
+    "workerpool": "^1.1.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-datetime": "^1.4.0",
     "chai-http": "^2.0.1",
+    "codeclimate-test-reporter": "^0.3.1",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",

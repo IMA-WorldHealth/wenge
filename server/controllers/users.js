@@ -6,25 +6,22 @@
 * and mailing it back to the user.
 */
 
-const fs     = require('fs');
-const path   = require('path');
-const crypto = require('crypto');
-const fork   = require('child_process').fork;
-const q      = require('q');
-const uuid   = require('node-uuid');
+const path       = require('path');
+const crypto     = require('crypto');
+const workerpool = require('workerpool');
+const q          = require('q');
+const uuid       = require('node-uuid');
 
 const db     = require('../lib/db');
 const mailer = require('../lib/mailer');
-const logger = require('../lib/logger');
+const logger = require('../logger');
 
 // default to 5 seconds of timeout
-const timeout = process.env.KEY_TIMOUT || 5000;
-
-// spin up a new worker instance of the RSA worker
-let worker = fork('../lib/RSAWorker');
+const timeout = process.env.WENGE_KEY_TIMOUT || 5000;
+const pool    = workerpool.pool(path.resolve(__dirname, '../lib/RSAWorker.js'));
 
 /** creates a new user **/
-exports.create  = create;
+exports.create = create;
 
 /** lists all users registered in the database */
 exports.list = list;
@@ -36,7 +33,7 @@ exports.detail = detail;
 exports.update  = update;
 
 /** deletes a user from the database */
-exports.delete  = del;
+exports.delete = del;
 
 /** sends a recovery email to the user */
 exports.recover = recover;
@@ -44,20 +41,18 @@ exports.recover = recover;
 /** sends an invitation to an email address */
 exports.invite = invite;
 
-/** emails templates */
-const emails = {
-  recover:    fs.readFileSync(path.join(__dirname, '../emails/recover.html'), 'utf8'),
-  invitation: fs.readFileSync(path.join(__dirname, '../emails/invitation.html'), 'utf8')
-};
 
 /* -------------------------------------------------------------------------- */
 
-// POST /users/invite
-// Invite a new user to sign up for wenge.  This route will store an invitation
-// uuid and associated email, to be confirmed.
-//
-// NOTE -- This invitation should include the users role and their signature type,
-// if any.
+/**
+ *
+ * POST /users/invite
+ * Invite a new user to sign up for wenge.  This route will store an invitation
+ * uuid and associated email, to be confirmed.
+ * 
+ * Expects to receive an email address and a roleid.
+ * 
+ */
 function invite(req, res, next) {
   'use strict';
 
@@ -79,7 +74,6 @@ function invite(req, res, next) {
 
     var message = {
       subject: 'Invitation to Wenge',
-      html: emails.invitation,
       params : {
         token : id,
         address : data.email
@@ -87,7 +81,7 @@ function invite(req, res, next) {
     };
 
     // send the message
-    return mailer.send(data.email, message);
+    return mailer.send('invite', data.email, message);
   })
   .then(function (body) {
 

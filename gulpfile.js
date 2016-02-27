@@ -9,7 +9,6 @@ const autoprefixer = require('gulp-autoprefixer');
 const iife         = require('gulp-iife');
 const sass         = require('gulp-sass');
 const uglify       = require('gulp-uglify');
-const rimraf       = require('rimraf');
 
 // load environmental variables
 var envPath = `.env.${ process.env.NODE_ENV.toLowerCase().trim() }`;
@@ -38,16 +37,8 @@ var paths = {
   server:   {
     dir:    path.join(process.env.BUILD_DIR, 'server'),
     static: ['server/*.js', 'server/**/*']
-  },
-  db:       {
-    dir:    path.join(process.env.BUILD_DIR, 'db'),
-    static: ['db/*']
   }
 };
-
-gulp.task('clean', function (fn) {
-  rimraf(process.env.BUILD_DIR, fn);
-});
 
 // concatenates all the client scripts into one
 gulp.task('build-client', function () {
@@ -91,23 +82,13 @@ gulp.task('client-move', function () {
 });
 
 gulp.task('build-server', function () {
-  gulp.start('server-move', 'vars-move', 'db-move');
-});
-
-gulp.task('vars-move', function () {
-  return gulp.src(envPath)
-    .pipe(gulp.dest(process.env.BUILD_DIR));
+  gulp.start('server-move');
 });
 
 // move the server into the bin/ directory
 gulp.task('server-move', function () {
   return gulp.src(paths.server.static)
     .pipe(gulp.dest(paths.server.dir));
-});
-
-gulp.task('db-move', function () {
-  return gulp.src(paths.db.static)
-    .pipe(gulp.dest(paths.db.dir));
 });
 
 // watch the client for changes and rebuild
@@ -117,11 +98,11 @@ gulp.task('watch', function () {
 });
 
 // build task for npm run start
-gulp.task('build', ['clean'], function () {
+gulp.task('build', function () {
   gulp.start('build-client', 'build-server');
 });
 
 // default task runner
-gulp.task('default', ['clean'], function () {
+gulp.task('default', function () {
   gulp.start('build-client', 'build-server', 'env', 'watch');
 });

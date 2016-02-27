@@ -6,7 +6,7 @@
  */
 
 const RSA = require('node-rsa');
-const EventEmitter = require('events');
+const workerpool = require('workerpool');
 
 // The key size to create for each key pair
 const bits = process.env.KEY_SIZE;
@@ -69,33 +69,9 @@ function verifyVoucher(data) {
   return { bool : bool };
 }
 
-/**
- * Listens for messages from the parent process to perform computationally
- * expensive actions.  Supported actions:
- *  1) 'keypair' - generates a new keypair
- *  2) 'sign'    - signs a voucher
- *  3) 'verify'  - verifies that a voucher is correctly signed
- *
- *  @param {Object} message - A message object containing 'action' and 'data' properties
- *  @returns {Object} A response object customized to the action.
- */
-function router(message) {
-  'use strict';
-
-  // event emitter
-  const handler = new EventEmitter();
-
-  // generate a keypair for a new user
-  handler.on('keypair', () => process.send(generateKeyPair()));
-
-  // sign a voucher
-  handler.on('sign', () => process.send(signVoucher(message.data)));
-
-  // verify a previous signature
-  handler.on('verify', () => process.send(verifyVoucher(message.data)));
-
-  handler.emit(message);
-}
-
 /** listen to the parent process for instructions */
-process.on('message', router);
+workerpool.worker({
+  keypair : generateKeyPair,
+  sign : signVoucher,
+  verify : verifyVoucher
+});

@@ -1,3 +1,5 @@
+/* jshint expr:true */
+
 const expect       = require('chai').expect;
 const chaiHttp     = require('chai-http');
 const chaiDatetime = require('chai-datetime');
