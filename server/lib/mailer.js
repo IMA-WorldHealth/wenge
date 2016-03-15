@@ -1,3 +1,5 @@
+/* eslint consistent-return: 0 */
+
 /**
 * Mailer
 *
@@ -11,24 +13,23 @@
 */
 
 /** load dependencies */
-const path     = require('path');
-const fs       = require('fs');
-const composer = require('mailcomposer');
-const _        = require('lodash');
-const P        = require('bluebird');
-const mailgun  = require('mailgun-js')({
-  apiKey : process.env.MAILGUN_KEY,
-  domain : process.env.MAILGUN_DOMAIN
+import path from 'path';
+import fs from 'fs';
+import mailcomposer from 'mailcomposer';
+import _ from 'lodash';
+import Promise from 'bluebird';
+import mailgun from 'mailgun-js';
+
+const mg = mailgun({
+  apiKey: process.env.MAILGUN_KEY,
+  domain: process.env.MAILGUN_DOMAIN,
 });
 
-/** emails templates */
+/** email templates */
 const templates = {
   recover: fs.readFileSync(path.join(__dirname, '../emails/recover.html'), 'utf8'),
-  invite:  fs.readFileSync(path.join(__dirname, '../emails/invitation.html'), 'utf8')
+  invite: fs.readFileSync(path.join(__dirname, '../emails/invitation.html'), 'utf8'),
 };
-
-/** expose module functionality */
-module.exports = send;
 
 /**
  * Sends emails to a recipient, templating in any required data before doing so.
@@ -40,39 +41,34 @@ module.exports = send;
  * @returns {Promise} promise - resolved if email is successfully send
  */
 function send(key, address, params) {
-  'use strict';
-
-
-  data.from = `${ process.env.APP }@${ process.env.MAILGUN_DOMAIN }`;
+  const data = {};
+  data.from = `${process.env.APP}@${process.env.MAILGUN_DOMAIN}`;
   data.to = address;
 
   // template in the parameters before configurting MIME type
   data.html = _.template(templates[key], params);
 
-  return new P(function (resolve, reject) {
-
-    // compose 
-    composer(data)
-    .build(function (error, message) {
-
+  return new Promise((resolve, reject) => {
+    mailcomposer(data)
+    .build((error, message) => {
       if (error) {
         return reject(error);
       }
 
       // prepare the message object for sending
-      var message = {
-        to:      address,
-        message: message.toString('ascii')
+      const msg = {
+        to: address,
+        message: message.toString('ascii'),
       };
 
       // send an HTML email through mailgun's API
-      mailgun.messages()
-      .sendMime(message, function (error, body) {
-        if (error) {
-          return reject(error);
-        }
-        resolve(body);
+      mg.messages()
+      .sendMime(msg, (err, body) => {
+        if (err) { return reject(error); }
+        return resolve(body);
       });
     });
   });
 }
+
+export default send;

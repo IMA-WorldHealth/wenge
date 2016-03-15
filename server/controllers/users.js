@@ -4,282 +4,199 @@
 * This controller implements CRUD on the users table.  It is also responsible
 * for handling account resets for an individal user by generating a unique ID
 * and mailing it back to the user.
+*
+* @module controllers/express
+* @requires express
 */
 
-const path       = require('path');
-const crypto     = require('crypto');
-const workerpool = require('workerpool');
-const q          = require('q');
-const uuid       = require('node-uuid');
+import express from 'express';
+import path from 'path';
+import workerpool from 'workerpool';
+import uuid from 'node-uuid';
+import argon2 from 'argon2';
 
-const db     = require('../lib/db');
-const mailer = require('../lib/mailer');
-const logger = require('../logger');
+import db from '../lib/db';
+import mailer from '../lib/mailer';
+import logger from '../lib/logger';
+import { NotFound } from '../lib/errors';
 
 // default to 5 seconds of timeout
-const timeout = process.env.WENGE_KEY_TIMOUT || 5000;
-const pool    = workerpool.pool(path.resolve(__dirname, '../lib/RSAWorker.js'));
-
-/** creates a new user **/
-exports.create = create;
-
-/** lists all users registered in the database */
-exports.list = list;
-
-/** get the user details of a single user */
-exports.detail = detail;
-
-/** updates a particular user */
-exports.update  = update;
-
-/** deletes a user from the database */
-exports.delete = del;
-
-/** sends a recovery email to the user */
-exports.recover = recover;
-
-/** sends an invitation to an email address */
-exports.invite = invite;
-
-
-/* -------------------------------------------------------------------------- */
+const pool = workerpool.pool(path.join(__dirname, '../lib/RSAWorker.js'));
 
 /**
  *
  * POST /users/invite
  * Invite a new user to sign up for wenge.  This route will store an invitation
  * uuid and associated email, to be confirmed.
- * 
+ *
  * Expects to receive an email address and a roleid.
- * 
  */
-function invite(req, res, next) {
-  'use strict';
-
-   var data = req.body;
-
+export async function invite(req, res, next) {
   // generate a uuid for this person
-  let id = uuid.v4();
+  const id = uuid.v4();
 
-  let sql =
-    'INSERT INTO invitation (id, email) VALUES (?, ?);';
+  const sql = 'INSERT INTO invitation (id, email) VALUES (?, ?);';
 
-  // store the invitation in the database
-  db.runAsync(sql, [id, data.email])
-  .then(function () {
+  try {
+    // store the invitation in the database
+    await db.run(sql, id, req.body.email, req.body.roleid);
 
     // now that we've stored the new invitation, we should compose an email
     // message to the person, letting them know that they have a pending
     // invitation
-
-    var message = {
-      subject: 'Invitation to Wenge',
-      params : {
-        token : id,
-        address : data.email
-      }
+    const options = {
+      token: id,
+      address: req.body.email,
     };
 
-    // send the message
-    return mailer.send('invite', data.email, message);
-  })
-  .then(function (body) {
+    // send an email to the interested party
+    await mailer('invite', req.body.email, options);
 
-    // Success! Report to the client that we have successfully invited
-    // a new user.
-    res.status(200).json(body);
-  })
-  .catch(next)
-  .done();
+    // send to the client
+    res.status(200).json({ id });
+  } catch (e) { next(e); }
 }
+
 
 // POST /users
 // Creates a new user after an invitation has been sent out.  It deletes the
 // reference to the invitation if the user is successfully created.
-function create(req, res, next) {
-  'use strict';
-
-  var sql,
-      data = req.body;
+export async function create(req, res, next) {
+  const data = req.body;
 
   // first thing we must do is check the invitation ID to see if we actually
   // sent the user an invitation.
-  sql =
-    'SELECT email, timestamp FROM invitations WHERE id = ?;';
+  let sql =
+    'SELECT email, timestamp, roleid FROM invitations WHERE id = ?;';
 
-  db.getAsync(sql, [ data.invitationId ])
-  .then(function () {
-    var params = [
+  try {
+    const invitation = await db.get(sql, data.invitationId);
+
+    const params = [
       data.username, data.displayname, data.email, data.password,
-      data.telephone, data.roleid, data.hidden
+      data.telephone, data.roleid, data.hidden,
     ];
 
     // next, we must create the user
     sql =
-      'INSERT INTO user (username, displayname, email, password, telephone, roleid, hidden) ' +
-      'VALUES (?, ?, ?, ?, ? ?);';
+      `INSERT INTO user (username, displayname, email, password, telephone, roleid, hidden)
+      VALUES (?, ?, ?, ?, ? ?);`;
 
-    return db.runAsync(sql, params);
-  })
-  .then(function () {
-    let dfd = q.defer();
+    await db.run(sql, params);
 
-    logger.info('Attempting to generate keypair');
+    /** use worker-pool to generate a keypiar for the user */
+    const keypair = await pool.exec('keypair');
 
-    // ask the RSA library to create a new keypair for a user
-    worker.send('keypair');
-
-    // set a timer in case the worker takes too long
-    let timer = setTimeout(() => {
-
-      // throw an error
-      dfd.reject('TIMEOUT');
-
-      // kill the child process with impunity
-      worker.kill();
-
-      // restart a new worker as needed
-      worker = fork('../lib/RSAWorker');
-    }, timeout);
-
-    // listen to the workers actions in case it errors out.
-    worker.on('message', (msg) => {
-      dfd.resolve(msg);
-      clearTimeout(timer);
-    });
-
-    /** @todo -- get the type of signature from the invitation */
-    return dfd.promise;
-  })
-  .then(function (keypair) {
-
-    logger.info('generated the following keypair:', keypair);
+    logger.info('Generated the following keypair:', keypair);
 
     sql =
       'INSERT INTO signature (public, private, type) VALUES (?, ?, ?);';
 
-    return db.runAsync(sql, [keypair.public, keypair.private, 'normal']);
-  })
-  .then(function () {
-    res.status(200).json();
-  })
-  .catch(next)
-  .done();
+    await db.run(sql, [keypair.public, keypair.private, 'normal']);
+
+    res.sentStatus(200);
+  } catch (e) { next(e); }
 }
 
 /**
- * @method detail
- *
- * @description returns the details of a single user in the database.  If the
- * user does not exist, returns a 404.
+ * Returns the details of a single user in the database.  If the user does not exist,
+ * returns a 404.
+ * @method read
  */
-function detail(req, res, next) {
-  var sql =
-      'SELECT user.id, user.username, user.displayname, user.email, ' +
-      'role.label AS role, user.hidden, user.lastactive ' +
-      'FROM user JOIN role ON user.roleid = role.id ' +
-      'WHERE user.id = ?';
+export async function read(req, res, next) {
+  const sql =
+    `SELECT user.id, user.username, user.displayname, user.email,
+    role.label AS role, user.hidden, user.lastactive
+    FROM user JOIN role ON user.roleid = role.id
+    WHERE user.id = ?;`;
 
-  db.getAsync(sql, [req.params.id])
-  .then(function (user) {
+  try {
+    const user = await db.get(sql, req.params.id);
+
     if (!user) {
-      return res.sendStatus(404);
+      throw new NotFound(`No user by the id ${req.params.id}`);
     }
+
     res.status(200).json(user);
-  })
-  .catch(next)
-  .done();
+  } catch (e) {
+    next(e);
+  }
 }
 
 /**
- * @method list
- *
- * @description returns a (potentially empty) list of all users in the database.
+ * Returns a (potentially empty) list of all users in the database.
+ * @method index
  */
-function list(req, res, next) {
-  'use strict';
+export async function index(req, res, next) {
+  const sql = 'SELECT user.id, user.username, user.displayname FROM user;';
 
-  var sql =
-    'SELECT user.id, user.username, user.displayname FROM user;';
-
-  db.allAsync(sql)
-  .then(function (rows) {
-    res.status(200).json(rows);
-  })
-  .catch(next)
-  .done();
+  try {
+    const users = await db.all(sql);
+    res.status(200).json(users);
+  } catch (e) {
+    next(e);
+  }
 }
 
 // PUT /users/:id
-function update(req, res, next) {
-  'use strict';
-
-  var sql, shasum;
-
-  // TODO - super user override
-  if (req.params.id !== req.session.user.id) {
-    return res.sendStatus(403);
-  }
-
-  // hash password with sha256 and store in db
-  shasum = crypto.createHash('sha256').update(req.body.password).digest('hex');
+export async function update(req, res, next) {
+  const data = req.body;
+  const id = req.params.id;
 
   // TODO - ensure unique usernames
-  sql =
-    'UPDATE user SET username = ?, password = ?, email = ? WHERE id = ?;';
+  const sql = 'UPDATE user SET username = ?, email = ? WHERE id = ?;';
 
-  db.runAsync(sql, [req.body.username, shasum, req.body.email, req.params.id])
-  .then(function () {
-    res.status(200).send(this.changes);
-  })
-  .catch(next)
-  .done();
+  try {
+    await db.run(sql, data.username, data.email, id);
+
+    res.status(200).send({ id });
+  } catch (e) {
+    next(e);
+  }
 }
+
+// POST /users/:id/password
+// TODO
 
 // DELETE /users/:id
-function del(req, res, next) {
-  'use strict';
+async function del(req, res, next) {
+  const sql = 'DELETE FROM user WHERE id = ?';
 
-  var sql =
-    'DELETE FROM user WHERE id = ?';
-
-  db.runAsync(sql, [req.params.id])
-  .then(function () {
-    res.status(200).send(this.changes).bind(db);
-  })
-  .catch(next)
-  .done();
+  try {
+    await db.run(sql, req.params.id);
+    res.sendStatus(204);
+  } catch (e) {
+    next(e);
+  }
 }
 
+export { del as delete };
+
 // POST /users/recover
-function recover(req, res, next) {
-  'use strict';
+export async function recover(req, res, next) {
+  const data = req.body;
+  const sql = 'SELECT user.id, user.username, user.email FROM user WHERE email = ?;';
 
-  var sql;
+  try {
+    const user = await db.get(sql, data.email);
 
-  sql =
-    'SELECT user.id, user.username, user.email FROM user WHERE email = ?;';
-
-  db.getAsync(sql, [req.body.email])
-  .then(function (user) {
-    if (!user) { return res.status(404).json({ code: 'ERR_NO_USER' }); }
+    if (!user) {
+      throw new NotFound(`No user found with email ${data.email}`);
+    }
 
     // compose the message.  The params key will be used to template into the
     // HTML message with a templating library.
-    var message = {
+    const options = {
+      token: uuid.v4(),
+      address: user.email,
       subject: 'Password Reset Request',
-      html: emails.recover,
-      params : {
-        token : uuid.v4(),
-        address : user.email
-      }
     };
 
-    return mailer.send(user.email, message);
-  })
-  .then(function (body) {
-    res.status(200).json(body);
-  })
-  .catch(next)
-  .done();
+    // send the email
+    await mailer('recover', user.email, options);
+
+    res.sendStatus(200);
+  } catch (e) {
+    next(e);
+  }
 }

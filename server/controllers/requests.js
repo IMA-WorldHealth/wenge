@@ -2,10 +2,14 @@
 * Requests Module
 *
 * This module is responsible for providing full CRUD on the requests table.
+*
+* @module controllers/requests
+* @requires ../lib/db
+* @requires ../lib/tools
 */
 
-const db    = require('../lib/db');
-const tools = require('../lib/tools');
+import db from '../lib/db';
+import tools from '../lib/tools';
 
 // module exports
 exports.create = create;
@@ -17,8 +21,6 @@ exports.delete = del;
 // gets all requests.  Expects a query string with
 // ?status = { 'open', 'closed' }
 function read(req, res, next) {
-  'use strict';
-
   var sql,
       hasId = (req.params.id !== undefined);
 
@@ -59,8 +61,6 @@ function read(req, res, next) {
 // POST /requests
 // Expects a request body and request detail lines
 function create(req, res, next) {
-  'use strict';
-
   var requestStmt,
       detailStmt,
       data = req.body,
@@ -100,13 +100,11 @@ function create(req, res, next) {
 // PUT /requests/:id
 // TODO
 function update(req, res, next) {
-  'use strict';
   next();
 }
 
 // DELETE /requests/:id
 function del(req, res, next) {
-  'use strict';
 
   db.async.run('DELETE FROM request WHERE id = ?', [req.params.id])
   .then(function () {

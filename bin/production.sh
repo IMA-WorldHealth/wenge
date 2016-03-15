@@ -4,7 +4,7 @@
 export NODE_ENV=production
 
 echo "Starting $NODE_ENV build"
-DIR="dest"
+DIR="dist"
 
 # remove the destination directory if it exists
 if [ -d "$DIR" ]; then
@@ -22,16 +22,16 @@ gulp build
 echo "Building the database  ..."
 
 # build the database using sqlite3
-sqlite3 dest/wenge.db < db/schema.sql
-sqlite3 dest/wenge.db < db/data.sql
+sqlite3 $DIR/wenge.db < server/lib/db/schema.sql
+sqlite3 $DIR/wenge.db < server/lib/db/data.sql
 
 # move the .env file into the correct folder
-cp .env.$NODE_ENV dest/
+cp .env $DIR
 
 # enter the destination folder
-cd dest
+cd $DIR
 
 echo "Starting up the server ..."
 
 ## boot up the server
-node server/server.js
+node server/index.js

@@ -20,6 +20,8 @@ describe('Users (signup)', function () {
 
 });
 
+
+
 /** test that the API behaves correctly for authenticated users */
 describe('Users (authenticated)', function () {
   'use strict';

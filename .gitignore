@@ -1,6 +1,5 @@
 # ignore instance data
-db/data.sql
-dest/*
+dist/*
 
 # ignore built files
 *.min.js
@@ -13,13 +12,11 @@ dest/*
 # npm and things
 node_modules/
 client/vendor/*
-
-# express-session things
-sessions/*
+coverage/*
 
 # log files
 *.log
 
 # ignore environment config
-.env.*
+.env*
 !.env.sample

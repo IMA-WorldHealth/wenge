@@ -3,21 +3,19 @@
 *
 * Currently only serves one function (serving all colors) but may be expanded
 * in the future.
+*
+* @module colors
+* @requires ../lib/db
 */
 
-var db = require('../lib/db');
-
-// module exports
-exports.read = read;
+import db from '../lib/db';
 
 // GET /colors
-function read(req, res, next) {
-  'use strict';
-
-  db.allAsync('SELECT code, name FROM color;')
-  .then(function (rows) {
-    res.status(200).json(rows);
-  })
-  .catch(next)
-  .done();
+export async function read(req, res, next) {
+  try {
+    const colors = await db.all('SELECT code, name FROM color;');
+    res.status(200).json(colors);
+  } catch (e) {
+    next(e);
+  }
 }

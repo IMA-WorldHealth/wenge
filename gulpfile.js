@@ -1,7 +1,12 @@
+/* eslint-disable */
+
+'use strict';
+
 const path = require('path');
 
 const gulp         = require('gulp');
 const gulpif       = require('gulp-if');
+const babel        = require('gulp-babel');
 const sourcemaps   = require('gulp-sourcemaps');
 const concat       = require('gulp-concat');
 const nano         = require('gulp-cssnano');
@@ -9,13 +14,13 @@ const autoprefixer = require('gulp-autoprefixer');
 const iife         = require('gulp-iife');
 const sass         = require('gulp-sass');
 const uglify       = require('gulp-uglify');
+const merge        = require('merge-stream');
 
 // load environmental variables
-var envPath = `.env.${ process.env.NODE_ENV.toLowerCase().trim() }`;
-require('dotenv').load({ path : envPath });
+require('dotenv').config();
 
 // are we n development or production mode?
-var PRODUCTION = (process.env.NODE_ENV.toLowerCase().trim()  === 'production');
+var PRODUCTION = (process.env.NODE_ENV === 'production');
 
 // paths for building app components
 var paths = {
@@ -33,12 +38,21 @@ var paths = {
       'client/vendor/angular-ui-grid/*.min.js'
     ],
     static: ['!client/**/*.js', '!client/css/*', '!client/vendor/*', '!client/vendor/**/*', 'client/*', 'client/**/*']
-  },
-  server:   {
-    dir:    path.join(process.env.BUILD_DIR, 'server'),
-    static: ['server/*.js', 'server/**/*']
   }
 };
+
+gulp.task('build-server', function () {
+  let js = gulp.src('server/**/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(babel())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('dist/server'));
+
+  let html = gulp.src('server/**/*.html')
+    .pipe(gulp.dest('dist/server'));
+
+  merge(js, html);
+});
 
 // concatenates all the client scripts into one
 gulp.task('build-client', function () {
@@ -81,16 +95,6 @@ gulp.task('client-move', function () {
     .pipe(gulp.dest(paths.client.dir));
 });
 
-gulp.task('build-server', function () {
-  gulp.start('server-move');
-});
-
-// move the server into the bin/ directory
-gulp.task('server-move', function () {
-  return gulp.src(paths.server.static)
-    .pipe(gulp.dest(paths.server.dir));
-});
-
 // watch the client for changes and rebuild
 gulp.task('watch', function () {
   gulp.watch(paths.client.js, ['build-client']);
@@ -104,5 +108,5 @@ gulp.task('build', function () {
 
 // default task runner
 gulp.task('default', function () {
-  gulp.start('build-client', 'build-server', 'env', 'watch');
+  gulp.start('build-client', 'build-server', 'watch');
 });

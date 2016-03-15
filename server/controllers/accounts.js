@@ -1,31 +1,21 @@
 /**
-*
-*
-*
-*
-*/
+ * Accounts Management
+ *
+ *
+ *
+ */
 
-var db = require('../lib/db');
-
-exports.recover = recover;
+import db from '../lib/db';
 
 // POST /accounts/recover
-function recover(req, res, next) {
-  'use strict';
+async function recover(req, res, next) {
+  const sql =
+    `SELECT id, username, email FROM user WHERE email = ?;`;
 
-  var sql =
-    'SELECT id, username, email FROM user WHERE email = ?;';
-
-  db.getAsync(sql, [req.body.email])
-  .then(function (row) {
-
-    // no data (NOT FOUND)
-    if (!row) { return res.status(404).json(); }
-
-    // success
-    // TODO - code to send email
+  try {
+    const row = await db.get(sql, req.body.email);
     res.status(200).json(row);
-  })
-  .catch(next)
-  .done();
+  } catch (e) {
+    next(e);
+  }
 }

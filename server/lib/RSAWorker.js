@@ -2,31 +2,30 @@
  * This library exists purely for multi-threaded RSA key generation using the
  * node-rsa module.
  *
- * @module lib/rsa
+ * @module lib/RSAWorker
+ *
+ * @requires node-rsa
+ * @requires workerpool
  */
 
-const RSA = require('node-rsa');
-const workerpool = require('workerpool');
+import RSA from 'node-rsa';
+import workerpool from 'workerpool';
 
-// The key size to create for each key pair
+/** The key size to create for each key pair */
 const bits = process.env.KEY_SIZE;
 
-// The encoding scheme to be used for keys
+/** The encoding scheme to be used for keys */
 const encoding = process.env.KEY_ENCODING || 'pkcs1';
 
-
 /** generates a new public/private key pair for a user */
-function generateKeyPair() {
-  'use strict';
-
-  // create a new RSA public/private keypair with size `bits`
-  let key = new RSA({ b : bits });
+function keypair() {
+  const key = new RSA({ b: bits });
 
   // export a plaintext object
-  let plaintext = {
+  const plaintext = {
     private: key.exportKey(`${encoding}-private`),
-    public:  key.exportKey(`${encoding}-public`),
-    keySize: bits
+    public: key.exportKey(`${encoding}-public`),
+    keySize: bits,
   };
 
   return plaintext;
@@ -39,18 +38,15 @@ function generateKeyPair() {
  *
  * @param {object} data - a data object with at least 'plaintext' and 'voucher'
  * properties.
- *
  */
-function signVoucher(data) {
-  'use strict';
-
+function sign(data) {
   // import the key pair from the RSA data
-  let key = new RSA();
+  const key = new RSA();
   key.importKey(data.plaintext.public, encoding);
   key.importKey(data.plaintext.private, encoding);
 
-  let signature = key.sign(data.voucher, 'hex');
-  return { signature : signature };
+  const signature = key.sign(data.voucher, 'hex');
+  return { signature };
 }
 
 /**
@@ -58,20 +54,18 @@ function signVoucher(data) {
  * and signature properties.
  * @returns {object} response - a response object containing a boolean value.
  */
-function verifyVoucher(data) {
-  'use strict';
-
-  let key = new RSA();
+function verify(data) {
+  const key = new RSA();
   key.importKey(data.plaintext.public, encoding);
   key.importKey(data.plaintext.private, encoding);
 
-  let bool = key.verify(data.voucher, data.signature, 'utf8', 'hex');
-  return { bool : bool };
+  const bool = key.verify(data.voucher, data.signature, 'utf8', 'hex');
+  return { bool };
 }
 
 /** listen to the parent process for instructions */
 workerpool.worker({
-  keypair : generateKeyPair,
-  sign : signVoucher,
-  verify : verifyVoucher
+  keypair,
+  sign,
+  verify,
 });

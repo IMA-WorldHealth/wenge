@@ -210,7 +210,7 @@ api.read = function read(res) {
  * })
  * .catch(helpers.handler);
  */
-api.retrieved = function retrieved(res) {
+api.retrieved = function retrieved(res, n) {
   'use strict';
 
   // make these will always return an array
@@ -219,5 +219,5 @@ api.retrieved = function retrieved(res) {
 
   // this should return a single object
   expect(res.body).to.be.a('array');
-  expect(res.body).to.have.length.above(0);
+  expect(res.body).to.have.length(n);
 };
