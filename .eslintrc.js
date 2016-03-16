@@ -3,7 +3,8 @@ module.exports = {
     "extends": "airbnb",
     "plugins": [
         "react",
-        "babel"
+        "babel",
+        "ava"
     ],
     "rules" : {
       "no-unused-vars" : 0

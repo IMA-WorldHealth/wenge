@@ -14,7 +14,7 @@
  * @requires helmet
  * @requires connect-sqlite3
  */
-
+import path from 'path';
 import express from 'express';
 import session from 'express-session';
 import compression from 'compression';
@@ -52,9 +52,14 @@ middleware.use(bodyParser.json());
 /** parse req.body's that are urlencoded */
 middleware.use(bodyParser.urlencoded({ extended: false }));
 
-/** configure middleware session management using cookies and an SQLite store */
+/**
+ * configure middleware session management using cookies and an SQLite3 store
+ *
+ * NOTE: we are storing the session in the same database as the wenge database
+ */
+const parts = path.parse(process.env.DB);
 middleware.use(session({
-  store: new SQLiteStore(),
+  store: new SQLiteStore({ dir: parts.dir, db: parts.name }),
   secret: process.env.SESS_SECRET,
   resave: false,
   saveUninitialized: false,

@@ -1,19 +1,21 @@
 /**
  * Controllers
  *
- * This module configures the routes for wenge's server.  The ctrls are
+ * This module configures the routes for wenge's server.  The controllers are
  * all exported via es6  modules and attached to a sub-application that can be
  * easily consumed by the wenge server on re-export.
  *
- * @module server/ctrls
+ * @module server/controllers
  *
  * @requires express
+ * @requires controllers/users
+ * @requires controllers/projects
  */
 import express from 'express';
 
 import * as users from './users';
-import projects from './projects';
-// import requests from './requests';
+import * as projects from './projects';
+// import * as requests from './requests';
 
 const ctrls = express();
 
@@ -27,7 +29,13 @@ ctrls.delete('/users/:id', users.delete);
 ctrls.post('/users/invite', users.invite);
 ctrls.post('/users/recover', users.recover);
 
-// ctrls.use('/projects', require('./projects'));
+/** CRUD for projects */
+ctrls.get('/projects', projects.index);
+ctrls.get('/projects/:id', projects.read);
+ctrls.put('/projects/:id', projects.update);
+ctrls.post('/projects/', projects.create);
+ctrls.delete('/projects/:id', projects.delete);
+
 
 /** CRUD for requests */
 // ctrls.use('/requests', require('./requests'));

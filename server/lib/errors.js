@@ -59,3 +59,22 @@ export function Forbidden(desc) {
 }
 
 util.inherits(Forbidden, Error);
+
+/**
+ * Application Error Handler
+ */
+export function handler(error, req, res, next) {
+  let err;
+
+  // if there is a status, it is a known error
+  if (error.status) {
+    err = error;
+
+  // otherwise, make a new error
+  } else {
+    err = new InternalServerError(error);
+  }
+
+  // send the error back to the client
+  res.status(err.status).json(err);
+}

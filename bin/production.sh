@@ -19,12 +19,6 @@ echo "Running the build scripts ..."
 # build the application
 gulp build
 
-echo "Building the database  ..."
-
-# build the database using sqlite3
-sqlite3 $DIR/wenge.db < server/lib/db/schema.sql
-sqlite3 $DIR/wenge.db < server/lib/db/data.sql
-
 # move the .env file into the correct folder
 cp .env $DIR
 

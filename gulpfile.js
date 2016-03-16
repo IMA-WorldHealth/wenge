@@ -51,7 +51,10 @@ gulp.task('build-server', function () {
   let html = gulp.src('server/**/*.html')
     .pipe(gulp.dest('dist/server'));
 
-  merge(js, html);
+  let sql = gulp.src('server/**/*.sql')
+    .pipe(gulp.dest('dist/server'));
+
+  return merge(js, html, sql);
 });
 
 // concatenates all the client scripts into one
