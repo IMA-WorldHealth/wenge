@@ -33,7 +33,7 @@ ctrls.post('/users/recover', users.recover);
 ctrls.get('/projects', projects.index);
 ctrls.get('/projects/:id', projects.read);
 ctrls.put('/projects/:id', projects.update);
-ctrls.post('/projects/', projects.create);
+ctrls.post('/projects', projects.create);
 ctrls.delete('/projects/:id', projects.delete);
 
 

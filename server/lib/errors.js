@@ -1,4 +1,5 @@
 import util from 'util';
+import logger from './logger';
 
 /**
  * 404 HTTP Error
@@ -74,6 +75,8 @@ export function handler(error, req, res, next) {
   } else {
     err = new InternalServerError(error);
   }
+
+  logger.error(err.description);
 
   // send the error back to the client
   res.status(err.status).json(err);

@@ -37,4 +37,6 @@ logger.stream = {
   },
 };
 
+logger.exitOnError = true;
+
 export default logger;

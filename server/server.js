@@ -41,5 +41,8 @@ server.use(controllers);
 // error handler
 server.use(handler);
 
+// set the directory
+server.set('dir', __dirname);
+
 export { logger };
 export default server;

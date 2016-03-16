@@ -17,8 +17,3 @@ import server, { logger } from './server';
 server.listen(process.env.PORT, () => {
   logger.info('Server is listening on port %s.', process.env.PORT);
 });
-
-/** no logging needed - the app logger will automatically catch it */
-process.on('uncaughtException', () => {
-  process.exit(1);
-});

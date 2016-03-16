@@ -23,6 +23,24 @@ import tools from '../lib/tools';
 import subprojects from './subprojects';
 import { NotFound } from '../lib/errors';
 
+// get a project by it's id.
+async function getProject(id) {
+  let sql = 'SELECT p.id, p.code, p.color FROM project AS p WHERE p.id = ?;';
+
+  const project = await db.get(sql, id);
+
+  if (!project) {
+    throw new NotFound(`Could not find a project with id ${id}`);
+  }
+
+  // query the subproject table
+  sql = 'SELECT id, projectid, label, timestamp FROM subproject WHERE projectid = ?;';
+
+  project.subprojects = await db.all(sql, id);
+
+  return project;
+}
+
 // GET /projects
 export async function index(req, res, next) {
   const sql =
@@ -37,25 +55,10 @@ export async function index(req, res, next) {
   } catch (e) { next(e); }
 }
 
-
 // GET /projects/:id
 export async function read(req, res, next) {
-  const id = req.params.id;
-  const sql =
-    `SELECT p.id, p.code, p.color, s.id AS subid, s.label
-    FROM project AS p LEFT JOIN subproject AS s ON
-      p.id = s.projectid
-    WHERE p.id = ?`;
-
   try {
-    const row = await db.get(sql, req.params.id);
-
-    if (!row) {
-      throw new NotFound(`Could not find a project with id ${id}`);
-    }
-
-    /** @todo -- finish this! */
-    const project = tools.collect(row, 'subprojects', ['subid', 'label']);
+    const project = await getProject(req.params.id);
     res.status(200).json(project);
   } catch (e) { next(e); }
 }
@@ -64,14 +67,16 @@ export async function read(req, res, next) {
 // POST /projects
 export async function create(req, res, next) {
   const data = req.body;
-  const id = req.session.user.id;
   const sql = 'INSERT INTO project (code, color, createdby) VALUES (?,?,?);';
 
   try {
-    await db.run(sql, data.code, data.color, id);
+    const uid = req.session.user.id;
+
+    await db.run(sql, data.code, data.color, uid);
+    const id = await db.get('SELECT last_insert_rowid();');
 
     // send the new project back to the client
-    res.status(200).json({ id: this.lastId });
+    res.status(201).json({ id });
   } catch (e) { next(e); }
 }
 
@@ -82,7 +87,8 @@ export async function update(req, res, next) {
 
   try {
     await db.run(sql, data.code, data.color, req.params.id);
-    res.sendStatus(200);
+    const project = await getProject(req.params.id);
+    res.status(200).json(project);
   } catch (e) { next(e); }
 }
 
@@ -92,7 +98,7 @@ async function del(req, res, next) {
 
   try {
     await db.run(sql, req.params.id);
-    res.sendStatus(200);
+    res.sendStatus(204);
   } catch (e) { next(e); }
 }
 
