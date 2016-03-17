@@ -18,7 +18,7 @@ test.before(async t => {
   agent = await helpers.setup();
 });
 
-test('vouchers:index', async t => {
+test.skip('vouchers:index', async t => {
   t.plan(2);
   const res = await agent.get(url);
   t.is(res.status, 200);

@@ -47,6 +47,19 @@ async function database(server) {
 }
 
 /**
+ * Logs the agent into the application as needed.
+ */
+export async function login(agent) {
+  const user = {
+    username: 'admin',
+    password: 'password',
+  };
+
+  const res = await agent.post('/auth/login').send(user);
+  return agent;
+}
+
+/**
  * Setups up tests by initializing a server and database connection.
  */
 export async function setup() {

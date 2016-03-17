@@ -13,7 +13,7 @@ import express from 'express';
 import path from 'path';
 import workerpool from 'workerpool';
 import uuid from 'node-uuid';
-import argon2 from 'argon2';
+import argon from 'argon2';
 
 import db from '../lib/db';
 import mailer from '../lib/mailer';
@@ -70,11 +70,26 @@ export async function create(req, res, next) {
     'SELECT email, timestamp, roleid FROM invitations WHERE id = ?;';
 
   try {
+    // look up the user's invitation
     const invitation = await db.get(sql, data.invitationId);
 
+    if (!invitation) {
+      throw new NotFound(`Could not find an invitation with id ${data.invitationId}`);
+    }
+
+    logger.verbose(`Found invitation for ${invitation.email}.  Hashing password...`);
+
+    // generate a cryptographically secure salt using the argon2 library
+    const salt = await argon.generateSalt();
+
+    // hash the user's password argon2 before verifying
+    const hash = await argon.hash(data.password, salt);
+
+    logger.verbose(`Password hash: ${hash}.`);
+    logger.verbose(`Creating user: ${data.username}.`);
+
     const params = [
-      data.username, data.displayname, data.email, data.password,
-      data.telephone, data.roleid, data.hidden,
+      data.username, data.displayname, data.email, hash, data.telephone, data.roleid, data.hidden,
     ];
 
     // next, we must create the user
@@ -84,10 +99,12 @@ export async function create(req, res, next) {
 
     await db.run(sql, params);
 
+    logger.verbose('User created.  Generating keypair...');
+
     /** use worker-pool to generate a keypiar for the user */
     const keypair = await pool.exec('keypair');
 
-    logger.info('Generated the following keypair:', keypair);
+    logger.verbose(`Generated the following keypair: ${keypair}`);
 
     sql =
       'INSERT INTO signature (public, private, type) VALUES (?, ?, ?);';
