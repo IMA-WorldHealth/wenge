@@ -19,7 +19,7 @@
 import express from 'express';
 import logger from './lib/logger';
 import controllers from './controllers';
-import auth from './controllers/auth';
+import * as auth from './controllers/auth';
 import middleware from './middleware';
 import { handler } from './lib/errors';
 
@@ -29,8 +29,8 @@ const server = express();
 /** (pre authentication) */
 server.use(middleware);
 
-server.post('/login', auth.login);
-server.get('/logout', auth.logout);
+server.post('/auth/basic', auth.login);
+server.post('/auth/logout', auth.logout);
 
 // make sure so unauthorized requests can get through
 // server.use(auth.gateway);

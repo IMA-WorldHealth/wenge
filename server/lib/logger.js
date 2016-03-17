@@ -22,13 +22,13 @@ logger.add(winston.transports.Console);
 logger.handleExceptions(new winston.transports.Console({ colorize: true, json: true }));
 
 /** log errors to a file (no matter what the actual log level is) */
-const errFile = process.env.LOG_ERROR_FILE || 'errors.log';
-
-logger.add(winston.transports.File, {
-  filename: errFile,
-  handleExceptions: true,
-  humanReadableUnhandledException: true,
-});
+if (process.env.LOG_ERROR_FILE) {
+  logger.add(winston.transports.File, {
+    filename: process.env.LOG_ERROR_FILE,
+    handleExceptions: true,
+    humanReadableUnhandledException: true,
+  });
+}
 
 /** add bindings for morgan to log HTTP requests */
 logger.stream = {

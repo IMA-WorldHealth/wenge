@@ -9,6 +9,9 @@ dist/*
 *.swo
 *.swn
 
+# ignore databases
+wenge.db
+
 # npm and things
 node_modules/
 client/vendor/*

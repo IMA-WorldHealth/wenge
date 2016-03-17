@@ -2,10 +2,10 @@
  * The /projects endpoint tests written with concurrent capabilities
  */
 
-import request from 'supertest-as-promised';
 import test from 'ava';
-import {} from '../helpers/env';  // HACK :)
-import * as helpers from '../helpers/server';
+import request from 'supertest-as-promised';
+import {} from './_env';
+import * as helpers from '../../helpers/helpers';
 
 let agent = null;
 
@@ -14,10 +14,10 @@ let agent = null;
  * sets up the agent for sharing cookie information.
  */
 test.before(async t => {
-  const app = helpers.serve();
+  const app = helpers.app();
 
   // prepare for the tests by building the database
-  await helpers.prepare(app);
+  await helpers.database(app);
 
   // bind the agent to be used in subsequent tests
   agent = request.agent(app);
@@ -27,8 +27,7 @@ test.before(async t => {
 test('projects:index', async t => {
   t.plan(2);
 
-  const res = await agent
-    .get('/projects');
+  const res = await agent.get('/projects');
 
   t.is(res.status, 200);
   t.is(res.body.length, 3);
@@ -38,8 +37,7 @@ test('projects:index', async t => {
 test('projects:read:200', async t => {
   t.plan(2);
 
-  const res = await agent
-    .get('/projects/1');
+  const res = await agent.get('/projects/1');
 
   t.is(res.status, 200);
   t.is(res.body.id, 1);
@@ -63,8 +61,7 @@ test.skip('projects:create:201', async t => {
   t.is(res.status, 201);
   project.id = res.body.id;
 
-  res = await agent
-    .get(`/projects/${res.body.id}`);
+  res = await agent.get(`/projects/${res.body.id}`);
 
   // make sure that it comes back properly
   t.is(res.status, 200);
@@ -114,14 +111,13 @@ test('project:update:200', async t => {
 test('projects:read:404', async t => {
   t.plan(2);
 
-  const res = await agent
-    .get('/projects/3.141592');
+  const res = await agent.get('/projects/3.141592');
 
   t.is(res.status, 404);
   t.is(res.body.status, 404);
 });
 
-// remove test artifacts
+// remove database, etc
 test.after('cleanup', async t => {
   await helpers.cleanup();
 });

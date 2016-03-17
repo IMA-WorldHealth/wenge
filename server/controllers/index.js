@@ -10,11 +10,13 @@
  * @requires express
  * @requires controllers/users
  * @requires controllers/projects
+ * @requires controllers/colors
  */
 import express from 'express';
 
 import * as users from './users';
 import * as projects from './projects';
+import * as colors from './colors';
 // import * as requests from './requests';
 
 const ctrls = express();
@@ -36,6 +38,8 @@ ctrls.put('/projects/:id', projects.update);
 ctrls.post('/projects', projects.create);
 ctrls.delete('/projects/:id', projects.delete);
 
+/** CRUD for colors */
+ctrls.get('/colors', colors.index);
 
 /** CRUD for requests */
 // ctrls.use('/requests', require('./requests'));

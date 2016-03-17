@@ -2,15 +2,17 @@
  * Test Helper Functions
  *
  * @requires server
+ * @requires lib/db
  * @requires promised-exec
  * @requires fs
  */
+import {} from './_env';
 import server from '../../dist/server/server';
 import { connect } from '../../dist/server/lib/db';
 import exec from 'promised-exec';
 import fs from 'fs';
 
-export function serve() {
+export function app() {
   return server;
 }
 
@@ -23,8 +25,8 @@ export async function cleanup() {
  * from the database's SQL files.  Once the database is built, it connects the
  * database instance for the server to use.
  */
-export async function prepare(app) {
-  const dir = app.get('dir');
+export async function database(application) {
+  const dir = application.get('dir');
 
   try {
     fs.accessSync(`${process.env.DB}`, fs.F_OK);

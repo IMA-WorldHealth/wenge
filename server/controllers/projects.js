@@ -13,13 +13,12 @@
 *
 * @module controllers/projects
 *
-* @requires ../lib/db
-* @requires ../lib/tools
+* @requires lib/db
+* @requires lib/errors
 * @requires ./subprojects
 */
 
 import db from '../lib/db';
-import tools from '../lib/tools';
 import subprojects from './subprojects';
 import { NotFound } from '../lib/errors';
 
