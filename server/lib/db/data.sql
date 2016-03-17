@@ -48,6 +48,6 @@ INSERT INTO subproject (projectid, label) VALUES
   (1, "Empowerment"),
   (1, "Atelier/Conference");
 
-
+-- password is 'password' hashed with bcrypt
 INSERT INTO user (username, displayname, email, password, roleid, hidden, projectid, signatureid) VALUES
-("admin", "Adminstrator", "developers@imaworldhealth.org", "$argon2i$m=4096,t=3,p=1$B4cjObbiYdN1IHXLFhq2Mg$RR5DMmvjU3bBY328K/SkTuC0yER7kD1tVN3AN7mfY9E", 1, 1, 1, 1);
+("admin", "Adminstrator", "developers@imaworldhealth.org", "$2a$10$RjH4nNRIR4A4uw.iBIhPMexfiRuJDIG1lF4lwp3wYabYzavBj5qL.", 1, 1, 1, 1);

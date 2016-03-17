@@ -7,15 +7,20 @@ import request from 'supertest-as-promised';
 import {} from './_env';
 import * as helpers from '../../helpers/helpers';
 
-let agent = null;
+/** the url for this test suite */
 const url = '/auth/basic';
 
 /**
- * Before the test suite, start the server and connect the database. Also
- * sets up the agent for sharing cookie information.
+ * Before the test suite, start the server and connect the database.  In this case, we wish to
+ * avoid sharing cookies, so we create a new request using the server exported from the helpers
+ * module.
  */
 test.before(async t => {
-  agent = await helpers.setup();
+  try {
+    await helpers.setup();
+  } catch (e) {
+    throw e;
+  }
 });
 
 test('auth:failure:username', async t => {
@@ -26,7 +31,7 @@ test('auth:failure:username', async t => {
     password: 'password',
   };
 
-  const res = await agent.post(url).send(user);
+  const res = await request(helpers.app).post(url).send(user);
 
   const description =
     `Bad username and password combination for ${user.username}`;
@@ -43,7 +48,7 @@ test('auth:failure:password', async t => {
     password: 'password1', // the real password is 'password'
   };
 
-  const res = await agent.post(url).send(user);
+  const res = await request(helpers.app).post(url).send(user);
 
   const description =
     `Bad username and password combination for ${user.username}`;
@@ -60,13 +65,21 @@ test('auth:failure:both', async t => {
     password: 'garbage',
   };
 
-  const res = await agent.post(url).send(user);
+  const res = await request(helpers.app).post(url).send(user);
 
   const description =
     `Bad username and password combination for ${user.username}`;
 
   t.is(res.status, 401);
   t.is(res.body.description, description);
+});
+
+test('auth:forbidden', async t => {
+  t.plan(1);
+
+  // useing vouchers api just for kicks
+  const res = await request(helpers.app).get('/vouchers');
+  t.is(res.status, 403);
 });
 
 test('auth:success', async t => {
@@ -77,7 +90,7 @@ test('auth:success', async t => {
     password: 'password',
   };
 
-  const res = await agent.post(url).send(user);
+  const res = await request(helpers.app).post(url).send(user);
 
   t.is(res.status, 200);
   t.is(res.body.username, 'admin');

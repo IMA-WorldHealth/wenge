@@ -26,6 +26,8 @@ import { handler } from './lib/errors';
 /** create the server */
 const server = express();
 
+server.use((req, res, next) => { console.log(req.ip, req.path); next(); });
+
 /** (pre authentication) */
 server.use(middleware);
 
@@ -33,7 +35,7 @@ server.post('/auth/basic', auth.login);
 server.post('/auth/logout', auth.logout);
 
 // make sure so unauthorized requests can get through
-// server.use(auth.gateway);
+server.use(auth.gateway);
 
 // bind controllers
 server.use(controllers);

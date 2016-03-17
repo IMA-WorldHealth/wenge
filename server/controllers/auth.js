@@ -8,10 +8,14 @@
 * @todo - migrate this to using passportjs and JSON Web Tokens based on the invitation email.
 */
 
+import bcrypt from 'bcrypt';
+import Promise from 'bluebird';
 import db from '../lib/db';
 import { Unauthorized, Forbidden, NotFound } from '../lib/errors';
-import argon from 'argon2';
 import logger from '../lib/logger';
+
+// create async functions in the bcrypt library
+Promise.promisifyAll(bcrypt);
 
 /**
  * Basic password-based authentication for users that are registered with the system.  Passwords
@@ -35,8 +39,8 @@ export async function login(req, res, next) {
       throw new Unauthorized(`Bad username and password combination for ${req.body.username}`);
     }
 
-    // passwords are hashed with argon and random salt.  Use argon to verify correctness.
-    const bool = await argon.verify(user.password, req.body.password);
+    // passwords are hashed with bcrypt, using a salt. We can verify them with a simple hash
+    const bool = await bcrypt.compareAsync(req.body.password, user.password);
 
     if (!bool) {
       throw new Unauthorized(`Bad username and password combination for ${req.body.username}`);

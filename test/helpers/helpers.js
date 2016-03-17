@@ -47,24 +47,28 @@ async function database(server) {
 }
 
 /**
- * Logs the agent into the application as needed.
+ * Setups up tests by initializing a server and database connection.
  */
-export async function login(agent) {
+export async function setup() {
+  const agent = request.agent(app);
+
   const user = {
     username: 'admin',
     password: 'password',
   };
 
-  const res = await agent.post('/auth/login').send(user);
+  try {
+    await database(app);
+    console.log('before');
+    await agent.post('/auth/basic').send(user);
+    console.log('after');
+  } catch (e) {
+    throw e;
+  }
+
+  // return the agent for usage in subsequent tests
   return agent;
 }
 
-/**
- * Setups up tests by initializing a server and database connection.
- */
-export async function setup() {
-  await database(app);
-
-  // return the agent for usage in subsequent tests
-  return request.agent(app);
-}
+/** re-export app for consumption in auth */
+export { app };

@@ -10,15 +10,18 @@
 */
 
 import express from 'express';
+import Promise from 'bluebird';
 import path from 'path';
 import workerpool from 'workerpool';
 import uuid from 'node-uuid';
-import argon from 'argon2';
+import bcrypt from 'bcrypt';
 
 import db from '../lib/db';
 import mailer from '../lib/mailer';
 import logger from '../lib/logger';
 import { NotFound } from '../lib/errors';
+
+Promise.promisifyAll(bcrypt);
 
 // default to 5 seconds of timeout
 const pool = workerpool.pool(path.join(__dirname, '../lib/RSAWorker.js'));
@@ -79,11 +82,11 @@ export async function create(req, res, next) {
 
     logger.verbose(`Found invitation for ${invitation.email}.  Hashing password...`);
 
-    // generate a cryptographically secure salt using the argon2 library
-    const salt = await argon.generateSalt();
+    // generate a cryptographically secure salt using bcrypt
+    const salt = await bcrypt.genSaltAsync(13);
 
-    // hash the user's password argon2 before verifying
-    const hash = await argon.hash(data.password, salt);
+    // hash the user's password with bcrypt
+    const hash = await bcrypt.hashAsync(data.password, salt);
 
     logger.verbose(`Password hash: ${hash}.`);
     logger.verbose(`Creating user: ${data.username}.`);
