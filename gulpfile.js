@@ -17,7 +17,7 @@ const uglify       = require('gulp-uglify');
 const merge        = require('merge-stream');
 
 // load environmental variables
-require('dotenv').config();
+require('dotenv').config({ silent : true });
 
 // are we n development or production mode?
 var PRODUCTION = (process.env.NODE_ENV === 'production');
