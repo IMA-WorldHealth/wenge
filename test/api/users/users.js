@@ -1,5 +1,5 @@
 /**
- * /colors endpoint tests
+ * /users endpoint tests
  */
 
 import test from 'ava';
@@ -8,6 +8,7 @@ import {} from './_env';
 import * as helpers from '../../helpers/helpers';
 
 let agent = null;
+const url = '/users';
 
 /**
  * Before the test suite, start the server and connect the database. Also
@@ -17,14 +18,21 @@ test.before(async t => {
   agent = await helpers.setup();
 });
 
-test('colors:index', async t => {
+test('users:index', async t => {
   t.plan(2);
-
-  const res = await agent.get('/colors');
-
+  const res = await agent.get(url);
   t.is(res.status, 200);
-  t.is(res.body.length, 20);
+  t.is(res.body.length, 1);
 });
 
-// remove database, etc
+test.todo('users:read');
+test.todo('users:create');
+test.todo('users:update');
+test.todo('users:remove');
+test.todo('users:invite');
+test.todo('users:redeem');
+
+/**
+ * After test suite finishes running, remove temporary databases.
+ */
 test.after('cleanup', helpers.cleanup);

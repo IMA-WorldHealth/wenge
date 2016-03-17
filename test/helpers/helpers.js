@@ -6,15 +6,14 @@
  * @requires promised-exec
  * @requires fs
  */
+
 import {} from './_env';
-import server from '../../dist/server/server';
+import app from '../../dist/server/server';
 import { connect } from '../../dist/server/lib/db';
+
+import request from 'supertest-as-promised';
 import exec from 'promised-exec';
 import fs from 'fs';
-
-export function app() {
-  return server;
-}
 
 export async function cleanup() {
   await exec(`rm ${process.env.DB}`);
@@ -25,8 +24,8 @@ export async function cleanup() {
  * from the database's SQL files.  Once the database is built, it connects the
  * database instance for the server to use.
  */
-export async function database(application) {
-  const dir = application.get('dir');
+async function database(server) {
+  const dir = server.get('dir');
 
   try {
     fs.accessSync(`${process.env.DB}`, fs.F_OK);
@@ -45,4 +44,14 @@ export async function database(application) {
   } catch (e) {
     throw e;
   }
+}
+
+/**
+ * Setups up tests by initializing a server and database connection.
+ */
+export async function setup() {
+  await database(app);
+
+  // return the agent for usage in subsequent tests
+  return request.agent(app);
 }

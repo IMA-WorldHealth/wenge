@@ -14,13 +14,7 @@ let agent = null;
  * sets up the agent for sharing cookie information.
  */
 test.before(async t => {
-  const app = helpers.app();
-
-  // prepare for the tests by building the database
-  await helpers.database(app);
-
-  // bind the agent to be used in subsequent tests
-  agent = request.agent(app);
+  agent = await helpers.setup();
 });
 
 // there are currently three projects registered in the database
@@ -118,6 +112,4 @@ test('projects:read:404', async t => {
 });
 
 // remove database, etc
-test.after('cleanup', async t => {
-  await helpers.cleanup();
-});
+test.after('cleanup', helpers.cleanup);
