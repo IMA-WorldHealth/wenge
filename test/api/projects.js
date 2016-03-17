@@ -9,11 +9,15 @@ import * as helpers from '../helpers/server';
 
 let agent = null;
 
+/**
+ * Before the test suite, start the server and connect the database. Also
+ * sets up the agent for sharing cookie information.
+ */
 test.before(async t => {
-  // prepare for the tests by building the database
-  await helpers.prepare();
-
   const app = helpers.serve();
+
+  // prepare for the tests by building the database
+  await helpers.prepare(app);
 
   // bind the agent to be used in subsequent tests
   agent = request.agent(app);

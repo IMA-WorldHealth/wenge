@@ -1,11 +1,12 @@
 /**
  * Test Helper Functions
  *
- * @requires server/server
+ * @requires server
  * @requires promised-exec
  * @requires fs
  */
 import server from '../../dist/server/server';
+import { connect } from '../../dist/server/lib/db';
 import exec from 'promised-exec';
 import fs from 'fs';
 
@@ -14,29 +15,32 @@ export function serve() {
 }
 
 export async function cleanup() {
-  console.log('cleaning up');
   await exec(`rm ${process.env.DB}`);
-  console.log('clean!');
 }
 
-export async function prepare() {
-  const dir = '/home/jniles/code/wenge/dist/server';
+/**
+ * Pepares the database by removing the old test file and rebuilding fresh data
+ * from the database's SQL files.  Once the database is built, it connects the
+ * database instance for the server to use.
+ */
+export async function prepare(app) {
+  const dir = app.get('dir');
 
   try {
     fs.accessSync(`${process.env.DB}`, fs.F_OK);
-    console.log(`delete ${process.env.DB}`);
     await exec(`rm ${process.env.DB}`);
-    console.log(`deleted ${process.env.DB}`);
   } catch (e) {
-    console.log('ERR:', e);
+    throw e;
   }
 
   try {
-    console.log('building databases ...');
+    // build the database's test data
     await exec(`sqlite3 ${process.env.DB} < ${dir}/lib/db/schema.sql`);
     await exec(`sqlite3 ${process.env.DB} < ${dir}/lib/db/data.sql`);
-    console.log('databases built');
+
+    // connect the database
+    connect();
   } catch (e) {
-    console.log('ERR:', e);
+    throw e;
   }
 }
