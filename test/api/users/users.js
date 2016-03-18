@@ -4,7 +4,6 @@
 
 import test from 'ava';
 import request from 'supertest-as-promised';
-import {} from './_env';
 import * as helpers from '../../helpers/helpers';
 
 let agent = null;
@@ -31,8 +30,3 @@ test.todo('users:update');
 test.todo('users:remove');
 test.todo('users:invite');
 test.todo('users:redeem');
-
-/**
- * After test suite finishes running, remove temporary databases.
- */
-test.after('cleanup', helpers.cleanup);

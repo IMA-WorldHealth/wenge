@@ -4,7 +4,6 @@
 
 import test from 'ava';
 import request from 'supertest-as-promised';
-import {} from './_env';
 import * as helpers from '../../helpers/helpers';
 
 let agent = null;
@@ -110,6 +109,3 @@ test('projects:read:404', async t => {
   t.is(res.status, 404);
   t.is(res.body.status, 404);
 });
-
-// remove database, etc
-test.after('cleanup', helpers.cleanup);

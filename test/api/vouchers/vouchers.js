@@ -4,7 +4,6 @@
 
 import test from 'ava';
 import request from 'supertest-as-promised';
-import {} from './_env';
 import * as helpers from '../../helpers/helpers';
 
 let agent = null;
@@ -29,8 +28,3 @@ test.todo('vouchers:read');
 test.todo('vouchers:create');
 test.todo('vouchers:update');
 test.todo('vouchers:remove');
-
-/**
- * After test suite finishes running, remove temporary databases.
- */
-test.after('cleanup', helpers.cleanup);

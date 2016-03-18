@@ -4,7 +4,6 @@
 
 import test from 'ava';
 import request from 'supertest-as-promised';
-import {} from './_env';
 import * as helpers from '../../helpers/helpers';
 
 /** the url for this test suite */
@@ -15,16 +14,6 @@ const url = '/auth/basic';
  * avoid sharing cookies, so we create a new request using the server exported from the helpers
  * module.
  */
-test.before(async t => {
-  try {
-    const agent = await helpers.setup();
-  } catch (e) {
-    throw e;
-  }
-});
-
-test.only(t => { t.pass(); });
-
 test('auth:failure:username', async t => {
   t.plan(2);
 
@@ -100,6 +89,3 @@ test('auth:success', async t => {
   t.is(res.body.roleid, 1);
   t.is(res.body.projectid, 1);
 });
-
-// remove database, etc
-test.skip.after('cleanup', helpers.cleanup);

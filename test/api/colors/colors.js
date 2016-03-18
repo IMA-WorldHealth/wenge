@@ -4,7 +4,6 @@
 
 import test from 'ava';
 import request from 'supertest-as-promised';
-import {} from './_env';
 import * as helpers from '../../helpers/helpers';
 
 let agent = null;
@@ -25,6 +24,3 @@ test('colors:index', async t => {
   t.is(res.status, 200);
   t.is(res.body.length, 20);
 });
-
-// remove database, etc
-test.after('cleanup', helpers.cleanup);

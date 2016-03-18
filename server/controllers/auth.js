@@ -29,16 +29,13 @@ export async function login(req, res, next) {
     `SELECT users.id, users.username, users.email, users.lastactive, users.password,
       roles.label AS role, users.roleid, users.projectid
     FROM users JOIN roles ON users.roleid = roles.id
-    WHERE users.username = $1~;`;
+    WHERE users.username = $1;`;
+
+  const NoUser = new Unauthorized(`Bad username and password combination for ${req.body.username}`);
 
   try {
     // locate the user matching the username
     const user = await db.one(sql, [req.body.username]);
-
-
-    if (!user) {
-      throw new Unauthorized(`Bad username and password combination for ${req.body.username}`);
-    }
 
     // passwords are hashed with bcrypt, using a salt. We can verify them with a simple hash
     const bool = await bcrypt.compareAsync(req.body.password, user.password);
@@ -54,11 +51,16 @@ export async function login(req, res, next) {
     req.session.user = user;
 
     // set update the with the current last active date
-    await db.none('UPDATE "users" SET lastactive = $1~ WHERE id = $2~;', [new Date(), user.id]);
+    await db.none('UPDATE "users" SET lastactive = $1 WHERE id = $2;', [new Date(), user.id]);
 
     res.status(200).json(user);
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    /** @todo - properly handle generic SQL errors */
+    if (error instanceof Unauthorized) {
+      next(error);
+    } else {
+      next(new Unauthorized(`Bad username and password combination for ${req.body.username}`));
+    }
   }
 }
 
