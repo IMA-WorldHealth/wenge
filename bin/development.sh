@@ -19,11 +19,12 @@ echo "Running the build scripts ..."
 # build the application
 gulp build
 
-echo "Building database ..."
-
-# build the database
-sqlite3 $DIR/wenge.db < $DIR/server/lib/db/schema.sql
-sqlite3 $DIR/wenge.db < $DIR/server/lib/db/data.sql
+# rebuilding development database 
+echo "Rebuilding development database ..."
+psql -U wenge -q -c 'DROP SCHEMA wenge CASCADE;'
+psql -U wenge -q -c 'CREATE SCHEMA wenge;'
+psql -U wenge -q wenge < server/lib/db/schema.sql
+psql -U wenge -q wenge < server/lib/db/data.sql
 
 # move the .env file into the correct folder
 cp .env $DIR

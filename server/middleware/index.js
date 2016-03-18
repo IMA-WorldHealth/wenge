@@ -21,13 +21,13 @@ import compression from 'compression';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
-import store from 'connect-sqlite3';
+import store from 'connect-pg-simple';
 
 // get the logger
 import logger from '../lib/logger';
 
 /** create the SQL store */
-const SQLiteStore = store(session);
+const PGStore = store(session);
 
 /** this is the middle ware **/
 const middleware = express();
@@ -54,12 +54,11 @@ middleware.use(bodyParser.urlencoded({ extended: false }));
 
 /**
  * configure middleware session management using cookies and an SQLite3 store
- *
- * NOTE: we are storing the session in the same database as the wenge database
  */
-const parts = path.parse(process.env.DB);
 middleware.use(session({
-  store: new SQLiteStore({ dir: parts.dir, db: parts.name }),
+  store: new PGStore({
+    conString: process.env.DBURL,
+  }),
   secret: process.env.SESS_SECRET,
   resave: false,
   saveUninitialized: false,

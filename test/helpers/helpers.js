@@ -16,7 +16,11 @@ import exec from 'promised-exec';
 import fs from 'fs';
 
 export async function cleanup() {
-  await exec(`rm ${process.env.DB}`);
+  try {
+    await exec(`rm ${process.env.DB}`);
+  } catch (e) {
+    throw e;
+  }
 }
 
 /**
@@ -40,7 +44,7 @@ async function database(server) {
     await exec(`sqlite3 ${process.env.DB} < ${dir}/lib/db/data.sql`);
 
     // connect the database
-    connect();
+    await connect();
   } catch (e) {
     throw e;
   }

@@ -12,12 +12,8 @@
 
 import dotenv from 'dotenv/config';
 import server, { logger } from './server';
-import { connect } from './lib/db';
 
 /** listen on the appropriate port */
 server.listen(process.env.PORT, () => {
-  logger.info('Server is listening on port %s.', process.env.PORT);
-
-  // connect the sqlite database instance
-  connect();
+  logger.info(`Server is listening on port ${process.env.PORT}.`);
 });

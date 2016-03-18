@@ -26,8 +26,6 @@ import { handler } from './lib/errors';
 /** create the server */
 const server = express();
 
-server.use((req, res, next) => { console.log(req.ip, req.path); next(); });
-
 /** (pre authentication) */
 server.use(middleware);
 

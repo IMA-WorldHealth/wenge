@@ -26,14 +26,15 @@ Promise.promisifyAll(bcrypt);
  */
 export async function login(req, res, next) {
   const sql =
-    `SELECT user.id, user.username, user.email, user.lastactive, user.password, role.label AS role,
-      user.roleid, user.projectid
-    FROM user JOIN role ON user.roleid = role.id
-    WHERE user.username = ?;`;
+    `SELECT users.id, users.username, users.email, users.lastactive, users.password,
+      roles.label AS role, users.roleid, users.projectid
+    FROM users JOIN roles ON users.roleid = roles.id
+    WHERE users.username = $1~;`;
 
   try {
     // locate the user matching the username
-    const user = await db.get(sql, req.body.username);
+    const user = await db.one(sql, [req.body.username]);
+
 
     if (!user) {
       throw new Unauthorized(`Bad username and password combination for ${req.body.username}`);
@@ -53,7 +54,7 @@ export async function login(req, res, next) {
     req.session.user = user;
 
     // set update the with the current last active date
-    await db.run('UPDATE user SET lastactive = ? WHERE id = ?;', new Date(), user.id);
+    await db.none('UPDATE "users" SET lastactive = $1~ WHERE id = $2~;', [new Date(), user.id]);
 
     res.status(200).json(user);
   } catch (e) {
@@ -65,7 +66,7 @@ export async function login(req, res, next) {
 // log a user out
 export function logout(req, res) {
   req.session.destroy(() => {
-    res.sentStatus(200);
+    res.sendStatus(200);
   });
 }
 

@@ -67,6 +67,9 @@ util.inherits(Forbidden, Error);
 export function handler(error, req, res, next) {
   let err;
 
+  // logger.error(error);
+  console.log(error);
+
   // if there is a status, it is a known error
   if (error.status) {
     err = error;
@@ -75,8 +78,6 @@ export function handler(error, req, res, next) {
   } else {
     err = new InternalServerError(error);
   }
-
-  logger.error(err.description);
 
   // send the error back to the client
   res.status(err.status).json(err);
