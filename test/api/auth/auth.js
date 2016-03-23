@@ -14,7 +14,7 @@ const url = '/auth/basic';
  * avoid sharing cookies, so we create a new request using the server exported from the helpers
  * module.
  */
-test('auth:failure:username', async t => {
+test.only('auth:failure:username', async t => {
   t.plan(2);
 
   const user = {
