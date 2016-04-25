@@ -32,7 +32,7 @@
     "multer": "^1.0.5",
     "node-rsa": "^0.3.2",
     "node-uuid": "^1.4.3",
-    "pg-promise": "^3.3.0",
+    "pg-promise": "^4.0.1",
     "winston": "^2.2.0",
     "workerpool": "^1.1.0"
   },
