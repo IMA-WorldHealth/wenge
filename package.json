@@ -63,7 +63,7 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.3",
     "merge-stream": "^1.0.0",
-    "nyc": "^6.0.0",
+    "nyc": "^7.0.0",
     "promised-exec": "^1.0.1",
     "rimraf": "^2.5.2",
     "supertest": "^1.2.0",
