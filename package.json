@@ -67,7 +67,7 @@
     "promised-exec": "^1.0.1",
     "rimraf": "^2.5.2",
     "supertest": "^2.0.0",
-    "supertest-as-promised": "^3.0.0"
+    "supertest-as-promised": "^4.0.0"
   },
   "ava": {
     "require": [
