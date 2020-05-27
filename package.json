@@ -61,7 +61,7 @@
     "gulp-iife": "0.3.0",
     "gulp-sass": "^2.2.0",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "^2.0.0",
+    "gulp-uglify": "^3.0.2",
     "merge-stream": "^1.0.0",
     "nyc": "^8.0.0",
     "promised-exec": "^1.0.1",
